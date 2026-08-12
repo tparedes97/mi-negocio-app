@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>¿Cuánto cobro? — Calculadora para makers</title>
+<title>¿Cuánto cobro? — Costéalo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Quicksand:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -382,6 +382,7 @@ const GLOBAL_T = {
   iaSectionSub:{es:"Usa la inteligencia artificial como una aliada más de tu marca.", en:"Use artificial intelligence as another ally for your brand."},
   footerTagline:{es:"Hecho con cariño para makers que cobran lo justo.", en:"Made with love for makers who charge what's fair."},
   footerRights:{es:"Todos los derechos reservados.", en:"All rights reserved."},
+  pageTitle:{es:"¿Cuánto cobro? — Costéalo", en:"How much should I charge? — Costéalo"},
   heroPreviewTitle:{es:"Vela de soja 🕯️", en:"Soy candle 🕯️"},
   heroPreviewIngredients:{es:"Insumos", en:"Ingredients"},
   heroPreviewLabor:{es:"Mano de obra", en:"Labor"},
@@ -918,6 +919,7 @@ function setLang(lang){
   LANG = lang;
   document.getElementById('lang-es').classList.toggle('active', lang==='es');
   document.getElementById('lang-en').classList.toggle('active', lang==='en');
+  document.title = GLOBAL_T.pageTitle[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
     if(GLOBAL_T[key]) el.textContent = GLOBAL_T[key][LANG];
@@ -933,6 +935,7 @@ function setLang(lang){
 }
 
 /* Init */
+document.title = GLOBAL_T.pageTitle[LANG];
 document.querySelectorAll('[data-i18n]').forEach(el => {
   const key = el.dataset.i18n;
   if(GLOBAL_T[key]) el.textContent = GLOBAL_T[key][LANG];
