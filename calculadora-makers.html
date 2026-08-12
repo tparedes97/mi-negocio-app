@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Cuánto cobro? — Calculadora para makers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Quicksand:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#fdf0f5; --sage:#b98fd1; --sage-dark:#8a5fae; --clay:#e8628f;
+    --brown:#3d1f36; --line:#f3d3de;
+    --pink-50:#fdedf2; --pink-100:#fbdbe6; --pink-200:#f6c3d6;
+    --plum-800:#4a2140; --gold:#eab766; --coral:#f2789a;
+    --shadow-pink: 0 10px 30px -12px rgba(216,90,134,0.28);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{ -webkit-font-smoothing:antialiased; }
+  body{
+    background:
+      radial-gradient(circle at 12% 8%, #fbe0ea 0%, transparent 45%),
+      radial-gradient(circle at 88% 6%, #e4d4f5 0%, transparent 40%),
+      radial-gradient(circle at 90% 92%, #fbe0ea 0%, transparent 45%),
+      linear-gradient(160deg, #fdf2f6 0%, #f6ecf9 100%);
+    background-attachment:fixed;
+    color:var(--brown); font-family:'Quicksand', sans-serif; font-weight:500;
+    min-height:100vh; display:flex; justify-content:center; padding:28px 14px 60px;
+  }
+  .app{
+    width:100%; max-width:460px; background:#fffbfc; border-radius:28px;
+    padding:22px 18px 26px; box-shadow:0 24px 60px -24px rgba(107,44,84,0.35), 0 0 0 1px #fbe4ec;
+    position:relative; overflow:hidden;
+  }
+  .app::before{
+    content:""; position:absolute; top:-60px; right:-60px; width:160px; height:160px;
+    background:radial-gradient(circle, #f6c9da 0%, transparent 70%); pointer-events:none;
+  }
+  header{ margin-bottom:18px; text-align:center; position:relative; }
+  .lang-toggle{ display:flex; justify-content:center; align-items:center; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+  .lang-toggle button{ padding:6px 15px; border:1.5px solid var(--sage); border-radius:20px; background:#fff; color:var(--sage-dark); font-family:'Quicksand', sans-serif; font-size:11px; font-weight:700; letter-spacing:.03em; cursor:pointer; transition:transform .15s ease, background .15s ease; }
+  .lang-toggle button:hover{ transform:translateY(-1px); }
+  .lang-toggle button.active{ background:var(--sage); color:#fff; box-shadow:0 4px 12px -4px rgba(138,95,174,0.5); }
+  .eyebrow{ font-family:'Caveat', cursive; font-size:20px; font-weight:700; letter-spacing:.01em; color:var(--clay); transform:rotate(-2deg); display:inline-block; }
+  h1{ font-family:'Cormorant Garamond', serif; font-weight:700; font-style:italic; font-size:29px; margin-top:2px; line-height:1.15; text-wrap:balance; color:var(--brown); }
+  .sub{ font-size:12.5px; color:#8a6b7c; margin-top:8px; font-weight:500; }
+
+  .cat-tabs{ display:flex; gap:7px; margin-bottom:18px; }
+  .cat-tabs button{ flex:1; padding:11px 4px; border:1.5px solid var(--line); border-radius:16px; background:#fff; font-family:'Quicksand',sans-serif; font-size:11.5px; font-weight:700; color:var(--brown); cursor:pointer; transition:all .15s ease; }
+  .cat-tabs button.active{ background:linear-gradient(135deg, var(--clay), var(--coral)); color:#fff; border-color:transparent; box-shadow:var(--shadow-pink); }
+  .tab-section{ display:none; }
+  .tab-section.active{ display:block; }
+
+  .ad-slot{ border:1.5px dashed var(--pink-200); border-radius:16px; padding:14px; text-align:center; font-family:'Quicksand',sans-serif; font-size:10.5px; font-weight:700; color:var(--clay); letter-spacing:.05em; text-transform:uppercase; margin:18px 0; background:var(--pink-50); }
+  .card{ background:#fffdfd; border:1px solid var(--line); border-radius:20px; padding:18px; margin-bottom:16px; box-shadow:0 12px 28px -20px rgba(107,44,84,0.25); }
+  .card h2{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:19px; margin-bottom:10px; color:var(--brown); }
+  .card .note{ font-size:11.5px; color:#8a6b7c; margin-bottom:12px; line-height:1.55; }
+
+  label{ font-family:'Quicksand', sans-serif; font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; font-weight:700; color:#a97e91; display:block; margin-bottom:4px; }
+  input, select{ width:100%; border:1.3px solid var(--line); border-radius:12px; padding:9px 11px; font-family:'Quicksand',sans-serif; font-weight:600; font-size:13px; background:#fffdfb; color:var(--brown); }
+  input:focus, select:focus{ outline:2px solid var(--sage); outline-offset:1px; border-color:var(--sage); }
+
+  .ing-row{ background:var(--pink-50); border:1px solid var(--line); border-radius:16px; padding:13px; margin-bottom:11px; position:relative; }
+  .ing-row .remove{ position:absolute; top:8px; right:8px; width:22px; height:22px; display:flex; align-items:center; justify-content:center; background:#fff; border:1px solid var(--pink-200); border-radius:50%; color:var(--clay); font-size:12px; cursor:pointer; font-weight:700; }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
+  .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:8px; }
+  .row-cost{ font-family:'Quicksand', sans-serif; font-size:11.5px; color:var(--sage-dark); margin-top:6px; font-weight:700; font-variant-numeric:tabular-nums; }
+
+  .add-btn{ width:100%; padding:12px; border:1.5px dashed var(--clay); border-radius:14px; background:var(--pink-50); color:var(--clay); font-family:'Quicksand',sans-serif; font-weight:700; font-size:12.5px; cursor:pointer; margin-top:4px; transition:background .15s ease; }
+  .add-btn:hover{ background:var(--pink-100); }
+
+  .summary{ background:linear-gradient(160deg, var(--plum-800), #6b2c54); color:var(--cream); border-radius:20px; padding:20px; margin-bottom:16px; box-shadow:0 16px 32px -18px rgba(74,33,64,0.55); }
+  .summary .line{ display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; padding:5px 0; border-bottom:1px solid rgba(253,240,245,0.14); font-variant-numeric:tabular-nums; }
+  .summary .line:last-child{ border-bottom:none; }
+  .summary .final{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:23px; margin-top:10px; padding-top:12px; border-top:1.5px solid var(--gold); display:flex; justify-content:space-between; align-items:baseline; font-variant-numeric:tabular-nums; }
+  .summary .final b{ color:var(--gold); }
+
+  table.eq-table{ width:100%; border-collapse:collapse; font-size:11.5px; }
+  table.eq-table th{ font-family:'Quicksand',sans-serif; font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; text-align:left; padding:6px 4px; color:#a97e91; border-bottom:1.5px solid var(--line); }
+  table.eq-table td{ padding:7px 4px; border-bottom:1px solid var(--line); font-weight:500; }
+  table.eq-table tr:last-child td{ border-bottom:none; }
+
+  .tip{ background:var(--pink-50); border:1px solid var(--pink-200); border-radius:14px; padding:11px 13px; margin-bottom:10px; font-size:11.5px; line-height:1.55; }
+  .tip b{ display:block; margin-bottom:3px; color:var(--clay); font-size:12px; }
+
+  .main-section{ display:none; }
+  .main-section.active{ display:block; }
+
+  .content-card{ background:#fffdfd; border:1px solid var(--line); border-radius:20px; padding:18px; margin-bottom:14px; box-shadow:0 12px 28px -20px rgba(107,44,84,0.25); }
+  .content-card .kicker{ font-family:'Quicksand',sans-serif; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--sage-dark); }
+  .content-card h3{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:18px; margin-top:6px; margin-bottom:9px; color:var(--brown); }
+  .content-card p{ font-size:12.5px; line-height:1.6; color:#6b4f5e; margin-bottom:6px; }
+  .content-card ul{ padding-left:18px; margin-bottom:6px; }
+  .content-card li{ font-size:12.5px; line-height:1.6; color:#6b4f5e; margin-bottom:3px; }
+  .safety-note{ background:#fdeae6; border:1px solid #f0b8a8; border-radius:12px; padding:10px 12px; font-size:11.5px; color:#8a3a24; line-height:1.5; margin-top:8px; }
+  .safety-note b{ display:block; margin-bottom:2px; }
+  .recipe-subtabs{ display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+  .recipe-subtabs button{ padding:7px 14px; border:1.3px solid var(--line); border-radius:20px; background:#fff; font-family:'Quicksand',sans-serif; font-size:11px; font-weight:700; cursor:pointer; color:var(--brown); }
+  .recipe-subtabs button.active{ background:var(--sage); color:#fff; border-color:var(--sage); }
+
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="lang-toggle">
+      <button id="lang-es" class="active">ES</button>
+      <button id="lang-en">EN</button>
+      <select id="currency-select" style="width:auto; padding:6px 10px; border:1.5px solid var(--sage); border-radius:20px; background:#fff; color:var(--sage-dark); font-family:'Quicksand', sans-serif; font-size:10.5px; font-weight:700;">
+        <option value="PEN">S/ Soles (PEN)</option>
+        <option value="USD">$ Dólares (USD)</option>
+        <option value="MXN">$ Pesos MX (MXN)</option>
+        <option value="COP">$ Pesos COP (COP)</option>
+        <option value="CLP">$ Pesos CL (CLP)</option>
+        <option value="ARS">$ Pesos AR (ARS)</option>
+        <option value="EUR">€ Euros (EUR)</option>
+      </select>
+    </div>
+    <div class="eyebrow" data-i18n="eyebrow">para makers</div>
+    <h1 data-i18n="title">¿Cuánto cobro por esto?</h1>
+    <div class="sub" data-i18n="subtitle">Calcula el precio real de tu producto, insumo por insumo</div>
+  </header>
+
+  <nav class="cat-tabs" id="main-tabs" style="margin-bottom:10px;">
+    <button class="main-tab-btn active" data-section="calc" data-i18n="navCalc">🧮 Calculadora</button>
+    <button class="main-tab-btn" data-section="recetas" data-i18n="navRecetas">📖 Recetas</button>
+    <button class="main-tab-btn" data-section="consejos" data-i18n="navConsejos">💡 Consejos</button>
+    <button class="main-tab-btn" data-section="ia" data-i18n="navIA">🤖 IA</button>
+  </nav>
+
+  <div id="section-calc" class="main-section active">
+  <div class="cat-tabs" id="cat-tabs">
+    <button class="tab-btn active" data-cat="reposteria" data-i18n="tabReposteria">🧁 Repostería</button>
+    <button class="tab-btn" data-cat="velas" data-i18n="tabVelas">🕯️ Velas/Jabones</button>
+    <button class="tab-btn" data-cat="resina" data-i18n="tabResina">💧 Resina</button>
+  </div>
+
+  <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+
+  <div id="calc-container"></div>
+
+  <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+  </div>
+
+  <div id="section-recetas" class="main-section">
+    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+    <div id="recetas-container"></div>
+    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+  </div>
+
+  <div id="section-consejos" class="main-section">
+    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+    <div id="consejos-container"></div>
+    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+  </div>
+
+  <div id="section-ia" class="main-section">
+    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+    <div id="ia-container"></div>
+    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+  </div>
+
+</div>
+
+<script>
+let LANG = 'es';
+const CURRENCIES = { PEN:'S/', USD:'$', MXN:'$', COP:'$', CLP:'$', ARS:'$', EUR:'€' };
+let CURRENCY = CURRENCIES.PEN;
+
+const GLOBAL_T = {
+  eyebrow:{es:"para makers", en:"for makers"},
+  title:{es:"¿Cuánto cobro por esto?", en:"How much should I charge?"},
+  subtitle:{es:"Calcula el precio real de tu producto, insumo por insumo", en:"Calculate your product's real price, ingredient by ingredient"},
+  ad:{es:"espacio publicitario", en:"ad space"},
+  tabReposteria:{es:"🧁 Repostería", en:"🧁 Baking"},
+  tabVelas:{es:"🕯️ Velas/Jabones", en:"🕯️ Candles/Soap"},
+  tabResina:{es:"💧 Resina", en:"💧 Resin"},
+  navCalc:{es:"🧮 Calculadora", en:"🧮 Calculator"},
+  navRecetas:{es:"📖 Recetas", en:"📖 Recipes"},
+  navConsejos:{es:"💡 Consejos", en:"💡 Tips"},
+  navIA:{es:"🤖 IA", en:"🤖 AI"},
+};
+
+/* ---------- Diccionarios de insumos por categoría ---------- */
+const CATEGORY_INGREDIENTS = {
+  reposteria: {
+    "harina_comun":   { label:{es:"Harina común (todo uso)", en:"All-purpose flour"}, cup:120, tbsp:8, tsp:2.7 },
+    "harina_leudante":{ label:{es:"Harina leudante", en:"Self-rising flour"}, cup:125, tbsp:8.3, tsp:2.6 },
+    "azucar_blanca":  { label:{es:"Azúcar blanca", en:"Granulated sugar"}, cup:200, tbsp:12.5, tsp:4.2 },
+    "azucar_rubia":   { label:{es:"Azúcar rubia (morena)", en:"Brown sugar"}, cup:220, tbsp:13.8, tsp:4.6 },
+    "mantequilla":    { label:{es:"Mantequilla", en:"Butter"}, cup:227, tbsp:14.2, tsp:4.7 },
+    "aceite":         { label:{es:"Aceite vegetal", en:"Vegetable oil"}, cup:218, tbsp:13.6, tsp:4.5 },
+    "leche":          { label:{es:"Leche", en:"Milk"}, cup:240, tbsp:15, tsp:5 },
+    "cacao":          { label:{es:"Cacao en polvo", en:"Cocoa powder"}, cup:85, tbsp:5.3, tsp:1.8 },
+    "polvo_hornear":  { label:{es:"Polvo de hornear", en:"Baking powder"}, cup:192, tbsp:12, tsp:4 },
+    "personalizado":  { label:{es:"Otro / personalizado", en:"Other / custom"}, cup:null, tbsp:null, tsp:null },
+  },
+  velas: {
+    "cera_soja":     { label:{es:"Cera de soja", en:"Soy wax"}, cup:200, tbsp:12.5, tsp:4.2 },
+    "cera_coco":     { label:{es:"Cera de coco", en:"Coconut wax"}, cup:190, tbsp:11.9, tsp:4.0 },
+    "cera_parafina": { label:{es:"Cera de parafina", en:"Paraffin wax"}, cup:180, tbsp:11.3, tsp:3.8 },
+    "aceite_coco":   { label:{es:"Aceite de coco", en:"Coconut oil"}, cup:218, tbsp:13.6, tsp:4.5 },
+    "aceite_oliva":  { label:{es:"Aceite de oliva", en:"Olive oil"}, cup:216, tbsp:13.5, tsp:4.5 },
+    "sosa_caustica": { label:{es:"Sosa cáustica (NaOH)", en:"Lye (NaOH)"}, cup:240, tbsp:15, tsp:5 },
+    "fragancia":     { label:{es:"Fragancia / esencia", en:"Fragrance oil"}, cup:210, tbsp:13.1, tsp:4.4 },
+    "personalizado": { label:{es:"Otro / personalizado", en:"Other / custom"}, cup:null, tbsp:null, tsp:null },
+  },
+  resina: {
+    "resina_epoxica": { label:{es:"Resina epóxica (componente A)", en:"Epoxy resin (component A)"}, cup:null, tbsp:null, tsp:null },
+    "endurecedor":    { label:{es:"Endurecedor (componente B)", en:"Hardener (component B)"}, cup:null, tbsp:null, tsp:null },
+    "resina_uv":      { label:{es:"Resina UV", en:"UV resin"}, cup:null, tbsp:null, tsp:null },
+    "pigmento":       { label:{es:"Pigmento líquido", en:"Liquid pigment"}, cup:null, tbsp:null, tsp:null },
+    "purpurina":      { label:{es:"Purpurina / glitter", en:"Glitter"}, cup:null, tbsp:null, tsp:null },
+    "sellador":       { label:{es:"Sellador / barniz", en:"Sealant / varnish"}, cup:null, tbsp:null, tsp:null },
+    "personalizado":  { label:{es:"Otro / personalizado", en:"Other / custom"}, cup:null, tbsp:null, tsp:null },
+  },
+};
+
+const UNIT_OPTIONS = [
+  {v:'g', l:{es:'gramos', en:'grams'}}, {v:'kg', l:{es:'kilos', en:'kilograms'}},
+  {v:'ml', l:{es:'ml', en:'ml'}}, {v:'l', l:{es:'litros', en:'liters'}},
+  {v:'cup', l:{es:'tazas', en:'cups'}}, {v:'tbsp', l:{es:'cucharadas', en:'tbsp'}},
+  {v:'tsp', l:{es:'cucharaditas', en:'tsp'}}, {v:'unidad', l:{es:'unidades', en:'units'}},
+];
+
+const T = {
+  ingTitle:{es:"🧾 Insumos de tu receta", en:"🧾 Your recipe's ingredients"},
+  ingNote:{es:'Elige el insumo para que la conversión sea exacta. Para unidades sueltas (moldes, envases, ganchos) usa "unidad".', en:'Pick the ingredient so the conversion is accurate. For loose units (molds, containers, findings) use "unit".'},
+  addBtn:{es:"+ Agregar insumo", en:"+ Add ingredient"},
+  othersTitle:{es:"🏷️ Otros costos y margen", en:"🏷️ Other costs & margin"},
+  laborHoursLabel:{es:"Horas de trabajo", en:"Hours of work"},
+  laborRateLabel:{es:"Tu tarifa por hora", en:"Your hourly rate"},
+  packagingLabel:{es:"Empaque / presentación (monto fijo)", en:"Packaging (flat amount)"},
+  equipmentLabel:{es:"Desgaste de moldes/equipo (monto fijo)", en:"Mold/equipment wear (flat amount)"},
+  overheadLabel:{es:"Otros costos fijos (gas, luz, etc.)", en:"Other fixed costs (gas, electricity, etc.)"},
+  servingsLabel:{es:"¿Cuántas unidades rinde esta receta/lote?", en:"How many units does this recipe/batch yield?"},
+  marginLabel:{es:"Margen de ganancia deseado (%)", en:"Desired profit margin (%)"},
+  removeBtn:{es:"✕", en:"✕"},
+  ingredientLabel:{es:"Insumo", en:"Ingredient"},
+  usedLabel:{es:"Usaste", en:"You used"},
+  unitLabel:{es:"Unidad", en:"Unit"},
+  rowCostLabel:{es:"Costo total", en:"Total cost"},
+  paidLabel:{es:"Pagaste", en:"You paid"},
+  perLabel:{es:"Por cuánto", en:"For how much"},
+  rowCostLine:{es:"Costo de este insumo: ", en:"Cost of this ingredient: "},
+  rowCostPending:{es:"Costo de este insumo: completa los datos para calcular", en:"Cost of this ingredient: fill in the data to calculate"},
+  customNameLabel:{es:"Nombre del insumo", en:"Ingredient name"},
+  customNamePh:{es:"Ej: Molde de silicona", en:"E.g. Silicone mold"},
+  sumIngredients:{es:"Insumos", en:"Ingredients"},
+  sumLabor:{es:"Mano de obra", en:"Labor"},
+  sumPackaging:{es:"Empaque", en:"Packaging"},
+  sumEquipment:{es:"Desgaste de moldes/equipo", en:"Mold/equipment wear"},
+  sumOverhead:{es:"Otros costos fijos", en:"Other fixed costs"},
+  sumTotalCost:{es:"Costo total", en:"Total cost"},
+  sumCostPerServing:{es:"Costo por unidad", en:"Cost per unit"},
+  sumFinal:{es:"Precio sugerido /unidad", en:"Suggested price /unit"},
+  sumFinalTotal:{es:"Precio total sugerido (lote completo)", en:"Suggested total price (whole batch)"},
+  eqTitleCup:{es:"📏 Tabla de equivalencias", en:"📏 Conversion table"},
+  eqNoteCup:{es:"No todos los insumos pesan igual en la misma taza — por eso cada uno tiene su propia densidad.", en:"Not every ingredient weighs the same per cup — that's why each has its own density."},
+  eqTitleRatio:{es:"⚗️ Proporciones de mezcla comunes", en:"⚗️ Common mixing ratios"},
+  eqNoteRatio:{es:"Referencia general — siempre revisa la ficha técnica de tu marca específica, las proporciones varían.", en:"General reference — always check your specific brand's technical sheet, ratios vary."},
+};
+
+const RESIN_RATIOS = [
+  {type:{es:"Resina para mesa (table top)", en:"Table top resin"}, ratio:"1:1 (volumen)"},
+  {type:{es:"Resina para joyería/moldes", en:"Jewelry/casting resin"}, ratio:"2:1 (volumen)"},
+  {type:{es:"Resina de arte (art resin)", en:"Art resin"}, ratio:"1:1 (volumen)"},
+  {type:{es:"Resina UV", en:"UV resin"}, ratio:{es:"No se mezcla — cura con luz UV", en:"No mixing — cures with UV light"}},
+];
+
+/* ---------- Estado por categoría ---------- */
+const state = {};
+['reposteria','velas','resina'].forEach(cat => { state[cat] = { rows: [], counter: 0 }; });
+let activeCat = 'reposteria';
+
+function ingredientOptionsHtml(cat, selected){
+  return Object.entries(CATEGORY_INGREDIENTS[cat]).map(([key, ing]) =>
+    `<option value="${key}" ${key===selected?'selected':''}>${ing.label[LANG]}</option>`
+  ).join('');
+}
+function unitOptionsHtml(selected, restrictToWeight){
+  const opts = restrictToWeight ? UNIT_OPTIONS.filter(u => !['cup','tbsp','tsp'].includes(u.v)) : UNIT_OPTIONS;
+  return opts.map(u => `<option value="${u.v}" ${u.v===selected?'selected':''}>${u.l[LANG]}</option>`).join('');
+}
+
+function renderCalculator(cat){
+  const container = document.getElementById('calc-container');
+  const isRatioTable = cat === 'resina';
+  container.innerHTML = `
+    <div class="card">
+      <h2 data-t="${isRatioTable ? 'eqTitleRatio' : 'eqTitleCup'}"></h2>
+      <div class="note" data-t="${isRatioTable ? 'eqNoteRatio' : 'eqNoteCup'}"></div>
+      <table class="eq-table" id="eq-table-${cat}"></table>
+    </div>
+    <div class="ad-slot" data-i18n="ad"></div>
+    <div class="card">
+      <h2 data-t="ingTitle"></h2>
+      <div class="note" data-t="ingNote"></div>
+      <div id="ingredients-list-${cat}"></div>
+      <button class="add-btn" id="add-ingredient-${cat}" data-t="addBtn"></button>
+    </div>
+    <div class="ad-slot" data-i18n="ad"></div>
+    <div class="card">
+      <h2 data-t="othersTitle"></h2>
+      <label id="labor-hours-label-${cat}"></label>
+      <input type="number" id="labor-hours-${cat}" placeholder="Ej: 2" step="0.25" style="margin-bottom:10px;">
+      <label id="labor-rate-label-${cat}"></label>
+      <input type="number" id="labor-rate-${cat}" placeholder="Ej: 15" style="margin-bottom:10px;">
+      <label id="packaging-label-${cat}"></label>
+      <input type="number" id="packaging-${cat}" placeholder="Ej: 5" style="margin-bottom:10px;">
+      <label id="equipment-label-${cat}"></label>
+      <input type="number" id="equipment-${cat}" placeholder="Ej: 2" style="margin-bottom:10px;">
+      <label id="overhead-label-${cat}"></label>
+      <input type="number" id="overhead-${cat}" placeholder="Ej: 3" style="margin-bottom:10px;">
+      <label data-t="servingsLabel"></label>
+      <input type="number" id="servings-${cat}" placeholder="Ej: 8" style="margin-bottom:10px;">
+      <label data-t="marginLabel"></label>
+      <input type="number" id="margin-${cat}" placeholder="Ej: 40">
+    </div>
+    <div class="summary" id="summary-${cat}"></div>
+  `;
+  applyScopedTranslations(container);
+  document.getElementById(`add-ingredient-${cat}`).addEventListener('click', () => addIngredientRow(cat));
+  ['labor-hours','labor-rate','packaging','equipment','overhead','servings','margin'].forEach(f => {
+    document.getElementById(`${f}-${cat}`).addEventListener('input', () => calculate(cat));
+  });
+  renderEqTable(cat);
+  if(state[cat].rows.length === 0){
+    addIngredientRow(cat);
+    addIngredientRow(cat);
+  } else {
+    state[cat].rows.forEach(id => rebuildRowLabels(cat, document.getElementById(id)));
+  }
+  calculate(cat);
+}
+
+function applyScopedTranslations(scope){
+  scope.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.dataset.t;
+    if(T[key]) el.textContent = T[key][LANG];
+  });
+  scope.querySelectorAll('[data-i18n="ad"]').forEach(el => el.textContent = GLOBAL_T.ad[LANG]);
+  const cat = document.querySelector('.tab-btn.active').dataset.cat;
+  const laborRateEl = document.getElementById(`labor-rate-label-${cat}`);
+  if(laborRateEl) laborRateEl.textContent = `${T.laborRateLabel[LANG]} (${CURRENCY})`;
+  const packagingEl = document.getElementById(`packaging-label-${cat}`);
+  if(packagingEl) packagingEl.textContent = `${T.packagingLabel[LANG]} (${CURRENCY})`;
+  const equipmentEl = document.getElementById(`equipment-label-${cat}`);
+  if(equipmentEl) equipmentEl.textContent = `${T.equipmentLabel[LANG]} (${CURRENCY})`;
+  const overheadEl = document.getElementById(`overhead-label-${cat}`);
+  if(overheadEl) overheadEl.textContent = `${T.overheadLabel[LANG]} (${CURRENCY})`;
+  const laborHoursEl = document.getElementById(`labor-hours-label-${cat}`);
+  if(laborHoursEl) laborHoursEl.textContent = T.laborHoursLabel[LANG];
+}
+
+function renderEqTable(cat){
+  const table = document.getElementById(`eq-table-${cat}`);
+  if(!table) return;
+  if(cat === 'resina'){
+    const headers = LANG==='es' ? ['Tipo','Proporción'] : ['Type','Ratio'];
+    let html = `<tr><th>${headers[0]}</th><th>${headers[1]}</th></tr>`;
+    RESIN_RATIOS.forEach(r => {
+      const ratioText = typeof r.ratio === 'string' ? r.ratio : r.ratio[LANG];
+      html += `<tr><td>${r.type[LANG]}</td><td>${ratioText}</td></tr>`;
+    });
+    table.innerHTML = html;
+  } else {
+    const headers = LANG==='es' ? ['Insumo','1 taza','1 cda','1 cdta'] : ['Ingredient','1 cup','1 tbsp','1 tsp'];
+    let html = `<tr><th>${headers[0]}</th><th>${headers[1]}</th><th>${headers[2]}</th><th>${headers[3]}</th></tr>`;
+    Object.entries(CATEGORY_INGREDIENTS[cat]).forEach(([key, ing]) => {
+      if(key === 'personalizado' || ing.cup == null) return;
+      html += `<tr><td>${ing.label[LANG]}</td><td>${ing.cup} g</td><td>${ing.tbsp} g</td><td>${ing.tsp} g</td></tr>`;
+    });
+    table.innerHTML = html;
+  }
+}
+
+function refreshUnitOptions(cat, row){
+  const type = row.querySelector('.ing-type').value;
+  const ing = CATEGORY_INGREDIENTS[cat][type];
+  const isRestricted = !ing || ing.cup == null;
+  row.querySelector('.custom-name-wrap').style.display = (type === 'personalizado') ? 'block' : 'none';
+  ['use-unit','buy-unit'].forEach(cls => {
+    const sel = row.querySelector('.'+cls);
+    const current = sel.value;
+    sel.innerHTML = unitOptionsHtml(current, isRestricted);
+    if(isRestricted && ['cup','tbsp','tsp'].includes(current)) sel.value = 'g';
+  });
+}
+
+function rebuildRowLabels(cat, row){
+  const typeSel = row.querySelector('.ing-type');
+  const currentType = typeSel.value;
+  typeSel.innerHTML = ingredientOptionsHtml(cat, currentType);
+  refreshUnitOptions(cat, row);
+  row.querySelector('[data-label="ingredient"]').textContent = T.ingredientLabel[LANG];
+  row.querySelector('[data-label="used"]').textContent = T.usedLabel[LANG];
+  row.querySelector('[data-label="unit"]').textContent = T.unitLabel[LANG];
+  row.querySelector('[data-label="rowcost"]').textContent = T.rowCostLabel[LANG];
+  row.querySelector('[data-label="paid"]').textContent = T.paidLabel[LANG];
+  row.querySelector('[data-label="per"]').textContent = T.perLabel[LANG];
+  row.querySelector('.remove').textContent = T.removeBtn[LANG];
+  row.querySelector('.custom-name').placeholder = T.customNamePh[LANG];
+  row.querySelector('[data-label="customname"]').textContent = T.customNameLabel[LANG];
+}
+
+function addIngredientRow(cat){
+  const id = `row-${cat}-${state[cat].counter++}`;
+  state[cat].rows.push(id);
+  const div = document.createElement('div');
+  div.className = 'ing-row';
+  div.id = id;
+  const firstKey = Object.keys(CATEGORY_INGREDIENTS[cat])[0];
+  div.innerHTML = `
+    <button class="remove" data-id="${id}">${T.removeBtn[LANG]}</button>
+    <label data-label="ingredient">${T.ingredientLabel[LANG]}</label>
+    <select class="ing-type" style="margin-bottom:8px;">${ingredientOptionsHtml(cat, firstKey)}</select>
+    <div class="custom-name-wrap" style="display:none; margin-bottom:8px;">
+      <label data-label="customname">${T.customNameLabel[LANG]}</label>
+      <input type="text" class="custom-name" placeholder="${T.customNamePh[LANG]}">
+    </div>
+    <div class="grid3">
+      <div><label data-label="used">${T.usedLabel[LANG]}</label><input type="number" class="use-qty" placeholder="500"></div>
+      <div><label data-label="unit">${T.unitLabel[LANG]}</label><select class="use-unit">${unitOptionsHtml('g')}</select></div>
+      <div><label data-label="rowcost">${T.rowCostLabel[LANG]}</label><input type="number" class="row-cost-input" placeholder="0" disabled style="background:#f7e3ea;"></div>
+    </div>
+    <div class="grid2">
+      <div><label data-label="paid">${T.paidLabel[LANG]}</label><input type="number" class="buy-price" placeholder="20"></div>
+      <div><label data-label="per">${T.perLabel[LANG]}</label><input type="number" class="buy-qty" placeholder="1" style="margin-bottom:4px;"></div>
+    </div>
+    <select class="buy-unit" style="margin-bottom:8px;">${unitOptionsHtml('kg')}</select>
+    <div class="row-cost" id="cost-${id}"></div>
+  `;
+  document.getElementById(`ingredients-list-${cat}`).appendChild(div);
+  div.querySelectorAll('select, input').forEach(el => el.addEventListener('input', () => calculate(cat)));
+  div.querySelector('.ing-type').addEventListener('change', () => { refreshUnitOptions(cat, div); calculate(cat); });
+  div.querySelector('.remove').addEventListener('click', () => {
+    div.remove();
+    state[cat].rows = state[cat].rows.filter(r => r !== id);
+    calculate(cat);
+  });
+  refreshUnitOptions(cat, div);
+  calculate(cat);
+}
+
+function toGrams(qty, unit, densityKey, cat){
+  if(!qty || qty <= 0) return null;
+  if(unit === 'g') return qty;
+  if(unit === 'kg') return qty * 1000;
+  if(unit === 'ml') return qty;
+  if(unit === 'l') return qty * 1000;
+  if(unit === 'unidad') return null;
+  const ing = CATEGORY_INGREDIENTS[cat][densityKey];
+  if(!ing || ing[unit] == null) return null;
+  return qty * ing[unit];
+}
+
+function calculate(cat){
+  let totalIngredients = 0;
+  state[cat].rows.forEach(id => {
+    const row = document.getElementById(id);
+    if(!row) return;
+    const type = row.querySelector('.ing-type').value;
+    const useQty = parseFloat(row.querySelector('.use-qty').value);
+    const useUnit = row.querySelector('.use-unit').value;
+    const buyPrice = parseFloat(row.querySelector('.buy-price').value);
+    const buyQty = parseFloat(row.querySelector('.buy-qty').value);
+    const buyUnit = row.querySelector('.buy-unit').value;
+    const costEl = document.getElementById('cost-'+id);
+
+    let cost = 0;
+    if(useUnit === 'unidad' && buyUnit === 'unidad' && useQty > 0 && buyQty > 0 && buyPrice > 0){
+      cost = (buyPrice / buyQty) * useQty;
+    } else {
+      const useGrams = toGrams(useQty, useUnit, type, cat);
+      const buyGrams = toGrams(buyQty, buyUnit, type, cat);
+      if(useGrams && buyGrams && buyPrice > 0){
+        cost = (buyPrice / buyGrams) * useGrams;
+      }
+    }
+    totalIngredients += cost;
+    const displayName = type === 'personalizado' ? (row.querySelector('.custom-name').value.trim() || '') : '';
+    const prefix = displayName ? `${T.rowCostLine[LANG]}(${displayName}) ` : T.rowCostLine[LANG];
+    costEl.textContent = cost > 0 ? `${prefix}${CURRENCY} ${cost.toFixed(2)}` : T.rowCostPending[LANG];
+  });
+
+  const g = f => parseFloat(document.getElementById(`${f}-${cat}`)?.value) || 0;
+  const laborHours = g('labor-hours'), laborRate = g('labor-rate'), packaging = g('packaging');
+  const equipment = g('equipment'), overhead = g('overhead');
+  const servings = g('servings') || 1, margin = g('margin');
+
+  const laborCost = laborHours * laborRate;
+  const totalCost = totalIngredients + laborCost + packaging + equipment + overhead;
+  const costPerServing = totalCost / servings;
+  const priceWithMargin = costPerServing * (1 + margin/100);
+  const totalPriceMargin = totalCost * (1 + margin/100);
+
+  const summary = document.getElementById(`summary-${cat}`);
+  if(!summary) return;
+  summary.innerHTML = `
+    <div class="line"><span>${T.sumIngredients[LANG]}</span><span>${CURRENCY} ${totalIngredients.toFixed(2)}</span></div>
+    <div class="line"><span>${T.sumLabor[LANG]} (${laborHours}h × ${CURRENCY}${laborRate})</span><span>${CURRENCY} ${laborCost.toFixed(2)}</span></div>
+    <div class="line"><span>${T.sumPackaging[LANG]}</span><span>${CURRENCY} ${packaging.toFixed(2)}</span></div>
+    <div class="line"><span>${T.sumEquipment[LANG]}</span><span>${CURRENCY} ${equipment.toFixed(2)}</span></div>
+    <div class="line"><span>${T.sumOverhead[LANG]}</span><span>${CURRENCY} ${overhead.toFixed(2)}</span></div>
+    <div class="line"><span>${T.sumTotalCost[LANG]}</span><span>${CURRENCY} ${totalCost.toFixed(2)}</span></div>
+    <div class="line"><span>${T.sumCostPerServing[LANG]} (${servings})</span><span>${CURRENCY} ${costPerServing.toFixed(2)}</span></div>
+    <div class="final"><span>${T.sumFinal[LANG]}</span><b>${CURRENCY} ${priceWithMargin.toFixed(2)}</b></div>
+    <div class="line" style="margin-top:6px;"><span>${T.sumFinalTotal[LANG]}</span><span>${CURRENCY} ${totalPriceMargin.toFixed(2)}</span></div>
+  `;
+}
+
+/* ---------- RECETAS ---------- */
+const RECIPES = {
+  reposteria: [
+    {
+      title:{es:"Cupcakes básicos de vainilla (12 unidades)", en:"Basic vanilla cupcakes (12 units)"},
+      ingredients:{es:["2 tazas de harina común","1 taza de azúcar blanca","1/2 taza de mantequilla","2 huevos","1 taza de leche","2 cdtas de polvo de hornear","1 cdta de esencia de vainilla"], en:["2 cups all-purpose flour","1 cup granulated sugar","1/2 cup butter","2 eggs","1 cup milk","2 tsp baking powder","1 tsp vanilla extract"]},
+      steps:{es:["Precalienta el horno a 180°C.","Bate la mantequilla con el azúcar hasta cremar.","Agrega los huevos uno a uno, luego la vainilla.","Alterna la harina (con el polvo de hornear) y la leche.","Distribuye en moldes y hornea 18-20 min."], en:["Preheat the oven to 350°F.","Cream the butter with the sugar.","Add eggs one at a time, then the vanilla.","Alternate adding the flour (with baking powder) and milk.","Divide into molds and bake 18-20 min."]},
+    },
+  ],
+  velas: [
+    {
+      title:{es:"Vela de soja aromática (1 unidad, 200 ml)", en:"Scented soy candle (1 unit, 200 ml)"},
+      ingredients:{es:["170 g de cera de soja","8 ml de fragancia (aprox. 5% del peso de cera)","1 pabilo de madera o algodón","1 envase de vidrio de 200 ml"], en:["170 g soy wax","8 ml fragrance oil (approx. 5% of wax weight)","1 wood or cotton wick","1 glass container, 200 ml"]},
+      steps:{es:["Derrite la cera a baño maría hasta 70-75°C.","Retira del calor y deja enfriar a 55-60°C.","Agrega la fragancia y mezcla bien 2 minutos.","Fija el pabilo al centro del envase y vierte la cera.","Deja curar sin mover por 24-48 horas antes de encender."], en:["Melt the wax in a double boiler to 70-75°C (158-167°F).","Remove from heat and cool to 55-60°C (131-140°F).","Add the fragrance and mix well for 2 minutes.","Secure the wick at the center of the container and pour the wax.","Let it cure undisturbed for 24-48 hours before lighting."]},
+    },
+  ],
+  jabon: [
+    {
+      title:{es:"Jabón artesanal básico (proceso en frío)", en:"Basic handmade soap (cold process)"},
+      ingredients:{es:["500 g de aceite de oliva/coco (mezcla)","70 g de sosa cáustica (NaOH)","180 ml de agua fría","Aceite esencial al gusto (opcional)"], en:["500 g olive/coconut oil blend","70 g lye (NaOH)","180 ml cold water","Essential oil to taste (optional)"]},
+      steps:{es:["Disuelve la sosa en el agua (NUNCA al revés) en un lugar ventilado.","Deja enfriar la mezcla de sosa a 35-40°C.","Calienta los aceites a la misma temperatura.","Une ambas mezclas y bate hasta 'traza' (textura de pudín ligero).","Vierte en moldes y deja curar 4-6 semanas antes de usar."], en:["Dissolve the lye in the water (NEVER the other way around) in a ventilated area.","Let the lye mixture cool to 35-40°C (95-104°F).","Heat the oils to the same temperature.","Combine both mixtures and blend until 'trace' (light pudding texture).","Pour into molds and cure for 4-6 weeks before use."]},
+      safety:{es:"La sosa cáustica es corrosiva: usa guantes, lentes de protección, ropa de manga larga, y trabaja en un espacio ventilado. Nunca la inhales directamente ni la manipules cerca de niños.", en:"Lye is corrosive: use gloves, eye protection, long sleeves, and work in a ventilated space. Never inhale it directly or handle it near children."},
+    },
+  ],
+  resina: [
+    {
+      title:{es:"Posavasos de resina epóxica (set de 4)", en:"Epoxy resin coasters (set of 4)"},
+      ingredients:{es:["200 ml de resina epóxica + endurecedor (proporción según tu marca)","Pigmento líquido al gusto","4 moldes de silicona para posavasos"], en:["200 ml epoxy resin + hardener (ratio per your brand)","Liquid pigment to taste","4 silicone coaster molds"]},
+      steps:{es:["Mide resina y endurecedor exactamente en la proporción de tu marca.","Mezcla lento por 3 minutos evitando burbujas.","Divide en vasos y agrega pigmento a cada uno.","Vierte en los moldes.","Pasa un soplete suave por la superficie para quitar burbujas.","Deja curar 24-72 horas según ficha técnica antes de desmoldar."], en:["Measure resin and hardener exactly per your brand's ratio.","Mix slowly for 3 minutes avoiding bubbles.","Divide into cups and add pigment to each.","Pour into molds.","Pass a torch lightly over the surface to remove bubbles.","Cure 24-72 hours per technical sheet before unmolding."]},
+      safety:{es:"Trabaja en un espacio ventilado y usa guantes — los vapores de la resina sin curar pueden irritar. Revisa siempre la ficha de seguridad (MSDS) de tu marca específica.", en:"Work in a ventilated space and wear gloves — uncured resin fumes can irritate. Always check your specific brand's safety data sheet (MSDS)."},
+    },
+  ],
+};
+
+const RECIPE_CAT_LABELS = {
+  reposteria:{es:"🧁 Repostería", en:"🧁 Baking"},
+  velas:{es:"🕯️ Velas", en:"🕯️ Candles"},
+  jabon:{es:"🧼 Jabón", en:"🧼 Soap"},
+  resina:{es:"💧 Resina", en:"💧 Resin"},
+};
+let activeRecipeCat = 'reposteria';
+
+function renderRecetas(){
+  const container = document.getElementById('recetas-container');
+  const tabs = Object.keys(RECIPE_CAT_LABELS).map(k =>
+    `<button data-rcat="${k}" class="${k===activeRecipeCat?'active':''}">${RECIPE_CAT_LABELS[k][LANG]}</button>`
+  ).join('');
+  const recipes = RECIPES[activeRecipeCat].map(r => `
+    <div class="content-card">
+      <div class="kicker">${LANG==='es'?'RECETA':'RECIPE'}</div>
+      <h3>${r.title[LANG]}</h3>
+      <p><b>${LANG==='es'?'Ingredientes:':'Ingredients:'}</b></p>
+      <ul>${r.ingredients[LANG].map(i=>`<li>${i}</li>`).join('')}</ul>
+      <p><b>${LANG==='es'?'Pasos:':'Steps:'}</b></p>
+      <ul>${r.steps[LANG].map(s=>`<li>${s}</li>`).join('')}</ul>
+      ${r.safety ? `<div class="safety-note"><b>⚠️ ${LANG==='es'?'Seguridad':'Safety'}</b>${r.safety[LANG]}</div>` : ''}
+    </div>
+  `).join('');
+  container.innerHTML = `<div class="recipe-subtabs">${tabs}</div>${recipes}`;
+  container.querySelectorAll('.recipe-subtabs button').forEach(btn => {
+    btn.onclick = () => { activeRecipeCat = btn.dataset.rcat; renderRecetas(); };
+  });
+}
+
+/* ---------- CONSEJOS DE NEGOCIO ---------- */
+const BUSINESS_TIPS = [
+  {title:{es:"No compitas solo por precio", en:"Don't compete on price alone"}, body:{es:"Si bajas el precio para ganarle a la competencia, ganas la venta pero pierdes margen — y es una carrera que alguien más siempre puede ganar bajando más. Compite en calidad, presentación, historia de marca o servicio.", en:"If you lower your price to beat competitors, you win the sale but lose margin — and it's a race someone else can always win by going lower. Compete on quality, presentation, brand story, or service instead."}},
+  {title:{es:"La foto vende antes que el producto", en:"The photo sells before the product does"}, body:{es:"En redes y marketplaces, la gente decide en segundos si sigue mirando. Luz natural, fondo simple, y mostrar el producto en uso (no solo aislado) mejora mucho la conversión.", en:"On social media and marketplaces, people decide in seconds whether to keep looking. Natural light, a simple background, and showing the product in use (not just isolated) significantly improves conversion."}},
+  {title:{es:"Diversifica dónde vendes", en:"Diversify where you sell"}, body:{es:"No dependas de un solo canal (solo Instagram, o solo ferias). Si ese canal cae, cae tu negocio. Combina redes, WhatsApp Business, marketplaces y ventas presenciales.", en:"Don't depend on a single channel (only Instagram, or only fairs). If that channel drops, your business drops with it. Combine social media, WhatsApp Business, marketplaces, and in-person sales."}},
+  {title:{es:"Guarda tus costos reales desde el día uno", en:"Track your real costs from day one"}, body:{es:"Es fácil perder plata sin darte cuenta cuando no registras cada insumo, hora de trabajo y empaque. Usa una calculadora (como la de esta página) en cada producto nuevo, no solo al principio.", en:"It's easy to lose money without noticing when you don't track every ingredient, hour of work, and packaging cost. Use a calculator (like the one on this page) for every new product, not just at the start."}},
+  {title:{es:"Pide feedback, no solo ventas", en:"Ask for feedback, not just sales"}, body:{es:"Un cliente que no compró pero te dice por qué es información valiosísima. Pregunta directamente qué los detuvo — precio, diseño, tiempo de entrega.", en:"A customer who didn't buy but tells you why is incredibly valuable information. Directly ask what stopped them — price, design, delivery time."}},
+];
+
+function renderConsejos(){
+  const container = document.getElementById('consejos-container');
+  container.innerHTML = BUSINESS_TIPS.map(t => `
+    <div class="content-card">
+      <div class="kicker">${LANG==='es'?'CONSEJO':'TIP'}</div>
+      <h3>${t.title[LANG]}</h3>
+      <p>${t.body[LANG]}</p>
+    </div>
+  `).join('');
+}
+
+/* ---------- IA PARA TU NEGOCIO ---------- */
+const AI_TIPS = [
+  {title:{es:"Descripciones de producto en segundos", en:"Product descriptions in seconds"}, body:{es:"Dale a un asistente de IA una foto o una lista de características de tu producto y pídele 3-4 versiones de descripción (una más técnica, una más emocional, una corta para redes). Ahorra tiempo y te da opciones para probar cuál convierte mejor.", en:"Give an AI assistant a photo or a list of your product's features and ask for 3-4 description versions (one more technical, one more emotional, one short for social media). Saves time and gives you options to test which converts better."}},
+  {title:{es:"Ideas de contenido para redes cuando te quedas sin inspiración", en:"Content ideas for social media when you run out of inspiration"}, body:{es:"Pide un calendario de contenido semanal basado en tu tipo de producto — la IA puede sugerir ángulos (detrás de cámara, tutorial, testimonios, preguntas frecuentes) que quizás no se te ocurran solo.", en:"Ask for a weekly content calendar based on your product type — AI can suggest angles (behind the scenes, tutorial, testimonials, FAQs) you might not think of on your own."}},
+  {title:{es:"Respuestas rápidas para clientes", en:"Quick customer responses"}, body:{es:"Prepara con IA plantillas de respuesta para las preguntas que más te hacen (tiempos de entrega, personalización, cuidados del producto), y ajústalas a tu tono. Así respondes rápido sin sonar robótica.", en:"Use AI to prepare response templates for the questions you get most (delivery times, customization, product care), and adjust them to your tone. That way you respond fast without sounding robotic."}},
+  {title:{es:"Mockups y pruebas visuales antes de producir", en:"Mockups and visual tests before producing"}, body:{es:"Herramientas de generación de imágenes te dejan visualizar combinaciones de color, empaque o presentación antes de gastar en materiales — útil para decidir qué variante de un producto nuevo vale la pena hacer primero.", en:"Image generation tools let you visualize color combinations, packaging, or presentation before spending on materials — useful for deciding which variant of a new product is worth making first."}},
+  {title:{es:"No reemplaces tu voz, potenciala", en:"Don't replace your voice, amplify it"}, body:{es:"Lo que mejor vende en negocios artesanales es que se sienta hecho por una persona real. Usa la IA para el primer borrador o para ideas, pero siempre revisa y ajusta el resultado final con tu propio tono — la gente nota cuando algo suena genérico.", en:"What sells best in handmade businesses is that it feels made by a real person. Use AI for the first draft or for ideas, but always review and adjust the final result with your own tone — people notice when something sounds generic."}},
+];
+
+function renderIA(){
+  const container = document.getElementById('ia-container');
+  container.innerHTML = AI_TIPS.map(t => `
+    <div class="content-card">
+      <div class="kicker">${LANG==='es'?'IA + TU NEGOCIO':'AI + YOUR BUSINESS'}</div>
+      <h3>${t.title[LANG]}</h3>
+      <p>${t.body[LANG]}</p>
+    </div>
+  `).join('');
+}
+
+/* ---------- Navegación principal ---------- */
+document.querySelectorAll('.main-tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.main-section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('section-'+btn.dataset.section).classList.add('active');
+    if(btn.dataset.section === 'recetas') renderRecetas();
+    if(btn.dataset.section === 'consejos') renderConsejos();
+    if(btn.dataset.section === 'ia') renderIA();
+  });
+});
+
+/* ---------- Tabs de categoría ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCat = btn.dataset.cat;
+    renderCalculator(activeCat);
+  });
+});
+
+/* ---------- Idioma y moneda ---------- */
+document.getElementById('lang-es').addEventListener('click', () => setLang('es'));
+document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+document.getElementById('currency-select').addEventListener('change', (e) => {
+  CURRENCY = CURRENCIES[e.target.value];
+  renderCalculator(activeCat);
+});
+function setLang(lang){
+  LANG = lang;
+  document.getElementById('lang-es').classList.toggle('active', lang==='es');
+  document.getElementById('lang-en').classList.toggle('active', lang==='en');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if(GLOBAL_T[key]) el.textContent = GLOBAL_T[key][LANG];
+  });
+  renderCalculator(activeCat);
+  const activeSection = document.querySelector('.main-tab-btn.active').dataset.section;
+  if(activeSection === 'recetas') renderRecetas();
+  if(activeSection === 'consejos') renderConsejos();
+  if(activeSection === 'ia') renderIA();
+}
+
+/* Init */
+document.querySelectorAll('[data-i18n]').forEach(el => {
+  const key = el.dataset.i18n;
+  if(GLOBAL_T[key]) el.textContent = GLOBAL_T[key][LANG];
+});
+renderCalculator(activeCat);
+</script>
+</body>
+</html>
