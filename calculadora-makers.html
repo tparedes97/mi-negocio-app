@@ -154,6 +154,40 @@
   .recipe-subtabs button{ padding:8px 16px; border:1.3px solid var(--line); border-radius:20px; background:#fff; font-size:12px; font-weight:700; cursor:pointer; color:var(--brown); }
   .recipe-subtabs button.active{ background:var(--sage); color:#fff; border-color:var(--sage); }
 
+  /* ---------- Foro (FAQ + preguntas) ---------- */
+  .forum-top{ display:grid; grid-template-columns:1fr; gap:24px; margin-bottom:28px; }
+  textarea{ width:100%; border:1.3px solid var(--line); border-radius:12px; padding:10px 12px; font-family:'Quicksand',sans-serif; font-weight:600; font-size:13.5px; background:#fffdfb; color:var(--brown); resize:vertical; }
+  textarea:focus{ outline:2px solid var(--sage); outline-offset:1px; border-color:var(--sage); }
+  .forum-note{ font-size:11px; color:var(--muted); margin-top:12px; line-height:1.5; }
+
+  .faq-item{ border-bottom:1px solid var(--line); }
+  .faq-item:last-child{ border-bottom:none; }
+  .faq-question{ width:100%; text-align:left; background:none; border:none; padding:14px 2px; display:flex; justify-content:space-between; align-items:center; gap:12px; font-weight:700; font-size:13px; color:var(--brown); cursor:pointer; }
+  .faq-question .icon{ font-size:17px; color:var(--clay); font-weight:700; transition:transform .2s ease; flex-shrink:0; }
+  .faq-item.open .faq-question .icon{ transform:rotate(45deg); }
+  .faq-answer{ max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .faq-item.open .faq-answer{ max-height:400px; }
+  .faq-answer p{ padding:0 2px 14px; font-size:12.5px; line-height:1.6; color:#6b4f5e; }
+
+  .forum-list{ display:flex; flex-direction:column; gap:16px; }
+  .forum-post{ background:var(--paper); border:1px solid var(--line); border-radius:18px; padding:18px 20px; box-shadow:var(--shadow-card); }
+  .forum-post-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+  .forum-post-author{ font-weight:700; font-size:13px; color:var(--sage-dark); }
+  .forum-post-date{ font-size:11px; color:var(--muted); }
+  .forum-post-text{ font-size:13.5px; line-height:1.6; color:var(--brown); margin-bottom:10px; white-space:pre-wrap; }
+  .forum-post-actions{ display:flex; gap:16px; align-items:center; }
+  .forum-post-actions button{ background:none; border:none; font-size:11.5px; font-weight:700; color:var(--sage-dark); cursor:pointer; padding:2px 0; }
+  .forum-post-actions .delete-btn{ color:var(--clay); }
+  .forum-replies{ margin-top:12px; padding-left:16px; border-left:2px solid var(--pink-100); display:flex; flex-direction:column; gap:10px; }
+  .forum-reply{ font-size:12.5px; color:var(--brown); }
+  .forum-reply .reply-author{ font-weight:700; }
+  .forum-reply .reply-date{ font-size:10.5px; color:var(--muted); margin-left:6px; }
+  .forum-reply-text{ margin-top:2px; white-space:pre-wrap; }
+  .forum-reply-form{ display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .forum-reply-form input{ flex:1; min-width:160px; }
+  .forum-reply-form button{ padding:9px 16px; font-size:11.5px; white-space:nowrap; }
+  .forum-empty{ text-align:center; padding:36px 20px; color:var(--muted); font-size:13px; background:var(--paper); border:1px dashed var(--pink-200); border-radius:16px; }
+
   /* ---------- Footer ---------- */
   .site-footer{ background:linear-gradient(160deg, var(--plum-900), var(--plum-800)); color:var(--pink-50); padding-block:44px 28px; }
   .footer-inner{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px; }
@@ -172,6 +206,7 @@
   }
   @media (min-width:860px){
     .hero-grid{ grid-template-columns:1.15fr 0.85fr; }
+    .forum-top{ grid-template-columns:1fr 1fr; }
   }
   @media (min-width:900px){
     .nav-toggle{ display:none; }
@@ -220,11 +255,13 @@
         <button class="main-tab-btn" data-section="recetas" data-i18n="navRecetas">📖 Recetas</button>
         <button class="main-tab-btn" data-section="consejos" data-i18n="navConsejos">💡 Consejos</button>
         <button class="main-tab-btn" data-section="ia" data-i18n="navIA">🤖 IA</button>
+        <button class="main-tab-btn" data-section="foro" data-i18n="navForo">💬 Foro</button>
       </nav>
       <div class="nav-controls">
         <div class="lang-toggle">
           <button id="lang-es" class="active">ES</button>
           <button id="lang-en">EN</button>
+          <button id="lang-de">DE</button>
         </div>
         <select id="currency-select" class="currency-select">
           <option value="PEN">S/ Soles (PEN)</option>
@@ -338,6 +375,39 @@
     </div>
   </section>
 
+  <section id="section-foro" class="main-section">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker" data-t="navForo"></div>
+        <h2 data-t="foroSectionTitle"></h2>
+        <p data-t="foroSectionSub"></p>
+      </div>
+      <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+
+      <div class="forum-top">
+        <div class="card">
+          <h2 data-t="faqTitle"></h2>
+          <div id="faq-list"></div>
+        </div>
+        <div class="card">
+          <h2 data-t="askTitle"></h2>
+          <form id="forum-form">
+            <label data-t="askNameLabel"></label>
+            <input type="text" id="forum-name" style="margin-bottom:12px;">
+            <label data-t="askQuestionLabel"></label>
+            <textarea id="forum-question" rows="3" required></textarea>
+            <button type="submit" class="btn-cta" data-t="askSubmit" style="margin-top:14px; width:100%;"></button>
+          </form>
+          <p class="forum-note" data-t="askNote"></p>
+        </div>
+      </div>
+
+      <div id="forum-questions-list" class="forum-list"></div>
+
+      <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="site-footer">
@@ -355,126 +425,137 @@ let LANG = 'es';
 const CURRENCIES = { PEN:'S/', USD:'$', MXN:'$', COP:'$', CLP:'$', ARS:'$', EUR:'€' };
 let CURRENCY = CURRENCIES.PEN;
 
+const LANGS = ['es', 'en', 'de'];
+
 const GLOBAL_T = {
-  eyebrow:{es:"para makers", en:"for makers"},
-  title:{es:"¿Cuánto cobro por esto?", en:"How much should I charge?"},
-  subtitle:{es:"Calcula el precio real de tu producto, insumo por insumo", en:"Calculate your product's real price, ingredient by ingredient"},
-  ad:{es:"espacio publicitario", en:"ad space"},
-  tabReposteria:{es:"🧁 Repostería", en:"🧁 Baking"},
-  tabVelas:{es:"🕯️ Velas/Jabones", en:"🕯️ Candles/Soap"},
-  tabResina:{es:"💧 Resina", en:"💧 Resin"},
-  navCalc:{es:"🧮 Calculadora", en:"🧮 Calculator"},
-  navRecetas:{es:"📖 Recetas", en:"📖 Recipes"},
-  navConsejos:{es:"💡 Consejos", en:"💡 Tips"},
-  navIA:{es:"🤖 IA", en:"🤖 AI"},
-  heroCta:{es:"Comenzar a calcular →", en:"Start calculating →"},
-  statCategories:{es:"Categorías", en:"Categories"},
-  statIngredients:{es:"Insumos precargados", en:"Preloaded ingredients"},
-  statCurrencies:{es:"Monedas", en:"Currencies"},
-  categoriesLabel:{es:"Elige tu categoría", en:"Choose your category"},
-  calcSectionTitle:{es:"Calculadora de precios", en:"Price calculator"},
-  calcSectionSub:{es:"Completa los datos de tu receta y obtén el precio sugerido al instante.", en:"Fill in your recipe's details and get the suggested price instantly."},
-  recetasSectionTitle:{es:"Recetas paso a paso", en:"Step-by-step recipes"},
-  recetasSectionSub:{es:"Guías básicas para tus productos más populares.", en:"Basic guides for your most popular products."},
-  consejosSectionTitle:{es:"Consejos de negocio", en:"Business tips"},
-  consejosSectionSub:{es:"Ideas prácticas para vender mejor y cuidar tu margen.", en:"Practical ideas to sell better and protect your margin."},
-  iaSectionTitle:{es:"IA para tu negocio", en:"AI for your business"},
-  iaSectionSub:{es:"Usa la inteligencia artificial como una aliada más de tu marca.", en:"Use artificial intelligence as another ally for your brand."},
-  footerTagline:{es:"Hecho con cariño para makers que cobran lo justo.", en:"Made with love for makers who charge what's fair."},
-  footerRights:{es:"Todos los derechos reservados.", en:"All rights reserved."},
-  pageTitle:{es:"¿Cuánto cobro? — Costéalo", en:"How much should I charge? — Costéalo"},
-  heroPreviewTitle:{es:"Vela de soja 🕯️", en:"Soy candle 🕯️"},
-  heroPreviewIngredients:{es:"Insumos", en:"Ingredients"},
-  heroPreviewLabor:{es:"Mano de obra", en:"Labor"},
-  heroPreviewPackaging:{es:"Empaque", en:"Packaging"},
-  heroPreviewFinal:{es:"Precio sugerido", en:"Suggested price"},
+  eyebrow:{es:"para makers", en:"for makers", de:"für Maker"},
+  title:{es:"¿Cuánto cobro por esto?", en:"How much should I charge?", de:"Wie viel soll ich dafür verlangen?"},
+  subtitle:{es:"Calcula el precio real de tu producto, insumo por insumo", en:"Calculate your product's real price, ingredient by ingredient", de:"Berechne den echten Preis deines Produkts, Zutat für Zutat"},
+  ad:{es:"espacio publicitario", en:"ad space", de:"Werbefläche"},
+  tabReposteria:{es:"🧁 Repostería", en:"🧁 Baking", de:"🧁 Backen"},
+  tabVelas:{es:"🕯️ Velas/Jabones", en:"🕯️ Candles/Soap", de:"🕯️ Kerzen/Seife"},
+  tabResina:{es:"💧 Resina", en:"💧 Resin", de:"💧 Harz"},
+  navCalc:{es:"🧮 Calculadora", en:"🧮 Calculator", de:"🧮 Rechner"},
+  navRecetas:{es:"📖 Recetas", en:"📖 Recipes", de:"📖 Rezepte"},
+  navConsejos:{es:"💡 Consejos", en:"💡 Tips", de:"💡 Tipps"},
+  navIA:{es:"🤖 IA", en:"🤖 AI", de:"🤖 KI"},
+  navForo:{es:"💬 Foro", en:"💬 Forum", de:"💬 Forum"},
+  heroCta:{es:"Comenzar a calcular →", en:"Start calculating →", de:"Jetzt berechnen →"},
+  statCategories:{es:"Categorías", en:"Categories", de:"Kategorien"},
+  statIngredients:{es:"Insumos precargados", en:"Preloaded ingredients", de:"Vorinstallierte Zutaten"},
+  statCurrencies:{es:"Monedas", en:"Currencies", de:"Währungen"},
+  categoriesLabel:{es:"Elige tu categoría", en:"Choose your category", de:"Wähle deine Kategorie"},
+  calcSectionTitle:{es:"Calculadora de precios", en:"Price calculator", de:"Preisrechner"},
+  calcSectionSub:{es:"Completa los datos de tu receta y obtén el precio sugerido al instante.", en:"Fill in your recipe's details and get the suggested price instantly.", de:"Gib die Daten deines Rezepts ein und erhalte sofort den empfohlenen Preis."},
+  recetasSectionTitle:{es:"Recetas paso a paso", en:"Step-by-step recipes", de:"Rezepte Schritt für Schritt"},
+  recetasSectionSub:{es:"Guías básicas para tus productos más populares.", en:"Basic guides for your most popular products.", de:"Grundlegende Anleitungen für deine beliebtesten Produkte."},
+  consejosSectionTitle:{es:"Consejos de negocio", en:"Business tips", de:"Geschäftstipps"},
+  consejosSectionSub:{es:"Ideas prácticas para vender mejor y cuidar tu margen.", en:"Practical ideas to sell better and protect your margin.", de:"Praktische Ideen, um besser zu verkaufen und deine Marge zu schützen."},
+  iaSectionTitle:{es:"IA para tu negocio", en:"AI for your business", de:"KI für dein Geschäft"},
+  iaSectionSub:{es:"Usa la inteligencia artificial como una aliada más de tu marca.", en:"Use artificial intelligence as another ally for your brand.", de:"Nutze künstliche Intelligenz als weitere Verbündete deiner Marke."},
+  foroSectionTitle:{es:"Preguntas y respuestas", en:"Questions & answers", de:"Fragen & Antworten"},
+  foroSectionSub:{es:"Resuelve tus dudas y comparte las tuyas con otras makers.", en:"Get your questions answered and share your own.", de:"Kläre deine Fragen und teile sie mit anderen Makern."},
+  faqTitle:{es:"❓ Preguntas frecuentes", en:"❓ Frequently asked questions", de:"❓ Häufig gestellte Fragen"},
+  askTitle:{es:"✍️ Haz tu pregunta", en:"✍️ Ask your question", de:"✍️ Stelle deine Frage"},
+  askNote:{es:"Tu pregunta se guarda solo en este navegador — no se comparte con otras personas ni con un servidor.", en:"Your question is saved only in this browser — it isn't shared with other people or a server.", de:"Deine Frage wird nur in diesem Browser gespeichert — sie wird nicht mit anderen Personen oder einem Server geteilt."},
+  askNameLabel:{es:"Tu nombre (opcional)", en:"Your name (optional)", de:"Dein Name (optional)"},
+  askQuestionLabel:{es:"Tu pregunta", en:"Your question", de:"Deine Frage"},
+  askSubmit:{es:"Publicar pregunta", en:"Post question", de:"Frage veröffentlichen"},
+  footerTagline:{es:"Hecho con cariño para makers que cobran lo justo.", en:"Made with love for makers who charge what's fair.", de:"Mit Liebe gemacht für Maker, die faire Preise verlangen."},
+  footerRights:{es:"Todos los derechos reservados.", en:"All rights reserved.", de:"Alle Rechte vorbehalten."},
+  pageTitle:{es:"¿Cuánto cobro? — Costéalo", en:"How much should I charge? — Costéalo", de:"Wie viel soll ich verlangen? — Costéalo"},
+  heroPreviewTitle:{es:"Vela de soja 🕯️", en:"Soy candle 🕯️", de:"Sojakerze 🕯️"},
+  heroPreviewIngredients:{es:"Insumos", en:"Ingredients", de:"Zutaten"},
+  heroPreviewLabor:{es:"Mano de obra", en:"Labor", de:"Arbeitszeit"},
+  heroPreviewPackaging:{es:"Empaque", en:"Packaging", de:"Verpackung"},
+  heroPreviewFinal:{es:"Precio sugerido", en:"Suggested price", de:"Empfohlener Preis"},
 };
 
 /* ---------- Diccionarios de insumos por categoría ---------- */
 const CATEGORY_INGREDIENTS = {
   reposteria: {
-    "harina_comun":   { label:{es:"Harina común (todo uso)", en:"All-purpose flour"}, cup:120, tbsp:8, tsp:2.7 },
-    "harina_leudante":{ label:{es:"Harina leudante", en:"Self-rising flour"}, cup:125, tbsp:8.3, tsp:2.6 },
-    "azucar_blanca":  { label:{es:"Azúcar blanca", en:"Granulated sugar"}, cup:200, tbsp:12.5, tsp:4.2 },
-    "azucar_rubia":   { label:{es:"Azúcar rubia (morena)", en:"Brown sugar"}, cup:220, tbsp:13.8, tsp:4.6 },
-    "mantequilla":    { label:{es:"Mantequilla", en:"Butter"}, cup:227, tbsp:14.2, tsp:4.7 },
-    "aceite":         { label:{es:"Aceite vegetal", en:"Vegetable oil"}, cup:218, tbsp:13.6, tsp:4.5 },
-    "leche":          { label:{es:"Leche", en:"Milk"}, cup:240, tbsp:15, tsp:5 },
-    "cacao":          { label:{es:"Cacao en polvo", en:"Cocoa powder"}, cup:85, tbsp:5.3, tsp:1.8 },
-    "polvo_hornear":  { label:{es:"Polvo de hornear", en:"Baking powder"}, cup:192, tbsp:12, tsp:4 },
-    "personalizado":  { label:{es:"Otro / personalizado", en:"Other / custom"}, cup:null, tbsp:null, tsp:null },
+    "harina_comun":   { label:{es:"Harina común (todo uso)", en:"All-purpose flour", de:"Weizenmehl (Type 405)"}, cup:120, tbsp:8, tsp:2.7 },
+    "harina_leudante":{ label:{es:"Harina leudante", en:"Self-rising flour", de:"Selbstreagierendes Mehl"}, cup:125, tbsp:8.3, tsp:2.6 },
+    "azucar_blanca":  { label:{es:"Azúcar blanca", en:"Granulated sugar", de:"Weißer Zucker"}, cup:200, tbsp:12.5, tsp:4.2 },
+    "azucar_rubia":   { label:{es:"Azúcar rubia (morena)", en:"Brown sugar", de:"Brauner Zucker"}, cup:220, tbsp:13.8, tsp:4.6 },
+    "mantequilla":    { label:{es:"Mantequilla", en:"Butter", de:"Butter"}, cup:227, tbsp:14.2, tsp:4.7 },
+    "aceite":         { label:{es:"Aceite vegetal", en:"Vegetable oil", de:"Pflanzenöl"}, cup:218, tbsp:13.6, tsp:4.5 },
+    "leche":          { label:{es:"Leche", en:"Milk", de:"Milch"}, cup:240, tbsp:15, tsp:5 },
+    "cacao":          { label:{es:"Cacao en polvo", en:"Cocoa powder", de:"Kakaopulver"}, cup:85, tbsp:5.3, tsp:1.8 },
+    "polvo_hornear":  { label:{es:"Polvo de hornear", en:"Baking powder", de:"Backpulver"}, cup:192, tbsp:12, tsp:4 },
+    "personalizado":  { label:{es:"Otro / personalizado", en:"Other / custom", de:"Andere / eigene Angabe"}, cup:null, tbsp:null, tsp:null },
   },
   velas: {
-    "cera_soja":     { label:{es:"Cera de soja", en:"Soy wax"}, cup:200, tbsp:12.5, tsp:4.2 },
-    "cera_coco":     { label:{es:"Cera de coco", en:"Coconut wax"}, cup:190, tbsp:11.9, tsp:4.0 },
-    "cera_parafina": { label:{es:"Cera de parafina", en:"Paraffin wax"}, cup:180, tbsp:11.3, tsp:3.8 },
-    "aceite_coco":   { label:{es:"Aceite de coco", en:"Coconut oil"}, cup:218, tbsp:13.6, tsp:4.5 },
-    "aceite_oliva":  { label:{es:"Aceite de oliva", en:"Olive oil"}, cup:216, tbsp:13.5, tsp:4.5 },
-    "sosa_caustica": { label:{es:"Sosa cáustica (NaOH)", en:"Lye (NaOH)"}, cup:240, tbsp:15, tsp:5 },
-    "fragancia":     { label:{es:"Fragancia / esencia", en:"Fragrance oil"}, cup:210, tbsp:13.1, tsp:4.4 },
-    "personalizado": { label:{es:"Otro / personalizado", en:"Other / custom"}, cup:null, tbsp:null, tsp:null },
+    "cera_soja":     { label:{es:"Cera de soja", en:"Soy wax", de:"Sojawachs"}, cup:200, tbsp:12.5, tsp:4.2 },
+    "cera_coco":     { label:{es:"Cera de coco", en:"Coconut wax", de:"Kokoswachs"}, cup:190, tbsp:11.9, tsp:4.0 },
+    "cera_parafina": { label:{es:"Cera de parafina", en:"Paraffin wax", de:"Paraffinwachs"}, cup:180, tbsp:11.3, tsp:3.8 },
+    "aceite_coco":   { label:{es:"Aceite de coco", en:"Coconut oil", de:"Kokosöl"}, cup:218, tbsp:13.6, tsp:4.5 },
+    "aceite_oliva":  { label:{es:"Aceite de oliva", en:"Olive oil", de:"Olivenöl"}, cup:216, tbsp:13.5, tsp:4.5 },
+    "sosa_caustica": { label:{es:"Sosa cáustica (NaOH)", en:"Lye (NaOH)", de:"Natronlauge (NaOH)"}, cup:240, tbsp:15, tsp:5 },
+    "fragancia":     { label:{es:"Fragancia / esencia", en:"Fragrance oil", de:"Duftöl / Essenz"}, cup:210, tbsp:13.1, tsp:4.4 },
+    "personalizado": { label:{es:"Otro / personalizado", en:"Other / custom", de:"Andere / eigene Angabe"}, cup:null, tbsp:null, tsp:null },
   },
   resina: {
-    "resina_epoxica": { label:{es:"Resina epóxica (componente A)", en:"Epoxy resin (component A)"}, cup:null, tbsp:null, tsp:null },
-    "endurecedor":    { label:{es:"Endurecedor (componente B)", en:"Hardener (component B)"}, cup:null, tbsp:null, tsp:null },
-    "resina_uv":      { label:{es:"Resina UV", en:"UV resin"}, cup:null, tbsp:null, tsp:null },
-    "pigmento":       { label:{es:"Pigmento líquido", en:"Liquid pigment"}, cup:null, tbsp:null, tsp:null },
-    "purpurina":      { label:{es:"Purpurina / glitter", en:"Glitter"}, cup:null, tbsp:null, tsp:null },
-    "sellador":       { label:{es:"Sellador / barniz", en:"Sealant / varnish"}, cup:null, tbsp:null, tsp:null },
-    "personalizado":  { label:{es:"Otro / personalizado", en:"Other / custom"}, cup:null, tbsp:null, tsp:null },
+    "resina_epoxica": { label:{es:"Resina epóxica (componente A)", en:"Epoxy resin (component A)", de:"Epoxidharz (Komponente A)"}, cup:null, tbsp:null, tsp:null },
+    "endurecedor":    { label:{es:"Endurecedor (componente B)", en:"Hardener (component B)", de:"Härter (Komponente B)"}, cup:null, tbsp:null, tsp:null },
+    "resina_uv":      { label:{es:"Resina UV", en:"UV resin", de:"UV-Harz"}, cup:null, tbsp:null, tsp:null },
+    "pigmento":       { label:{es:"Pigmento líquido", en:"Liquid pigment", de:"Flüssigpigment"}, cup:null, tbsp:null, tsp:null },
+    "purpurina":      { label:{es:"Purpurina / glitter", en:"Glitter", de:"Glitzer"}, cup:null, tbsp:null, tsp:null },
+    "sellador":       { label:{es:"Sellador / barniz", en:"Sealant / varnish", de:"Versiegelung / Lack"}, cup:null, tbsp:null, tsp:null },
+    "personalizado":  { label:{es:"Otro / personalizado", en:"Other / custom", de:"Andere / eigene Angabe"}, cup:null, tbsp:null, tsp:null },
   },
 };
 
 const UNIT_OPTIONS = [
-  {v:'g', l:{es:'gramos', en:'grams'}}, {v:'kg', l:{es:'kilos', en:'kilograms'}},
-  {v:'ml', l:{es:'ml', en:'ml'}}, {v:'l', l:{es:'litros', en:'liters'}},
-  {v:'cup', l:{es:'tazas', en:'cups'}}, {v:'tbsp', l:{es:'cucharadas', en:'tbsp'}},
-  {v:'tsp', l:{es:'cucharaditas', en:'tsp'}}, {v:'unidad', l:{es:'unidades', en:'units'}},
+  {v:'g', l:{es:'gramos', en:'grams', de:'Gramm'}}, {v:'kg', l:{es:'kilos', en:'kilograms', de:'Kilogramm'}},
+  {v:'ml', l:{es:'ml', en:'ml', de:'ml'}}, {v:'l', l:{es:'litros', en:'liters', de:'Liter'}},
+  {v:'cup', l:{es:'tazas', en:'cups', de:'Tassen'}}, {v:'tbsp', l:{es:'cucharadas', en:'tbsp', de:'Esslöffel'}},
+  {v:'tsp', l:{es:'cucharaditas', en:'tsp', de:'Teelöffel'}}, {v:'unidad', l:{es:'unidades', en:'units', de:'Einheiten'}},
 ];
 
 const T = {
-  ingTitle:{es:"🧾 Insumos de tu receta", en:"🧾 Your recipe's ingredients"},
-  ingNote:{es:'Elige el insumo para que la conversión sea exacta. Para unidades sueltas (moldes, envases, ganchos) usa "unidad".', en:'Pick the ingredient so the conversion is accurate. For loose units (molds, containers, findings) use "unit".'},
-  addBtn:{es:"+ Agregar insumo", en:"+ Add ingredient"},
-  othersTitle:{es:"🏷️ Otros costos y margen", en:"🏷️ Other costs & margin"},
-  laborHoursLabel:{es:"Horas de trabajo", en:"Hours of work"},
-  laborRateLabel:{es:"Tu tarifa por hora", en:"Your hourly rate"},
-  packagingLabel:{es:"Empaque / presentación (monto fijo)", en:"Packaging (flat amount)"},
-  equipmentLabel:{es:"Desgaste de moldes/equipo (monto fijo)", en:"Mold/equipment wear (flat amount)"},
-  overheadLabel:{es:"Otros costos fijos (gas, luz, etc.)", en:"Other fixed costs (gas, electricity, etc.)"},
-  servingsLabel:{es:"¿Cuántas unidades rinde esta receta/lote?", en:"How many units does this recipe/batch yield?"},
-  marginLabel:{es:"Margen de ganancia deseado (%)", en:"Desired profit margin (%)"},
-  removeBtn:{es:"✕", en:"✕"},
-  ingredientLabel:{es:"Insumo", en:"Ingredient"},
-  usedLabel:{es:"Usaste", en:"You used"},
-  unitLabel:{es:"Unidad", en:"Unit"},
-  rowCostLabel:{es:"Costo total", en:"Total cost"},
-  paidLabel:{es:"Pagaste", en:"You paid"},
-  perLabel:{es:"Por cuánto", en:"For how much"},
-  rowCostLine:{es:"Costo de este insumo: ", en:"Cost of this ingredient: "},
-  rowCostPending:{es:"Costo de este insumo: completa los datos para calcular", en:"Cost of this ingredient: fill in the data to calculate"},
-  customNameLabel:{es:"Nombre del insumo", en:"Ingredient name"},
-  customNamePh:{es:"Ej: Molde de silicona", en:"E.g. Silicone mold"},
-  sumIngredients:{es:"Insumos", en:"Ingredients"},
-  sumLabor:{es:"Mano de obra", en:"Labor"},
-  sumPackaging:{es:"Empaque", en:"Packaging"},
-  sumEquipment:{es:"Desgaste de moldes/equipo", en:"Mold/equipment wear"},
-  sumOverhead:{es:"Otros costos fijos", en:"Other fixed costs"},
-  sumTotalCost:{es:"Costo total", en:"Total cost"},
-  sumCostPerServing:{es:"Costo por unidad", en:"Cost per unit"},
-  sumFinal:{es:"Precio sugerido /unidad", en:"Suggested price /unit"},
-  sumFinalTotal:{es:"Precio total sugerido (lote completo)", en:"Suggested total price (whole batch)"},
-  eqTitleCup:{es:"📏 Tabla de equivalencias", en:"📏 Conversion table"},
-  eqNoteCup:{es:"No todos los insumos pesan igual en la misma taza — por eso cada uno tiene su propia densidad.", en:"Not every ingredient weighs the same per cup — that's why each has its own density."},
-  eqTitleRatio:{es:"⚗️ Proporciones de mezcla comunes", en:"⚗️ Common mixing ratios"},
-  eqNoteRatio:{es:"Referencia general — siempre revisa la ficha técnica de tu marca específica, las proporciones varían.", en:"General reference — always check your specific brand's technical sheet, ratios vary."},
+  ingTitle:{es:"🧾 Insumos de tu receta", en:"🧾 Your recipe's ingredients", de:"🧾 Zutaten deines Rezepts"},
+  ingNote:{es:'Elige el insumo para que la conversión sea exacta. Para unidades sueltas (moldes, envases, ganchos) usa "unidad".', en:'Pick the ingredient so the conversion is accurate. For loose units (molds, containers, findings) use "unit".', de:'Wähle die Zutat aus, damit die Umrechnung genau ist. Für einzelne Stücke (Formen, Behälter, Verschlüsse) verwende "Einheit".'},
+  addBtn:{es:"+ Agregar insumo", en:"+ Add ingredient", de:"+ Zutat hinzufügen"},
+  othersTitle:{es:"🏷️ Otros costos y margen", en:"🏷️ Other costs & margin", de:"🏷️ Weitere Kosten & Marge"},
+  laborHoursLabel:{es:"Horas de trabajo", en:"Hours of work", de:"Arbeitsstunden"},
+  laborRateLabel:{es:"Tu tarifa por hora", en:"Your hourly rate", de:"Dein Stundensatz"},
+  packagingLabel:{es:"Empaque / presentación (monto fijo)", en:"Packaging (flat amount)", de:"Verpackung / Präsentation (Festbetrag)"},
+  equipmentLabel:{es:"Desgaste de moldes/equipo (monto fijo)", en:"Mold/equipment wear (flat amount)", de:"Abnutzung von Formen/Ausrüstung (Festbetrag)"},
+  overheadLabel:{es:"Otros costos fijos (gas, luz, etc.)", en:"Other fixed costs (gas, electricity, etc.)", de:"Weitere Fixkosten (Gas, Strom usw.)"},
+  servingsLabel:{es:"¿Cuántas unidades rinde esta receta/lote?", en:"How many units does this recipe/batch yield?", de:"Wie viele Einheiten ergibt dieses Rezept/diese Charge?"},
+  marginLabel:{es:"Margen de ganancia deseado (%)", en:"Desired profit margin (%)", de:"Gewünschte Gewinnmarge (%)"},
+  removeBtn:{es:"✕", en:"✕", de:"✕"},
+  ingredientLabel:{es:"Insumo", en:"Ingredient", de:"Zutat"},
+  usedLabel:{es:"Usaste", en:"You used", de:"Verwendet"},
+  unitLabel:{es:"Unidad", en:"Unit", de:"Einheit"},
+  rowCostLabel:{es:"Costo total", en:"Total cost", de:"Gesamtkosten"},
+  paidLabel:{es:"Pagaste", en:"You paid", de:"Bezahlt"},
+  perLabel:{es:"Por cuánto", en:"For how much", de:"Für wie viel"},
+  rowCostLine:{es:"Costo de este insumo: ", en:"Cost of this ingredient: ", de:"Kosten dieser Zutat: "},
+  rowCostPending:{es:"Costo de este insumo: completa los datos para calcular", en:"Cost of this ingredient: fill in the data to calculate", de:"Kosten dieser Zutat: Fülle die Daten aus, um zu berechnen"},
+  customNameLabel:{es:"Nombre del insumo", en:"Ingredient name", de:"Name der Zutat"},
+  customNamePh:{es:"Ej: Molde de silicona", en:"E.g. Silicone mold", de:"Z. B. Silikonform"},
+  sumIngredients:{es:"Insumos", en:"Ingredients", de:"Zutaten"},
+  sumLabor:{es:"Mano de obra", en:"Labor", de:"Arbeitszeit"},
+  sumPackaging:{es:"Empaque", en:"Packaging", de:"Verpackung"},
+  sumEquipment:{es:"Desgaste de moldes/equipo", en:"Mold/equipment wear", de:"Abnutzung von Formen/Ausrüstung"},
+  sumOverhead:{es:"Otros costos fijos", en:"Other fixed costs", de:"Weitere Fixkosten"},
+  sumTotalCost:{es:"Costo total", en:"Total cost", de:"Gesamtkosten"},
+  sumCostPerServing:{es:"Costo por unidad", en:"Cost per unit", de:"Kosten pro Einheit"},
+  sumFinal:{es:"Precio sugerido /unidad", en:"Suggested price /unit", de:"Empfohlener Preis /Einheit"},
+  sumFinalTotal:{es:"Precio total sugerido (lote completo)", en:"Suggested total price (whole batch)", de:"Empfohlener Gesamtpreis (ganze Charge)"},
+  eqTitleCup:{es:"📏 Tabla de equivalencias", en:"📏 Conversion table", de:"📏 Umrechnungstabelle"},
+  eqNoteCup:{es:"No todos los insumos pesan igual en la misma taza — por eso cada uno tiene su propia densidad.", en:"Not every ingredient weighs the same per cup — that's why each has its own density.", de:"Nicht jede Zutat wiegt in derselben Tasse gleich viel — deshalb hat jede ihre eigene Dichte."},
+  eqTitleRatio:{es:"⚗️ Proporciones de mezcla comunes", en:"⚗️ Common mixing ratios", de:"⚗️ Übliche Mischverhältnisse"},
+  eqNoteRatio:{es:"Referencia general — siempre revisa la ficha técnica de tu marca específica, las proporciones varían.", en:"General reference — always check your specific brand's technical sheet, ratios vary.", de:"Allgemeine Referenz — prüfe immer das technische Datenblatt deiner Marke, die Verhältnisse variieren."},
 };
 
 const RESIN_RATIOS = [
-  {type:{es:"Resina para mesa (table top)", en:"Table top resin"}, ratio:"1:1 (volumen)"},
-  {type:{es:"Resina para joyería/moldes", en:"Jewelry/casting resin"}, ratio:"2:1 (volumen)"},
-  {type:{es:"Resina de arte (art resin)", en:"Art resin"}, ratio:"1:1 (volumen)"},
-  {type:{es:"Resina UV", en:"UV resin"}, ratio:{es:"No se mezcla — cura con luz UV", en:"No mixing — cures with UV light"}},
+  {type:{es:"Resina para mesa (table top)", en:"Table top resin", de:"Tischplattenharz (Table Top)"}, ratio:{es:"1:1 (volumen)", en:"1:1 (by volume)", de:"1:1 (Volumen)"}},
+  {type:{es:"Resina para joyería/moldes", en:"Jewelry/casting resin", de:"Schmuck-/Gießharz"}, ratio:{es:"2:1 (volumen)", en:"2:1 (by volume)", de:"2:1 (Volumen)"}},
+  {type:{es:"Resina de arte (art resin)", en:"Art resin", de:"Kunstharz (Art Resin)"}, ratio:{es:"1:1 (volumen)", en:"1:1 (by volume)", de:"1:1 (Volumen)"}},
+  {type:{es:"Resina UV", en:"UV resin", de:"UV-Harz"}, ratio:{es:"No se mezcla — cura con luz UV", en:"No mixing — cures with UV light", de:"Wird nicht gemischt — härtet mit UV-Licht aus"}},
 ];
 
 /* ---------- Estado por categoría ---------- */
@@ -606,7 +687,7 @@ function renderEqTable(cat){
   const table = document.getElementById(`eq-table-${cat}`);
   if(!table) return;
   if(cat === 'resina'){
-    const headers = LANG==='es' ? ['Tipo','Proporción'] : ['Type','Ratio'];
+    const headers = {es:['Tipo','Proporción'], en:['Type','Ratio'], de:['Typ','Verhältnis']}[LANG];
     let html = `<tr><th>${headers[0]}</th><th>${headers[1]}</th></tr>`;
     RESIN_RATIOS.forEach(r => {
       const ratioText = typeof r.ratio === 'string' ? r.ratio : r.ratio[LANG];
@@ -614,7 +695,7 @@ function renderEqTable(cat){
     });
     table.innerHTML = html;
   } else {
-    const headers = LANG==='es' ? ['Insumo','1 taza','1 cda','1 cdta'] : ['Ingredient','1 cup','1 tbsp','1 tsp'];
+    const headers = {es:['Insumo','1 taza','1 cda','1 cdta'], en:['Ingredient','1 cup','1 tbsp','1 tsp'], de:['Zutat','1 Tasse','1 EL','1 TL']}[LANG];
     let html = `<tr><th>${headers[0]}</th><th>${headers[1]}</th><th>${headers[2]}</th><th>${headers[3]}</th></tr>`;
     Object.entries(CATEGORY_INGREDIENTS[cat]).forEach(([key, ing]) => {
       if(key === 'personalizado' || ing.cup == null) return;
@@ -763,41 +844,73 @@ function calculate(cat){
 const RECIPES = {
   reposteria: [
     {
-      title:{es:"Cupcakes básicos de vainilla (12 unidades)", en:"Basic vanilla cupcakes (12 units)"},
-      ingredients:{es:["2 tazas de harina común","1 taza de azúcar blanca","1/2 taza de mantequilla","2 huevos","1 taza de leche","2 cdtas de polvo de hornear","1 cdta de esencia de vainilla"], en:["2 cups all-purpose flour","1 cup granulated sugar","1/2 cup butter","2 eggs","1 cup milk","2 tsp baking powder","1 tsp vanilla extract"]},
-      steps:{es:["Precalienta el horno a 180°C.","Bate la mantequilla con el azúcar hasta cremar.","Agrega los huevos uno a uno, luego la vainilla.","Alterna la harina (con el polvo de hornear) y la leche.","Distribuye en moldes y hornea 18-20 min."], en:["Preheat the oven to 350°F.","Cream the butter with the sugar.","Add eggs one at a time, then the vanilla.","Alternate adding the flour (with baking powder) and milk.","Divide into molds and bake 18-20 min."]},
+      title:{es:"Cupcakes básicos de vainilla (12 unidades)", en:"Basic vanilla cupcakes (12 units)", de:"Einfache Vanille-Cupcakes (12 Stück)"},
+      ingredients:{
+        es:["2 tazas de harina común","1 taza de azúcar blanca","1/2 taza de mantequilla","2 huevos","1 taza de leche","2 cdtas de polvo de hornear","1 cdta de esencia de vainilla"],
+        en:["2 cups all-purpose flour","1 cup granulated sugar","1/2 cup butter","2 eggs","1 cup milk","2 tsp baking powder","1 tsp vanilla extract"],
+        de:["2 Tassen Weizenmehl","1 Tasse weißer Zucker","1/2 Tasse Butter","2 Eier","1 Tasse Milch","2 TL Backpulver","1 TL Vanilleextrakt"],
+      },
+      steps:{
+        es:["Precalienta el horno a 180°C.","Bate la mantequilla con el azúcar hasta cremar.","Agrega los huevos uno a uno, luego la vainilla.","Alterna la harina (con el polvo de hornear) y la leche.","Distribuye en moldes y hornea 18-20 min."],
+        en:["Preheat the oven to 350°F.","Cream the butter with the sugar.","Add eggs one at a time, then the vanilla.","Alternate adding the flour (with baking powder) and milk.","Divide into molds and bake 18-20 min."],
+        de:["Backofen auf 180°C vorheizen.","Butter mit dem Zucker cremig schlagen.","Die Eier nacheinander hinzufügen, dann die Vanille.","Das Mehl (mit dem Backpulver) und die Milch abwechselnd unterrühren.","In Formen füllen und 18–20 Min. backen."],
+      },
     },
   ],
   velas: [
     {
-      title:{es:"Vela de soja aromática (1 unidad, 200 ml)", en:"Scented soy candle (1 unit, 200 ml)"},
-      ingredients:{es:["170 g de cera de soja","8 ml de fragancia (aprox. 5% del peso de cera)","1 pabilo de madera o algodón","1 envase de vidrio de 200 ml"], en:["170 g soy wax","8 ml fragrance oil (approx. 5% of wax weight)","1 wood or cotton wick","1 glass container, 200 ml"]},
-      steps:{es:["Derrite la cera a baño maría hasta 70-75°C.","Retira del calor y deja enfriar a 55-60°C.","Agrega la fragancia y mezcla bien 2 minutos.","Fija el pabilo al centro del envase y vierte la cera.","Deja curar sin mover por 24-48 horas antes de encender."], en:["Melt the wax in a double boiler to 70-75°C (158-167°F).","Remove from heat and cool to 55-60°C (131-140°F).","Add the fragrance and mix well for 2 minutes.","Secure the wick at the center of the container and pour the wax.","Let it cure undisturbed for 24-48 hours before lighting."]},
+      title:{es:"Vela de soja aromática (1 unidad, 200 ml)", en:"Scented soy candle (1 unit, 200 ml)", de:"Duftende Sojakerze (1 Stück, 200 ml)"},
+      ingredients:{
+        es:["170 g de cera de soja","8 ml de fragancia (aprox. 5% del peso de cera)","1 pabilo de madera o algodón","1 envase de vidrio de 200 ml"],
+        en:["170 g soy wax","8 ml fragrance oil (approx. 5% of wax weight)","1 wood or cotton wick","1 glass container, 200 ml"],
+        de:["170 g Sojawachs","8 ml Duftöl (ca. 5 % des Wachsgewichts)","1 Holz- oder Baumwolldocht","1 Glasgefäß, 200 ml"],
+      },
+      steps:{
+        es:["Derrite la cera a baño maría hasta 70-75°C.","Retira del calor y deja enfriar a 55-60°C.","Agrega la fragancia y mezcla bien 2 minutos.","Fija el pabilo al centro del envase y vierte la cera.","Deja curar sin mover por 24-48 horas antes de encender."],
+        en:["Melt the wax in a double boiler to 70-75°C (158-167°F).","Remove from heat and cool to 55-60°C (131-140°F).","Add the fragrance and mix well for 2 minutes.","Secure the wick at the center of the container and pour the wax.","Let it cure undisturbed for 24-48 hours before lighting."],
+        de:["Das Wachs im Wasserbad auf 70–75°C schmelzen.","Von der Hitze nehmen und auf 55–60°C abkühlen lassen.","Das Duftöl hinzufügen und 2 Minuten gut vermischen.","Den Docht in der Mitte des Gefäßes befestigen und das Wachs eingießen.","24–48 Stunden ungestört aushärten lassen, bevor du sie anzündest."],
+      },
     },
   ],
   jabon: [
     {
-      title:{es:"Jabón artesanal básico (proceso en frío)", en:"Basic handmade soap (cold process)"},
-      ingredients:{es:["500 g de aceite de oliva/coco (mezcla)","70 g de sosa cáustica (NaOH)","180 ml de agua fría","Aceite esencial al gusto (opcional)"], en:["500 g olive/coconut oil blend","70 g lye (NaOH)","180 ml cold water","Essential oil to taste (optional)"]},
-      steps:{es:["Disuelve la sosa en el agua (NUNCA al revés) en un lugar ventilado.","Deja enfriar la mezcla de sosa a 35-40°C.","Calienta los aceites a la misma temperatura.","Une ambas mezclas y bate hasta 'traza' (textura de pudín ligero).","Vierte en moldes y deja curar 4-6 semanas antes de usar."], en:["Dissolve the lye in the water (NEVER the other way around) in a ventilated area.","Let the lye mixture cool to 35-40°C (95-104°F).","Heat the oils to the same temperature.","Combine both mixtures and blend until 'trace' (light pudding texture).","Pour into molds and cure for 4-6 weeks before use."]},
-      safety:{es:"La sosa cáustica es corrosiva: usa guantes, lentes de protección, ropa de manga larga, y trabaja en un espacio ventilado. Nunca la inhales directamente ni la manipules cerca de niños.", en:"Lye is corrosive: use gloves, eye protection, long sleeves, and work in a ventilated space. Never inhale it directly or handle it near children."},
+      title:{es:"Jabón artesanal básico (proceso en frío)", en:"Basic handmade soap (cold process)", de:"Einfache handgemachte Seife (Kaltverfahren)"},
+      ingredients:{
+        es:["500 g de aceite de oliva/coco (mezcla)","70 g de sosa cáustica (NaOH)","180 ml de agua fría","Aceite esencial al gusto (opcional)"],
+        en:["500 g olive/coconut oil blend","70 g lye (NaOH)","180 ml cold water","Essential oil to taste (optional)"],
+        de:["500 g Oliven-/Kokosölmischung","70 g Natronlauge (NaOH)","180 ml kaltes Wasser","Ätherisches Öl nach Belieben (optional)"],
+      },
+      steps:{
+        es:["Disuelve la sosa en el agua (NUNCA al revés) en un lugar ventilado.","Deja enfriar la mezcla de sosa a 35-40°C.","Calienta los aceites a la misma temperatura.","Une ambas mezclas y bate hasta 'traza' (textura de pudín ligero).","Vierte en moldes y deja curar 4-6 semanas antes de usar."],
+        en:["Dissolve the lye in the water (NEVER the other way around) in a ventilated area.","Let the lye mixture cool to 35-40°C (95-104°F).","Heat the oils to the same temperature.","Combine both mixtures and blend until 'trace' (light pudding texture).","Pour into molds and cure for 4-6 weeks before use."],
+        de:["Die Lauge im Wasser auflösen (NIEMALS umgekehrt) an einem gut belüfteten Ort.","Die Laugenmischung auf 35–40°C abkühlen lassen.","Die Öle auf dieselbe Temperatur erwärmen.","Beide Mischungen vereinen und schlagen, bis die 'Spur' (leichte Puddingtextur) erreicht ist.","In Formen gießen und 4–6 Wochen aushärten lassen, bevor du sie verwendest."],
+      },
+      safety:{es:"La sosa cáustica es corrosiva: usa guantes, lentes de protección, ropa de manga larga, y trabaja en un espacio ventilado. Nunca la inhales directamente ni la manipules cerca de niños.", en:"Lye is corrosive: use gloves, eye protection, long sleeves, and work in a ventilated space. Never inhale it directly or handle it near children.", de:"Natronlauge ist ätzend: Trage Handschuhe, Augenschutz und langärmelige Kleidung und arbeite in einem gut belüfteten Raum. Atme sie niemals direkt ein und halte sie von Kindern fern."},
     },
   ],
   resina: [
     {
-      title:{es:"Posavasos de resina epóxica (set de 4)", en:"Epoxy resin coasters (set of 4)"},
-      ingredients:{es:["200 ml de resina epóxica + endurecedor (proporción según tu marca)","Pigmento líquido al gusto","4 moldes de silicona para posavasos"], en:["200 ml epoxy resin + hardener (ratio per your brand)","Liquid pigment to taste","4 silicone coaster molds"]},
-      steps:{es:["Mide resina y endurecedor exactamente en la proporción de tu marca.","Mezcla lento por 3 minutos evitando burbujas.","Divide en vasos y agrega pigmento a cada uno.","Vierte en los moldes.","Pasa un soplete suave por la superficie para quitar burbujas.","Deja curar 24-72 horas según ficha técnica antes de desmoldar."], en:["Measure resin and hardener exactly per your brand's ratio.","Mix slowly for 3 minutes avoiding bubbles.","Divide into cups and add pigment to each.","Pour into molds.","Pass a torch lightly over the surface to remove bubbles.","Cure 24-72 hours per technical sheet before unmolding."]},
-      safety:{es:"Trabaja en un espacio ventilado y usa guantes — los vapores de la resina sin curar pueden irritar. Revisa siempre la ficha de seguridad (MSDS) de tu marca específica.", en:"Work in a ventilated space and wear gloves — uncured resin fumes can irritate. Always check your specific brand's safety data sheet (MSDS)."},
+      title:{es:"Posavasos de resina epóxica (set de 4)", en:"Epoxy resin coasters (set of 4)", de:"Untersetzer aus Epoxidharz (4er-Set)"},
+      ingredients:{
+        es:["200 ml de resina epóxica + endurecedor (proporción según tu marca)","Pigmento líquido al gusto","4 moldes de silicona para posavasos"],
+        en:["200 ml epoxy resin + hardener (ratio per your brand)","Liquid pigment to taste","4 silicone coaster molds"],
+        de:["200 ml Epoxidharz + Härter (Verhältnis je nach Marke)","Flüssigpigment nach Belieben","4 Silikonformen für Untersetzer"],
+      },
+      steps:{
+        es:["Mide resina y endurecedor exactamente en la proporción de tu marca.","Mezcla lento por 3 minutos evitando burbujas.","Divide en vasos y agrega pigmento a cada uno.","Vierte en los moldes.","Pasa un soplete suave por la superficie para quitar burbujas.","Deja curar 24-72 horas según ficha técnica antes de desmoldar."],
+        en:["Measure resin and hardener exactly per your brand's ratio.","Mix slowly for 3 minutes avoiding bubbles.","Divide into cups and add pigment to each.","Pour into molds.","Pass a torch lightly over the surface to remove bubbles.","Cure 24-72 hours per technical sheet before unmolding."],
+        de:["Harz und Härter exakt im Verhältnis deiner Marke abmessen.","3 Minuten lang langsam rühren, um Blasen zu vermeiden.","Auf Becher verteilen und jedem Pigment hinzufügen.","In die Formen gießen.","Mit einem Brenner leicht über die Oberfläche fahren, um Blasen zu entfernen.","Je nach technischem Datenblatt 24–72 Stunden aushärten lassen, bevor du entformst."],
+      },
+      safety:{es:"Trabaja en un espacio ventilado y usa guantes — los vapores de la resina sin curar pueden irritar. Revisa siempre la ficha de seguridad (MSDS) de tu marca específica.", en:"Work in a ventilated space and wear gloves — uncured resin fumes can irritate. Always check your specific brand's safety data sheet (MSDS).", de:"Arbeite in einem gut belüfteten Raum und trage Handschuhe — die Dämpfe von unausgehärtetem Harz können reizen. Prüfe immer das Sicherheitsdatenblatt (MSDS) deiner spezifischen Marke."},
     },
   ],
 };
 
 const RECIPE_CAT_LABELS = {
-  reposteria:{es:"🧁 Repostería", en:"🧁 Baking"},
-  velas:{es:"🕯️ Velas", en:"🕯️ Candles"},
-  jabon:{es:"🧼 Jabón", en:"🧼 Soap"},
-  resina:{es:"💧 Resina", en:"💧 Resin"},
+  reposteria:{es:"🧁 Repostería", en:"🧁 Baking", de:"🧁 Backen"},
+  velas:{es:"🕯️ Velas", en:"🕯️ Candles", de:"🕯️ Kerzen"},
+  jabon:{es:"🧼 Jabón", en:"🧼 Soap", de:"🧼 Seife"},
+  resina:{es:"💧 Resina", en:"💧 Resin", de:"💧 Harz"},
 };
 let activeRecipeCat = 'reposteria';
 
@@ -806,15 +919,21 @@ function renderRecetas(){
   const tabs = Object.keys(RECIPE_CAT_LABELS).map(k =>
     `<button data-rcat="${k}" class="${k===activeRecipeCat?'active':''}">${RECIPE_CAT_LABELS[k][LANG]}</button>`
   ).join('');
+  const L = {
+    kicker:{es:'RECETA', en:'RECIPE', de:'REZEPT'}[LANG],
+    ingredients:{es:'Ingredientes:', en:'Ingredients:', de:'Zutaten:'}[LANG],
+    steps:{es:'Pasos:', en:'Steps:', de:'Schritte:'}[LANG],
+    safety:{es:'Seguridad', en:'Safety', de:'Sicherheit'}[LANG],
+  };
   const recipes = RECIPES[activeRecipeCat].map(r => `
     <div class="content-card">
-      <div class="kicker">${LANG==='es'?'RECETA':'RECIPE'}</div>
+      <div class="kicker">${L.kicker}</div>
       <h3>${r.title[LANG]}</h3>
-      <p><b>${LANG==='es'?'Ingredientes:':'Ingredients:'}</b></p>
+      <p><b>${L.ingredients}</b></p>
       <ul>${r.ingredients[LANG].map(i=>`<li>${i}</li>`).join('')}</ul>
-      <p><b>${LANG==='es'?'Pasos:':'Steps:'}</b></p>
+      <p><b>${L.steps}</b></p>
       <ul>${r.steps[LANG].map(s=>`<li>${s}</li>`).join('')}</ul>
-      ${r.safety ? `<div class="safety-note"><b>⚠️ ${LANG==='es'?'Seguridad':'Safety'}</b>${r.safety[LANG]}</div>` : ''}
+      ${r.safety ? `<div class="safety-note"><b>⚠️ ${L.safety}</b>${r.safety[LANG]}</div>` : ''}
     </div>
   `).join('');
   container.innerHTML = `<div class="recipe-subtabs">${tabs}</div>${recipes}`;
@@ -825,18 +944,20 @@ function renderRecetas(){
 
 /* ---------- CONSEJOS DE NEGOCIO ---------- */
 const BUSINESS_TIPS = [
-  {title:{es:"No compitas solo por precio", en:"Don't compete on price alone"}, body:{es:"Si bajas el precio para ganarle a la competencia, ganas la venta pero pierdes margen — y es una carrera que alguien más siempre puede ganar bajando más. Compite en calidad, presentación, historia de marca o servicio.", en:"If you lower your price to beat competitors, you win the sale but lose margin — and it's a race someone else can always win by going lower. Compete on quality, presentation, brand story, or service instead."}},
-  {title:{es:"La foto vende antes que el producto", en:"The photo sells before the product does"}, body:{es:"En redes y marketplaces, la gente decide en segundos si sigue mirando. Luz natural, fondo simple, y mostrar el producto en uso (no solo aislado) mejora mucho la conversión.", en:"On social media and marketplaces, people decide in seconds whether to keep looking. Natural light, a simple background, and showing the product in use (not just isolated) significantly improves conversion."}},
-  {title:{es:"Diversifica dónde vendes", en:"Diversify where you sell"}, body:{es:"No dependas de un solo canal (solo Instagram, o solo ferias). Si ese canal cae, cae tu negocio. Combina redes, WhatsApp Business, marketplaces y ventas presenciales.", en:"Don't depend on a single channel (only Instagram, or only fairs). If that channel drops, your business drops with it. Combine social media, WhatsApp Business, marketplaces, and in-person sales."}},
-  {title:{es:"Guarda tus costos reales desde el día uno", en:"Track your real costs from day one"}, body:{es:"Es fácil perder plata sin darte cuenta cuando no registras cada insumo, hora de trabajo y empaque. Usa una calculadora (como la de esta página) en cada producto nuevo, no solo al principio.", en:"It's easy to lose money without noticing when you don't track every ingredient, hour of work, and packaging cost. Use a calculator (like the one on this page) for every new product, not just at the start."}},
-  {title:{es:"Pide feedback, no solo ventas", en:"Ask for feedback, not just sales"}, body:{es:"Un cliente que no compró pero te dice por qué es información valiosísima. Pregunta directamente qué los detuvo — precio, diseño, tiempo de entrega.", en:"A customer who didn't buy but tells you why is incredibly valuable information. Directly ask what stopped them — price, design, delivery time."}},
+  {title:{es:"No compitas solo por precio", en:"Don't compete on price alone", de:"Konkurriere nicht nur über den Preis"}, body:{es:"Si bajas el precio para ganarle a la competencia, ganas la venta pero pierdes margen — y es una carrera que alguien más siempre puede ganar bajando más. Compite en calidad, presentación, historia de marca o servicio.", en:"If you lower your price to beat competitors, you win the sale but lose margin — and it's a race someone else can always win by going lower. Compete on quality, presentation, brand story, or service instead.", de:"Wenn du den Preis senkst, um die Konkurrenz zu schlagen, gewinnst du den Verkauf, verlierst aber Marge — und das ist ein Wettlauf, den jemand anderes immer gewinnen kann, indem er noch weiter runtergeht. Konkurriere stattdessen über Qualität, Präsentation, Markengeschichte oder Service."}},
+  {title:{es:"La foto vende antes que el producto", en:"The photo sells before the product does", de:"Das Foto verkauft, bevor es das Produkt tut"}, body:{es:"En redes y marketplaces, la gente decide en segundos si sigue mirando. Luz natural, fondo simple, y mostrar el producto en uso (no solo aislado) mejora mucho la conversión.", en:"On social media and marketplaces, people decide in seconds whether to keep looking. Natural light, a simple background, and showing the product in use (not just isolated) significantly improves conversion.", de:"In sozialen Netzwerken und Marktplätzen entscheiden Menschen in Sekunden, ob sie weiterschauen. Natürliches Licht, ein einfacher Hintergrund und die Darstellung des Produkts in Benutzung (nicht nur isoliert) verbessern die Conversion deutlich."}},
+  {title:{es:"Diversifica dónde vendes", en:"Diversify where you sell", de:"Diversifiziere deine Verkaufskanäle"}, body:{es:"No dependas de un solo canal (solo Instagram, o solo ferias). Si ese canal cae, cae tu negocio. Combina redes, WhatsApp Business, marketplaces y ventas presenciales.", en:"Don't depend on a single channel (only Instagram, or only fairs). If that channel drops, your business drops with it. Combine social media, WhatsApp Business, marketplaces, and in-person sales.", de:"Verlasse dich nicht auf einen einzigen Kanal (nur Instagram oder nur Messen). Fällt dieser Kanal aus, fällt dein Geschäft mit. Kombiniere soziale Netzwerke, WhatsApp Business, Marktplätze und persönlichen Verkauf."}},
+  {title:{es:"Guarda tus costos reales desde el día uno", en:"Track your real costs from day one", de:"Erfasse deine echten Kosten von Tag eins an"}, body:{es:"Es fácil perder plata sin darte cuenta cuando no registras cada insumo, hora de trabajo y empaque. Usa una calculadora (como la de esta página) en cada producto nuevo, no solo al principio.", en:"It's easy to lose money without noticing when you don't track every ingredient, hour of work, and packaging cost. Use a calculator (like the one on this page) for every new product, not just at the start.", de:"Es ist leicht, unbemerkt Geld zu verlieren, wenn du nicht jede Zutat, jede Arbeitsstunde und jede Verpackung erfasst. Nutze einen Rechner (wie den auf dieser Seite) für jedes neue Produkt, nicht nur am Anfang."}},
+  {title:{es:"Pide feedback, no solo ventas", en:"Ask for feedback, not just sales", de:"Bitte um Feedback, nicht nur um Verkäufe"}, body:{es:"Un cliente que no compró pero te dice por qué es información valiosísima. Pregunta directamente qué los detuvo — precio, diseño, tiempo de entrega.", en:"A customer who didn't buy but tells you why is incredibly valuable information. Directly ask what stopped them — price, design, delivery time.", de:"Ein Kunde, der nicht gekauft hat, dir aber sagt, warum, ist eine unglaublich wertvolle Information. Frage direkt, was ihn abgehalten hat — Preis, Design, Lieferzeit."}},
 ];
+
+const CONSEJO_KICKER = {es:'CONSEJO', en:'TIP', de:'TIPP'};
 
 function renderConsejos(){
   const container = document.getElementById('consejos-container');
   container.innerHTML = BUSINESS_TIPS.map(t => `
     <div class="content-card">
-      <div class="kicker">${LANG==='es'?'CONSEJO':'TIP'}</div>
+      <div class="kicker">${CONSEJO_KICKER[LANG]}</div>
       <h3>${t.title[LANG]}</h3>
       <p>${t.body[LANG]}</p>
     </div>
@@ -845,22 +966,210 @@ function renderConsejos(){
 
 /* ---------- IA PARA TU NEGOCIO ---------- */
 const AI_TIPS = [
-  {title:{es:"Descripciones de producto en segundos", en:"Product descriptions in seconds"}, body:{es:"Dale a un asistente de IA una foto o una lista de características de tu producto y pídele 3-4 versiones de descripción (una más técnica, una más emocional, una corta para redes). Ahorra tiempo y te da opciones para probar cuál convierte mejor.", en:"Give an AI assistant a photo or a list of your product's features and ask for 3-4 description versions (one more technical, one more emotional, one short for social media). Saves time and gives you options to test which converts better."}},
-  {title:{es:"Ideas de contenido para redes cuando te quedas sin inspiración", en:"Content ideas for social media when you run out of inspiration"}, body:{es:"Pide un calendario de contenido semanal basado en tu tipo de producto — la IA puede sugerir ángulos (detrás de cámara, tutorial, testimonios, preguntas frecuentes) que quizás no se te ocurran solo.", en:"Ask for a weekly content calendar based on your product type — AI can suggest angles (behind the scenes, tutorial, testimonials, FAQs) you might not think of on your own."}},
-  {title:{es:"Respuestas rápidas para clientes", en:"Quick customer responses"}, body:{es:"Prepara con IA plantillas de respuesta para las preguntas que más te hacen (tiempos de entrega, personalización, cuidados del producto), y ajústalas a tu tono. Así respondes rápido sin sonar robótica.", en:"Use AI to prepare response templates for the questions you get most (delivery times, customization, product care), and adjust them to your tone. That way you respond fast without sounding robotic."}},
-  {title:{es:"Mockups y pruebas visuales antes de producir", en:"Mockups and visual tests before producing"}, body:{es:"Herramientas de generación de imágenes te dejan visualizar combinaciones de color, empaque o presentación antes de gastar en materiales — útil para decidir qué variante de un producto nuevo vale la pena hacer primero.", en:"Image generation tools let you visualize color combinations, packaging, or presentation before spending on materials — useful for deciding which variant of a new product is worth making first."}},
-  {title:{es:"No reemplaces tu voz, potenciala", en:"Don't replace your voice, amplify it"}, body:{es:"Lo que mejor vende en negocios artesanales es que se sienta hecho por una persona real. Usa la IA para el primer borrador o para ideas, pero siempre revisa y ajusta el resultado final con tu propio tono — la gente nota cuando algo suena genérico.", en:"What sells best in handmade businesses is that it feels made by a real person. Use AI for the first draft or for ideas, but always review and adjust the final result with your own tone — people notice when something sounds generic."}},
+  {title:{es:"Descripciones de producto en segundos", en:"Product descriptions in seconds", de:"Produktbeschreibungen in Sekunden"}, body:{es:"Dale a un asistente de IA una foto o una lista de características de tu producto y pídele 3-4 versiones de descripción (una más técnica, una más emocional, una corta para redes). Ahorra tiempo y te da opciones para probar cuál convierte mejor.", en:"Give an AI assistant a photo or a list of your product's features and ask for 3-4 description versions (one more technical, one more emotional, one short for social media). Saves time and gives you options to test which converts better.", de:"Gib einem KI-Assistenten ein Foto oder eine Liste der Eigenschaften deines Produkts und bitte um 3–4 Beschreibungsversionen (eine technischere, eine emotionalere, eine kurze für soziale Netzwerke). Spart Zeit und gibt dir Optionen, um zu testen, was besser konvertiert."}},
+  {title:{es:"Ideas de contenido para redes cuando te quedas sin inspiración", en:"Content ideas for social media when you run out of inspiration", de:"Content-Ideen für soziale Netzwerke, wenn dir die Inspiration ausgeht"}, body:{es:"Pide un calendario de contenido semanal basado en tu tipo de producto — la IA puede sugerir ángulos (detrás de cámara, tutorial, testimonios, preguntas frecuentes) que quizás no se te ocurran solo.", en:"Ask for a weekly content calendar based on your product type — AI can suggest angles (behind the scenes, tutorial, testimonials, FAQs) you might not think of on your own.", de:"Bitte um einen wöchentlichen Content-Kalender basierend auf deinem Produkttyp — die KI kann Blickwinkel vorschlagen (Behind the Scenes, Tutorial, Testimonials, häufig gestellte Fragen), auf die du allein vielleicht nicht kommst."}},
+  {title:{es:"Respuestas rápidas para clientes", en:"Quick customer responses", de:"Schnelle Antworten für Kunden"}, body:{es:"Prepara con IA plantillas de respuesta para las preguntas que más te hacen (tiempos de entrega, personalización, cuidados del producto), y ajústalas a tu tono. Así respondes rápido sin sonar robótica.", en:"Use AI to prepare response templates for the questions you get most (delivery times, customization, product care), and adjust them to your tone. That way you respond fast without sounding robotic.", de:"Bereite mit KI Antwortvorlagen für die am häufigsten gestellten Fragen vor (Lieferzeiten, Personalisierung, Produktpflege) und passe sie an deinen Ton an. So antwortest du schnell, ohne robotisch zu klingen."}},
+  {title:{es:"Mockups y pruebas visuales antes de producir", en:"Mockups and visual tests before producing", de:"Mockups und visuelle Tests vor der Produktion"}, body:{es:"Herramientas de generación de imágenes te dejan visualizar combinaciones de color, empaque o presentación antes de gastar en materiales — útil para decidir qué variante de un producto nuevo vale la pena hacer primero.", en:"Image generation tools let you visualize color combinations, packaging, or presentation before spending on materials — useful for deciding which variant of a new product is worth making first.", de:"Mit Bildgenerierungstools kannst du Farbkombinationen, Verpackung oder Präsentation visualisieren, bevor du Geld für Materialien ausgibst — nützlich, um zu entscheiden, welche Variante eines neuen Produkts zuerst umgesetzt werden sollte."}},
+  {title:{es:"No reemplaces tu voz, potenciala", en:"Don't replace your voice, amplify it", de:"Ersetze nicht deine Stimme, verstärke sie"}, body:{es:"Lo que mejor vende en negocios artesanales es que se sienta hecho por una persona real. Usa la IA para el primer borrador o para ideas, pero siempre revisa y ajusta el resultado final con tu propio tono — la gente nota cuando algo suena genérico.", en:"What sells best in handmade businesses is that it feels made by a real person. Use AI for the first draft or for ideas, but always review and adjust the final result with your own tone — people notice when something sounds generic.", de:"Was in handgemachten Geschäften am besten verkauft, ist das Gefühl, dass es von einer echten Person gemacht wurde. Nutze KI für den ersten Entwurf oder für Ideen, aber überprüfe und passe das Endergebnis immer mit deinem eigenen Ton an — Menschen bemerken, wenn etwas generisch klingt."}},
 ];
+
+const IA_KICKER = {es:'IA + TU NEGOCIO', en:'AI + YOUR BUSINESS', de:'KI + DEIN GESCHÄFT'};
 
 function renderIA(){
   const container = document.getElementById('ia-container');
   container.innerHTML = AI_TIPS.map(t => `
     <div class="content-card">
-      <div class="kicker">${LANG==='es'?'IA + TU NEGOCIO':'AI + YOUR BUSINESS'}</div>
+      <div class="kicker">${IA_KICKER[LANG]}</div>
       <h3>${t.title[LANG]}</h3>
       <p>${t.body[LANG]}</p>
     </div>
   `).join('');
+}
+
+/* ---------- FORO: preguntas frecuentes + preguntas de la comunidad ---------- */
+const FAQS = [
+  {
+    q:{es:"¿Mis datos se guardan en algún servidor?", en:"Is my data saved on a server?", de:"Werden meine Daten auf einem Server gespeichert?"},
+    a:{es:"No. Todo lo que escribes (insumos, costos, preguntas del foro) se guarda solo en tu navegador (localStorage). Si cambias de dispositivo, usas modo incógnito o borras el historial del navegador, esa información no se recupera.", en:"No. Everything you type (ingredients, costs, forum questions) is saved only in your browser (localStorage). If you switch devices, use incognito mode, or clear your browser history, that information won't be recovered.", de:"Nein. Alles, was du eingibst (Zutaten, Kosten, Forumsfragen), wird nur in deinem Browser (localStorage) gespeichert. Bei Gerätewechsel, im Inkognito-Modus oder beim Löschen deines Browserverlaufs gehen diese Daten verloren."},
+  },
+  {
+    q:{es:"¿Por qué el precio sugerido no coincide con lo que cobro hoy?", en:"Why doesn't the suggested price match what I charge today?", de:"Warum stimmt der vorgeschlagene Preis nicht mit dem überein, was ich heute verlange?"},
+    a:{es:"La calculadora suma el costo real de insumos, mano de obra y otros gastos, y le aplica tu margen deseado. Si el resultado es más alto que tu precio actual, probablemente estás cobrando por debajo de tu costo real sin darte cuenta.", en:"The calculator adds up the real cost of ingredients, labor, and other expenses, then applies your desired margin. If the result is higher than what you currently charge, you're likely pricing below your real cost without realizing it.", de:"Der Rechner addiert die tatsächlichen Kosten für Zutaten, Arbeitszeit und weitere Ausgaben und wendet deine gewünschte Marge an. Ist das Ergebnis höher als dein aktueller Preis, verlangst du wahrscheinlich unbemerkt weniger als deine echten Kosten."},
+  },
+  {
+    q:{es:"¿Puedo usar la calculadora para un insumo que no está en la lista?", en:"Can I use the calculator for an ingredient that's not on the list?", de:"Kann ich den Rechner für eine Zutat verwenden, die nicht in der Liste steht?"},
+    a:{es:"Sí. Elige la opción 'Otro / personalizado' en el tipo de insumo, ponle un nombre y usa una unidad de peso o volumen (gramos, ml, etc.) o 'unidad' si es una pieza suelta como un molde o envase.", en:"Yes. Choose the 'Other / custom' option for the ingredient type, give it a name, and use a weight or volume unit (grams, ml, etc.) or 'unit' if it's a loose piece like a mold or container.", de:"Ja. Wähle bei der Zutatenart 'Andere / eigene Angabe', gib ihr einen Namen und verwende eine Gewichts- oder Volumeneinheit (Gramm, ml usw.) oder 'Einheit', wenn es sich um ein einzelnes Stück wie eine Form oder einen Behälter handelt."},
+  },
+  {
+    q:{es:"¿Qué margen de ganancia debería poner?", en:"What profit margin should I use?", de:"Welche Gewinnmarge sollte ich ansetzen?"},
+    a:{es:"No hay un número universal — depende de tu categoría, tus costos fijos y cuánto necesitas ganar para que el negocio valga la pena. Muchos makers empiezan probando entre 30% y 60% y ajustan según cómo responde el mercado.", en:"There's no universal number — it depends on your category, your fixed costs, and how much you need to earn for the business to be worth it. Many makers start by testing between 30% and 60% and adjust based on how the market responds.", de:"Es gibt keine allgemeingültige Zahl — es hängt von deiner Kategorie, deinen Fixkosten und davon ab, wie viel du verdienen musst, damit sich das Geschäft lohnt. Viele Maker starten mit 30–60 % und passen je nach Marktreaktion an."},
+  },
+  {
+    q:{es:"¿Las monedas se convierten automáticamente entre sí?", en:"Do the currencies convert automatically between each other?", de:"Werden die Währungen automatisch ineinander umgerechnet?"},
+    a:{es:"No. El selector de moneda solo cambia el símbolo que se muestra ($, S/, € etc.) — no hace conversión de tipo de cambio. Ingresa tus precios directamente en la moneda que elijas.", en:"No. The currency selector only changes the displayed symbol ($, S/, €, etc.) — it doesn't do exchange-rate conversion. Enter your prices directly in whichever currency you choose.", de:"Nein. Die Währungsauswahl ändert nur das angezeigte Symbol ($, S/, € usw.) — sie rechnet keine Wechselkurse um. Gib deine Preise direkt in der gewählten Währung ein."},
+  },
+  {
+    q:{es:"¿Puedo borrar una pregunta que publiqué en el foro?", en:"Can I delete a question I posted in the forum?", de:"Kann ich eine Frage löschen, die ich im Forum veröffentlicht habe?"},
+    a:{es:"Sí, cada pregunta que publicas tiene un botón 'Eliminar' debajo. Como todo se guarda en este navegador, solo tú puedes verla y borrarla.", en:"Yes, every question you post has a 'Delete' button underneath. Since everything is saved in this browser, only you can see and delete it.", de:"Ja, jede von dir veröffentlichte Frage hat darunter eine Schaltfläche 'Löschen'. Da alles in diesem Browser gespeichert wird, kannst nur du sie sehen und löschen."},
+  },
+];
+
+const FORUM_T = {
+  empty:{es:"Aún no hay preguntas. ¡Sé la primera persona en preguntar!", en:"No questions yet. Be the first to ask!", de:"Noch keine Fragen. Sei die erste Person, die fragt!"},
+  anon:{es:"Anónimo", en:"Anonymous", de:"Anonym"},
+  reply:{es:"Responder", en:"Reply", de:"Antworten"},
+  delete:{es:"Eliminar", en:"Delete", de:"Löschen"},
+  send:{es:"Enviar", en:"Send", de:"Senden"},
+  replyPlaceholder:{es:"Escribe una respuesta...", en:"Write a reply...", de:"Schreibe eine Antwort..."},
+};
+
+let openFaqIndex = null;
+
+function renderFaqs(){
+  const list = document.getElementById('faq-list');
+  if(!list) return;
+  list.innerHTML = FAQS.map((f, i) => `
+    <div class="faq-item ${openFaqIndex===i?'open':''}" data-idx="${i}">
+      <button class="faq-question" type="button">
+        <span>${f.q[LANG]}</span>
+        <span class="icon">+</span>
+      </button>
+      <div class="faq-answer"><p>${f.a[LANG]}</p></div>
+    </div>
+  `).join('');
+  list.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-question').addEventListener('click', () => {
+      const idx = Number(item.dataset.idx);
+      openFaqIndex = openFaqIndex === idx ? null : idx;
+      renderFaqs();
+    });
+  });
+}
+
+const FORUM_STORAGE_KEY = 'costealo-forum-questions';
+
+function loadForumQuestions(){
+  try{
+    const raw = localStorage.getItem(FORUM_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e){
+    return [];
+  }
+}
+function saveForumQuestions(){
+  try{ localStorage.setItem(FORUM_STORAGE_KEY, JSON.stringify(forumQuestions)); } catch(e){ /* storage unavailable */ }
+}
+
+let forumQuestions = loadForumQuestions();
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function formatForumDate(iso){
+  const locale = LANG==='de' ? 'de-DE' : (LANG==='en' ? 'en-US' : 'es-PE');
+  try{
+    return new Date(iso).toLocaleDateString(locale, { day:'2-digit', month:'short', year:'numeric' });
+  } catch(e){
+    return '';
+  }
+}
+
+function renderForumQuestions(){
+  const container = document.getElementById('forum-questions-list');
+  if(!container) return;
+
+  if(forumQuestions.length === 0){
+    container.innerHTML = `<div class="forum-empty">${FORUM_T.empty[LANG]}</div>`;
+    return;
+  }
+
+  container.innerHTML = forumQuestions.slice().reverse().map(q => `
+    <div class="forum-post" data-id="${q.id}">
+      <div class="forum-post-head">
+        <span class="forum-post-author">${q.name ? escapeHtml(q.name) : FORUM_T.anon[LANG]}</span>
+        <span class="forum-post-date">${formatForumDate(q.date)}</span>
+      </div>
+      <div class="forum-post-text">${escapeHtml(q.text)}</div>
+      ${q.replies && q.replies.length ? `
+        <div class="forum-replies">
+          ${q.replies.map(r => `
+            <div class="forum-reply">
+              <span class="reply-author">${r.name ? escapeHtml(r.name) : FORUM_T.anon[LANG]}</span>
+              <span class="reply-date">${formatForumDate(r.date)}</span>
+              <div class="forum-reply-text">${escapeHtml(r.text)}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+      <div class="forum-post-actions">
+        <button class="reply-toggle" data-id="${q.id}">${FORUM_T.reply[LANG]}</button>
+        <button class="delete-btn" data-id="${q.id}">${FORUM_T.delete[LANG]}</button>
+      </div>
+      <div class="forum-reply-form" id="reply-form-${q.id}" style="display:none;">
+        <input type="text" class="reply-input" placeholder="${FORUM_T.replyPlaceholder[LANG]}">
+        <button type="button" class="btn-ghost reply-send" data-id="${q.id}">${FORUM_T.send[LANG]}</button>
+      </div>
+    </div>
+  `).join('');
+
+  container.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      forumQuestions = forumQuestions.filter(q => q.id !== btn.dataset.id);
+      saveForumQuestions();
+      renderForumQuestions();
+    });
+  });
+  container.querySelectorAll('.reply-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const form = document.getElementById(`reply-form-${btn.dataset.id}`);
+      if(form) form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+    });
+  });
+  container.querySelectorAll('.reply-send').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const input = document.querySelector(`#reply-form-${id} .reply-input`);
+      const text = input.value.trim();
+      if(!text) return;
+      const q = forumQuestions.find(q => q.id === id);
+      if(!q) return;
+      if(!q.replies) q.replies = [];
+      q.replies.push({ text, date: new Date().toISOString() });
+      saveForumQuestions();
+      renderForumQuestions();
+    });
+  });
+}
+
+function renderForo(){
+  renderFaqs();
+  renderForumQuestions();
+}
+
+function initForumForm(){
+  const form = document.getElementById('forum-form');
+  if(!form) return;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nameEl = document.getElementById('forum-name');
+    const questionEl = document.getElementById('forum-question');
+    const text = questionEl.value.trim();
+    if(!text) return;
+    forumQuestions.push({
+      id: 'q-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      name: nameEl.value.trim(),
+      text,
+      date: new Date().toISOString(),
+      replies: [],
+    });
+    saveForumQuestions();
+    nameEl.value = '';
+    questionEl.value = '';
+    renderForumQuestions();
+  });
 }
 
 /* ---------- Navegación principal ---------- */
@@ -909,16 +1218,18 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 /* ---------- Idioma y moneda ---------- */
-document.getElementById('lang-es').addEventListener('click', () => setLang('es'));
-document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+LANGS.forEach(l => {
+  document.getElementById(`lang-${l}`).addEventListener('click', () => setLang(l));
+});
 document.getElementById('currency-select').addEventListener('change', (e) => {
   CURRENCY = CURRENCIES[e.target.value];
   refreshAllCalculatorPanels();
 });
 function setLang(lang){
   LANG = lang;
-  document.getElementById('lang-es').classList.toggle('active', lang==='es');
-  document.getElementById('lang-en').classList.toggle('active', lang==='en');
+  LANGS.forEach(l => {
+    document.getElementById(`lang-${l}`).classList.toggle('active', l===lang);
+  });
   document.title = GLOBAL_T.pageTitle[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
@@ -932,6 +1243,7 @@ function setLang(lang){
   renderRecetas();
   renderConsejos();
   renderIA();
+  renderForo();
 }
 
 /* Init */
@@ -948,6 +1260,8 @@ showCalculatorPanel(activeCat);
 renderRecetas();
 renderConsejos();
 renderIA();
+initForumForm();
+renderForo();
 </script>
 </body>
 </html>
