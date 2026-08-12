@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>StyleBloom — Teen Fashion, Games &amp; Style Tips</title>
+<meta name="description" content="StyleBloom: dress-up games, style trivia, color theory and fashion editorials for teens.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================= RESET & BASE ============================= */
+*,*::before,*::after{box-sizing:border-box;}
+:root{
+  --pink-pastel:#ffd9ea;
+  --pink-pastel-2:#ffe8f2;
+  --pink-strong:#ff5fa2;
+  --pink-strong-deep:#e8438c;
+  --lavender:#e3d6fb;
+  --lavender-deep:#b39ddb;
+  --cream:#fffaf4;
+  --cream-deep:#fdeee1;
+  --gold:#e3b567;
+  --gold-deep:#cf9d4a;
+  --text-dark:#4a3b52;
+  --text-mid:#7d6b88;
+  --white:#ffffff;
+  --shadow-sm:0 4px 14px rgba(200,140,175,0.16);
+  --shadow-md:0 10px 28px rgba(200,140,175,0.20);
+  --radius-lg:28px;
+  --radius-md:18px;
+  --radius-sm:12px;
+}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:'Nunito',sans-serif;
+  color:var(--text-dark);
+  background:linear-gradient(180deg,var(--cream) 0%,var(--pink-pastel-2) 45%,var(--lavender) 100%);
+  background-attachment:fixed;
+  overflow-x:hidden;
+  line-height:1.55;
+}
+h1,h2,h3,h4,.display{
+  font-family:'Fredoka',sans-serif;
+  font-weight:600;
+  color:var(--pink-strong-deep);
+  margin:0 0 .4em;
+}
+p{margin:0 0 1em;}
+img,svg{max-width:100%;display:block;}
+button{font-family:inherit;cursor:pointer;}
+a{color:var(--pink-strong-deep);}
+.container{max-width:1100px;margin:0 auto;padding:0 20px;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+
+/* decorative sparkles */
+.sparkle{opacity:.8;}
+.title-deco{position:relative;display:inline-block;}
+.title-deco::before{content:"✨";position:absolute;left:-1.3em;top:-.1em;font-size:.6em;}
+.title-deco::after{content:"✨";position:absolute;right:-1.3em;bottom:-.1em;font-size:.55em;}
+
+/* ============================= HEADER ============================= */
+.site-header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,250,244,0.9);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(227,181,103,0.35);
+  box-shadow:var(--shadow-sm);
+}
+.header-inner{
+  max-width:1100px;margin:0 auto;padding:12px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.logo{
+  font-family:'Fredoka',sans-serif;font-size:1.5rem;font-weight:700;
+  color:var(--pink-strong-deep);display:flex;align-items:center;gap:6px;
+  text-decoration:none;
+}
+.logo .bud{color:var(--gold-deep);}
+.main-nav{display:flex;gap:6px;flex-wrap:wrap;}
+.main-nav a{
+  text-decoration:none;color:var(--text-dark);font-weight:700;font-size:.92rem;
+  padding:8px 14px;border-radius:999px;transition:background .2s,color .2s;
+}
+.main-nav a:hover{background:var(--pink-pastel);color:var(--pink-strong-deep);}
+.lang-switch{display:flex;gap:4px;background:var(--cream-deep);padding:4px;border-radius:999px;box-shadow:inset 0 0 0 1px rgba(227,181,103,.35);}
+.lang-btn{
+  border:none;background:transparent;padding:6px 11px;border-radius:999px;
+  font-weight:800;font-size:.78rem;letter-spacing:.03em;color:var(--text-mid);
+  min-width:38px;min-height:32px;
+}
+.lang-btn[aria-pressed="true"]{background:var(--pink-strong);color:#fff;box-shadow:var(--shadow-sm);}
+
+/* ============================= BUTTONS ============================= */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border:none;border-radius:999px;padding:12px 24px;font-weight:800;font-size:.95rem;
+  min-height:46px;
+  background:linear-gradient(135deg,var(--pink-strong),var(--pink-strong-deep));
+  color:#fff;box-shadow:var(--shadow-sm);transition:transform .15s, box-shadow .15s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.btn:active{transform:translateY(0);}
+.btn.secondary{background:var(--white);color:var(--pink-strong-deep);box-shadow:inset 0 0 0 2px var(--pink-pastel);}
+.btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold-deep));}
+.btn.small{padding:9px 16px;font-size:.85rem;min-height:38px;}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* ============================= HERO ============================= */
+.hero{padding:64px 20px 40px;text-align:center;}
+.hero h1{font-size:clamp(2rem,6vw,3.2rem);}
+.hero p.subtitle{max-width:560px;margin:0 auto 26px;color:var(--text-mid);font-size:1.05rem;}
+.hero-emojis{font-size:1.6rem;margin-bottom:10px;letter-spacing:.3em;}
+
+/* ============================= AD SLOTS ============================= */
+.ad-slot{
+  max-width:1100px;margin:26px auto;padding:18px;
+  border:2px dashed var(--lavender-deep);border-radius:var(--radius-md);
+  background:rgba(255,255,255,.5);
+  text-align:center;color:var(--text-mid);font-weight:700;font-size:.85rem;
+  min-height:90px;display:flex;align-items:center;justify-content:center;
+  letter-spacing:.04em;
+}
+
+/* ============================= SECTIONS ============================= */
+section{padding:20px 0;}
+.section-head{text-align:center;max-width:640px;margin:0 auto 34px;}
+.section-head h2{font-size:clamp(1.6rem,4vw,2.3rem);}
+.section-head p{color:var(--text-mid);}
+
+/* ============================= GAME CARDS ============================= */
+.games-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;
+  max-width:1100px;margin:0 auto;padding:0 20px;
+}
+.game-card{
+  background:var(--white);border-radius:var(--radius-lg);padding:24px 18px;
+  text-align:center;box-shadow:var(--shadow-sm);border:1px solid rgba(227,181,103,.25);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  transition:transform .18s, box-shadow .18s;
+}
+.game-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);}
+.game-card .icon{font-size:2.6rem;margin-bottom:4px;}
+.game-card h3{font-size:1.15rem;margin-bottom:4px;}
+.game-card p{color:var(--text-mid);font-size:.88rem;flex:1;}
+.game-card .btn{margin-top:10px;width:100%;}
+
+/* ============================= GAME STAGE ============================= */
+.game-stage{max-width:900px;margin:0 auto;padding:0 20px;}
+.game-panel{
+  background:var(--white);border-radius:var(--radius-lg);padding:26px 22px;
+  box-shadow:var(--shadow-md);border:1px solid rgba(227,181,103,.25);
+}
+.game-panel[hidden]{display:none;}
+.panel-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.panel-top h2{margin:0;font-size:1.5rem;}
+.game-meta{display:flex;gap:10px;flex-wrap:wrap;font-weight:800;font-size:.85rem;color:var(--pink-strong-deep);}
+.pill{background:var(--pink-pastel);padding:6px 14px;border-radius:999px;}
+.game-instructions{color:var(--text-mid);font-size:.92rem;margin-bottom:16px;}
+
+/* Doll / Game1 & Game4 layout */
+.doll-layout{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;}
+.doll-wrap{flex:0 0 200px;width:200px;max-width:200px;margin:0 auto;background:var(--cream-deep);border-radius:var(--radius-lg);padding:14px;box-shadow:inset 0 0 0 1px rgba(227,181,103,.3);}
+.doll-wrap svg{width:100%;height:auto;display:block;}
+.doll-controls{flex:1 1 280px;min-width:260px;}
+.scenario-box{
+  background:var(--lavender);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:16px;
+}
+.scenario-box h4{margin:0 0 4px;color:var(--pink-strong-deep);font-size:1.05rem;}
+.scenario-box p{margin:0;color:var(--text-dark);font-size:.9rem;}
+.cat-block{margin-bottom:14px;}
+.cat-block .cat-label{font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-mid);margin-bottom:6px;display:block;}
+.swatch-row{display:flex;gap:8px;flex-wrap:wrap;}
+.item-btn{
+  display:flex;align-items:center;gap:7px;
+  background:var(--cream);border:2px solid transparent;border-radius:999px;
+  padding:7px 12px 7px 7px;min-height:44px;font-weight:700;font-size:.82rem;color:var(--text-dark);
+  box-shadow:var(--shadow-sm);
+}
+.item-btn .dot{width:22px;height:22px;border-radius:50%;flex:0 0 22px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);}
+.item-btn[aria-pressed="true"]{border-color:var(--pink-strong);background:var(--pink-pastel-2);}
+.feedback-box{margin-top:14px;background:var(--cream-deep);border-radius:var(--radius-md);padding:14px 16px;font-size:.92rem;}
+.feedback-box.good{background:#e3f6e0;}
+.feedback-box strong{color:var(--pink-strong-deep);}
+.actions-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+
+/* Game2 trivia (grid of option buttons) */
+.trivia-look{background:var(--lavender);border-radius:var(--radius-md);padding:18px;font-size:1.02rem;margin-bottom:18px;font-style:italic;color:var(--text-dark);}
+.option-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.option-grid .opt-btn{
+  background:var(--cream);border:2px solid var(--pink-pastel);border-radius:var(--radius-md);
+  padding:14px 10px;font-weight:800;font-size:.95rem;min-height:52px;color:var(--text-dark);
+}
+.option-grid .opt-btn.correct{background:#d7f3d0;border-color:#6bbf59;}
+.option-grid .opt-btn.wrong{background:#ffd9d9;border-color:#e26b6b;}
+.option-grid .opt-btn:disabled{opacity:.8;}
+
+/* Game3 vocabulary cards (vertical stacked cards, distinct from grid) */
+.vocab-term{
+  text-align:center;font-size:1.7rem;font-family:'Fredoka',sans-serif;color:var(--pink-strong-deep);
+  background:var(--gold);background:linear-gradient(135deg,var(--pink-pastel),var(--lavender));
+  border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;
+}
+.def-stack{display:flex;flex-direction:column;gap:10px;}
+.def-card{
+  display:flex;gap:12px;align-items:flex-start;text-align:left;
+  background:var(--cream);border:2px solid var(--lavender);border-radius:var(--radius-md);
+  padding:14px 16px;font-size:.9rem;min-height:44px;
+}
+.def-card .letter{
+  flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:var(--lavender-deep);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;
+}
+.def-card.correct{background:#d7f3d0;border-color:#6bbf59;}
+.def-card.wrong{background:#ffd9d9;border-color:#e26b6b;}
+
+/* Game5 color match — visual, minimal text */
+.color-stage{text-align:center;}
+.base-swatch{
+  width:130px;height:130px;border-radius:50%;margin:0 auto 22px;
+  box-shadow:var(--shadow-md), inset 0 0 0 6px rgba(255,255,255,.6);
+  border:3px solid #fff;
+}
+.color-options{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+.color-opt{
+  width:78px;height:78px;border-radius:24px;border:3px solid #fff;box-shadow:var(--shadow-sm);
+  min-width:64px;min-height:64px;
+}
+.color-opt.correct{outline:4px solid #6bbf59;}
+.color-opt.wrong{outline:4px solid #e26b6b;}
+.color-explain{max-width:480px;margin:0 auto;background:var(--cream-deep);border-radius:var(--radius-md);padding:14px 16px;font-size:.92rem;}
+
+/* Progress dots */
+.progress-dots{display:flex;gap:6px;justify-content:center;margin:14px 0 4px;}
+.progress-dots span{width:9px;height:9px;border-radius:50%;background:var(--pink-pastel);}
+.progress-dots span.done{background:var(--pink-strong);}
+
+/* ============================= POSTS ============================= */
+.posts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;max-width:1100px;margin:0 auto;padding:0 20px;}
+.post-card{
+  background:var(--white);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);
+  border:1px solid rgba(227,181,103,.25);display:flex;flex-direction:column;
+}
+.post-banner{height:90px;background:linear-gradient(135deg,var(--pink-pastel),var(--lavender));display:flex;align-items:center;justify-content:center;font-size:2.2rem;}
+.post-body{padding:18px 18px 20px;flex:1;display:flex;flex-direction:column;}
+.post-tag{display:inline-block;background:var(--gold);color:#fff;font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:8px;width:fit-content;letter-spacing:.03em;}
+.post-body h3{font-size:1.1rem;margin-bottom:6px;}
+.post-excerpt{color:var(--text-mid);font-size:.88rem;flex:1;}
+.post-full{display:none;color:var(--text-dark);font-size:.88rem;margin-top:8px;}
+.post-full.open{display:block;}
+.post-body .btn{align-self:flex-start;margin-top:12px;}
+
+/* ============================= FOOTER ============================= */
+footer{margin-top:40px;padding:30px 20px 40px;text-align:center;color:var(--text-mid);font-size:.82rem;}
+footer .privacy-note{max-width:560px;margin:8px auto 0;}
+footer .heart{color:var(--pink-strong);}
+
+/* ============================= RESPONSIVE ============================= */
+@media (max-width:768px){
+  .header-inner{justify-content:center;text-align:center;}
+  .main-nav{order:3;width:100%;justify-content:center;}
+  .doll-layout{flex-direction:column;align-items:center;}
+  .doll-wrap{flex:0 0 auto;width:180px;max-width:180px;}
+  .option-grid{grid-template-columns:1fr;}
+}
+@media (max-width:480px){
+  .hero{padding:44px 14px 30px;}
+  .game-panel{padding:18px 14px;}
+  .color-opt{width:64px;height:64px;}
+  .base-swatch{width:100px;height:100px;}
+  .games-grid, .posts-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:380px){
+  .games-grid, .posts-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#top" class="logo"><span class="bud">✿</span> StyleBloom</a>
+    <nav class="main-nav">
+      <a href="#games" data-i18n="common.navGames">Games</a>
+      <a href="#posts" data-i18n="common.navPosts">Posts</a>
+    </nav>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button class="lang-btn" data-lang="es" aria-pressed="false">ES</button>
+      <button class="lang-btn" data-lang="en" aria-pressed="true">EN</button>
+      <button class="lang-btn" data-lang="de" aria-pressed="false">DE</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="container">
+      <div class="hero-emojis">🌸 ✨ 💖</div>
+      <h1 class="title-deco" data-i18n="hero.title">Style is a playground</h1>
+      <p class="subtitle" data-i18n="hero.subtitle">Dress up a paper doll, test your fashion IQ, master color theory, and read bite-sized style editorials — all in one glowy corner of the internet.</p>
+      <a href="#games" class="btn" data-i18n="hero.cta">Start Playing</a>
+    </div>
+  </section>
+
+  <div class="ad-slot" data-i18n="common.adLabel">Advertisement</div>
+
+  <section id="games">
+    <div class="section-head">
+      <h2 data-i18n="gamesSection.title">Mini-Games</h2>
+      <p data-i18n="gamesSection.subtitle">Five totally different ways to play with fashion.</p>
+    </div>
+
+    <div class="games-grid" id="games-grid">
+      <div class="game-card">
+        <div class="icon">👗</div>
+        <h3 data-i18n="game1.title">SOS Outfit</h3>
+        <p data-i18n="game1.cardDesc">Dress the doll for the occasion. Score points for matching the vibe.</p>
+        <button class="btn small" data-open="1" data-i18n="common.playBtn">Play</button>
+      </div>
+      <div class="game-card">
+        <div class="icon">⏳</div>
+        <h3 data-i18n="game2.title">Guess the Era</h3>
+        <p data-i18n="game2.cardDesc">Read the look, name the decade.</p>
+        <button class="btn small" data-open="2" data-i18n="common.playBtn">Play</button>
+      </div>
+      <div class="game-card">
+        <div class="icon">📖</div>
+        <h3 data-i18n="game3.title">Fashion Vocabulary</h3>
+        <p data-i18n="game3.cardDesc">Match the term to its real definition.</p>
+        <button class="btn small" data-open="3" data-i18n="common.playBtn">Play</button>
+      </div>
+      <div class="game-card">
+        <div class="icon">💇‍♀️</div>
+        <h3 data-i18n="game4.title">Perfect Hairstyle</h3>
+        <p data-i18n="game4.cardDesc">Style the doll's hair for every occasion.</p>
+        <button class="btn small" data-open="4" data-i18n="common.playBtn">Play</button>
+      </div>
+      <div class="game-card">
+        <div class="icon">🎨</div>
+        <h3 data-i18n="game5.title">Match the Colors</h3>
+        <p data-i18n="game5.cardDesc">Pure color theory. Pick the swatch that works.</p>
+        <button class="btn small" data-open="5" data-i18n="common.playBtn">Play</button>
+      </div>
+    </div>
+
+    <div class="game-stage">
+      <!-- GAME 1: SOS Outfit -->
+      <div class="game-panel" id="panel-1" hidden>
+        <div class="panel-top">
+          <button class="btn secondary small" data-close="1">← <span data-i18n="common.backBtn">Back to games</span></button>
+          <div class="game-meta">
+            <span class="pill" id="g1-round-pill"></span>
+            <span class="pill" id="g1-score-pill"></span>
+          </div>
+        </div>
+        <h2 data-i18n="game1.title">SOS Outfit</h2>
+        <p class="game-instructions" data-i18n="game1.instructions">Pick one item from each category to build a full outfit for the scenario below.</p>
+        <div class="doll-layout">
+          <div class="doll-wrap" id="g1-doll-wrap"></div>
+          <div class="doll-controls" id="g1-controls"></div>
+        </div>
+        <div id="g1-feedback"></div>
+      </div>
+
+      <!-- GAME 2: Guess the Era -->
+      <div class="game-panel" id="panel-2" hidden>
+        <div class="panel-top">
+          <button class="btn secondary small" data-close="2">← <span data-i18n="common.backBtn">Back to games</span></button>
+          <div class="game-meta">
+            <span class="pill" id="g2-round-pill"></span>
+            <span class="pill" id="g2-score-pill"></span>
+          </div>
+        </div>
+        <h2 data-i18n="game2.title">Guess the Era</h2>
+        <p class="game-instructions" data-i18n="game2.instructions">Read the look description and choose the decade it belongs to.</p>
+        <div class="trivia-look" id="g2-look"></div>
+        <div class="option-grid" id="g2-options"></div>
+        <div id="g2-feedback"></div>
+      </div>
+
+      <!-- GAME 3: Vocabulary -->
+      <div class="game-panel" id="panel-3" hidden>
+        <div class="panel-top">
+          <button class="btn secondary small" data-close="3">← <span data-i18n="common.backBtn">Back to games</span></button>
+          <div class="game-meta">
+            <span class="pill" id="g3-round-pill"></span>
+            <span class="pill" id="g3-score-pill"></span>
+          </div>
+        </div>
+        <h2 data-i18n="game3.title">Fashion Vocabulary</h2>
+        <p class="game-instructions" data-i18n="game3.instructions">Pick the definition that actually matches the term.</p>
+        <div class="vocab-term" id="g3-term"></div>
+        <div class="def-stack" id="g3-defs"></div>
+        <div id="g3-feedback"></div>
+      </div>
+
+      <!-- GAME 4: Perfect Hairstyle -->
+      <div class="game-panel" id="panel-4" hidden>
+        <div class="panel-top">
+          <button class="btn secondary small" data-close="4">← <span data-i18n="common.backBtn">Back to games</span></button>
+          <div class="game-meta">
+            <span class="pill" id="g4-round-pill"></span>
+            <span class="pill" id="g4-score-pill"></span>
+          </div>
+        </div>
+        <h2 data-i18n="game4.title">Perfect Hairstyle</h2>
+        <p class="game-instructions" data-i18n="game4.instructions">Choose a hairstyle and an accessory (or none) to fit the occasion.</p>
+        <div class="doll-layout">
+          <div class="doll-wrap" id="g4-doll-wrap"></div>
+          <div class="doll-controls" id="g4-controls"></div>
+        </div>
+        <div id="g4-feedback"></div>
+      </div>
+
+      <!-- GAME 5: Match the Colors -->
+      <div class="game-panel" id="panel-5" hidden>
+        <div class="panel-top">
+          <button class="btn secondary small" data-close="5">← <span data-i18n="common.backBtn">Back to games</span></button>
+          <div class="game-meta">
+            <span class="pill" id="g5-round-pill"></span>
+            <span class="pill" id="g5-score-pill"></span>
+          </div>
+        </div>
+        <h2 data-i18n="game5.title">Match the Colors</h2>
+        <div class="color-stage">
+          <div class="base-swatch" id="g5-base"></div>
+          <div class="color-options" id="g5-options"></div>
+          <div id="g5-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ad-slot" data-i18n="common.adLabel">Advertisement</div>
+
+  <section id="posts">
+    <div class="section-head">
+      <h2 data-i18n="postsSection.title">Style Notes</h2>
+      <p data-i18n="postsSection.subtitle">Quick reads on fashion, from couture to your closet.</p>
+    </div>
+    <div class="posts-grid" id="posts-grid"></div>
+  </section>
+
+  <div class="ad-slot" data-i18n="common.adLabel">Advertisement</div>
+</main>
+
+<footer>
+  <div>StyleBloom · <span data-i18n="footer.madeWith">made with</span> <span class="heart">♥</span></div>
+  <p class="privacy-note" data-i18n="footer.privacy">No accounts, no tracking, no data ever leaves your browser. Just games and stories.</p>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* =====================================================================
+   🇩🇪 Deutsche Übersetzung — KI-generiert. Bitte vor Veröffentlichung
+   in Produktion von einer/einem Muttersprachler:in gegenlesen lassen.
+   (AI-generated German translation — pending native-speaker review
+   before this goes to production.)
+   ===================================================================== */
+
+/* ============================= LANGUAGE-NEUTRAL GAME DATA ============================= */
+var COLORS = ['#F7A8C4','#C9A0DC','#FFC79A','#B5EAD7','#FFB56B','#E2B4F5','#FF9AA6','#8FD9D6',
+              '#F0B7D8','#FFB27A','#C7A6F2','#A9D8FF','#F2D24B','#FF8FA3','#B7C2EE','#FFADA0',
+              '#94CFBB','#F4A6C6','#CDA6E8','#F6A6C1'];
+
+var G1_ITEMS = {
+  top: [
+    {id:'t_blazer',   type:'formal', color:COLORS[0]},
+    {id:'t_tee',      type:'casual', color:COLORS[1]},
+    {id:'t_crop',     type:'trendy', color:COLORS[2]},
+    {id:'t_jacket',   type:'sporty', color:COLORS[3]},
+    {id:'t_sweater',  type:'comfy',  color:COLORS[4]}
+  ],
+  bottom: [
+    {id:'b_trousers', type:'formal', color:COLORS[5], silhouette:'long'},
+    {id:'b_jeans',    type:'casual', color:COLORS[6], silhouette:'long'},
+    {id:'b_skirt',    type:'trendy', color:COLORS[7], silhouette:'short'},
+    {id:'b_leggings', type:'sporty', color:COLORS[8], silhouette:'long'},
+    {id:'b_sweatpants',type:'comfy', color:COLORS[9], silhouette:'long'}
+  ],
+  shoes: [
+    {id:'s_heels',    type:'formal', color:COLORS[10]},
+    {id:'s_sneakers', type:'casual', color:COLORS[11]},
+    {id:'s_boots',    type:'trendy', color:COLORS[12]},
+    {id:'s_running',  type:'sporty', color:COLORS[13]},
+    {id:'s_slippers', type:'comfy',  color:COLORS[14]}
+  ],
+  accessory: [
+    {id:'a_necklace', type:'formal', color:COLORS[15]},
+    {id:'a_cap',      type:'casual', color:COLORS[16]},
+    {id:'a_earrings', type:'trendy', color:COLORS[17]},
+    {id:'a_watch',    type:'sporty', color:COLORS[18]},
+    {id:'a_scarf',    type:'comfy',  color:COLORS[19]}
+  ]
+};
+var G1_SCENARIOS = [
+  {id:'sc1', idealType:'formal'},
+  {id:'sc2', idealType:'casual'},
+  {id:'sc3', idealType:'comfy'},
+  {id:'sc4', idealType:'sporty'},
+  {id:'sc5', idealType:'trendy'}
+];
+
+var G2_DECADES = ['d1920','d1950','d1970','d1980','d1990','d2000'];
+var G2_ROUNDS = [
+  {id:'r1', correct:'d1920', options:['d1920','d1950','d1970','d2000']},
+  {id:'r2', correct:'d1950', options:['d1950','d1920','d1980','d1990']},
+  {id:'r3', correct:'d1970', options:['d1970','d1950','d1980','d2000']},
+  {id:'r4', correct:'d1980', options:['d1980','d1970','d1990','d2000']},
+  {id:'r5', correct:'d1990', options:['d1990','d1980','d2000','d1920']},
+  {id:'r6', correct:'d2000', options:['d2000','d1990','d1980','d1970']}
+];
+
+var G3_TERMS = ['capsule','couture','fastfashion','statement','silhouette','streetwear'];
+
+var G4_HAIR = ['h_loose','h_waves','h_pony','h_braid','h_updo'];
+var G4_ACC  = ['acc_headband','acc_clip','acc_none'];
+var G4_OCCASIONS = [
+  {id:'o1', hair:['h_pony','h_braid'], acc:['acc_headband','acc_clip']},
+  {id:'o2', hair:['h_waves','h_updo'], acc:['acc_clip','acc_none']},
+  {id:'o3', hair:['h_pony','h_braid'], acc:['acc_headband']},
+  {id:'o4', hair:['h_waves','h_loose'], acc:['acc_clip','acc_headband']}
+];
+
+var G5_ROUNDS = [
+  {id:'c1', type:'complementary', base:'#3B82C4', options:[
+    {hex:'#E8833A', correct:true},{hex:'#7FB3D9', correct:false},{hex:'#4CAF7D', correct:false},{hex:'#C9C9C9', correct:false}]},
+  {id:'c2', type:'complementary', base:'#E85DA0', options:[
+    {hex:'#5DE8A0', correct:true},{hex:'#E85D5D', correct:false},{hex:'#A05DE8', correct:false},{hex:'#E8D65D', correct:false}]},
+  {id:'c3', type:'complementary', base:'#F2C438', options:[
+    {hex:'#7A4FE8', correct:true},{hex:'#F28C38', correct:false},{hex:'#C4F238', correct:false},{hex:'#38C4F2', correct:false}]},
+  {id:'c4', type:'analogous', base:'#D8455C', options:[
+    {hex:'#E87A45', correct:true},{hex:'#45D8C4', correct:false},{hex:'#7A45D8', correct:false},{hex:'#45D858', correct:false}]},
+  {id:'c5', type:'neutral', base:'#2E8B8B', options:[
+    {hex:'#F0E6D2', correct:true},{hex:'#8B2E2E', correct:false},{hex:'#2E2E8B', correct:false},{hex:'#8B8B2E', correct:false}]},
+  {id:'c6', type:'analogous', base:'#B39DDB', options:[
+    {hex:'#9DB3DB', correct:true},{hex:'#DBC69D', correct:false},{hex:'#DB9DC6', correct:false},{hex:'#9DDBAF', correct:false}]}
+];
+
+/* ============================= TRANSLATIONS ============================= */
+var I18N = {
+
+/* ================================================================= EN ================================================================= */
+en:{
+common:{navGames:"Games",navPosts:"Posts",playBtn:"Play",backBtn:"Back to games",adLabel:"Advertisement",
+  scoreLabel:"Score",roundLabel:"Round",nextRound:"Next round",seeResults:"See results",playAgain:"Play again",confirm:"Confirm"},
+hero:{title:"Style is a playground",subtitle:"Dress up a paper doll, test your fashion IQ, master color theory, and read bite-sized style editorials — all in one glowy corner of the internet.",cta:"Start Playing"},
+gamesSection:{title:"Mini-Games",subtitle:"Five totally different ways to play with fashion."},
+postsSection:{title:"Style Notes",subtitle:"Quick reads on fashion, from couture to your closet."},
+footer:{madeWith:"made with",privacy:"No accounts, no tracking, no data ever leaves your browser. Just games and stories."},
+
+game1:{title:"SOS Outfit",cardDesc:"Dress the doll for the occasion. Score points for matching the vibe.",
+  instructions:"Pick one item from each category to build a full outfit for the scenario below.",
+  cat:{top:"Top",bottom:"Bottom",shoes:"Shoes",accessory:"Accessory"},
+  items:{t_blazer:"Blazer",t_tee:"Graphic Tee",t_crop:"Crop Top",t_jacket:"Sports Jacket",t_sweater:"Oversized Sweater",
+    b_trousers:"Tailored Trousers",b_jeans:"Denim Jeans",b_skirt:"Mini Skirt",b_leggings:"Leggings",b_sweatpants:"Sweatpants",
+    s_heels:"Heels",s_sneakers:"Sneakers",s_boots:"Platform Boots",s_running:"Running Shoes",s_slippers:"Fuzzy Slippers",
+    a_necklace:"Pearl Necklace",a_cap:"Baseball Cap",a_earrings:"Statement Earrings",a_watch:"Sports Watch",a_scarf:"Cozy Scarf"},
+  scenarios:{
+    sc1:{title:"Formal Family Reunion",desc:"Grandma's throwing a big dinner. Time to look polished and put-together."},
+    sc2:{title:"Casual Day at the Mall",desc:"Just hanging out with friends. Comfortable but cute is the goal."},
+    sc3:{title:"Cozy Video Call",desc:"A relaxed hangout on camera with your besties. Comfort is king today."},
+    sc4:{title:"Sports Practice",desc:"You've got practice after school. You need to actually move in this."},
+    sc5:{title:"Night Out With Friends",desc:"A fun night out — this is your moment to make a statement."}
+  },
+  feedback:{
+    4:"Perfect outfit! Every piece nails the vibe.",
+    3:"So close! Most of your outfit fits the occasion.",
+    2:"Halfway there — a couple of pieces don't quite match.",
+    1:"Bold choice, but this outfit doesn't really fit the scenario.",
+    0:"Total mismatch! None of these pieces suit the occasion."
+  },
+  results:{title:"Outfit Report Card",
+    high:"You've got main-character styling instincts! Your outfits nailed almost every scenario.",
+    mid:"Solid effort! You're getting the hang of dressing for the occasion.",
+    low:"Fashion is about experimenting — try again and really read each scenario."}
+},
+
+game2:{title:"Guess the Era",cardDesc:"Read the look, name the decade.",
+  instructions:"Read the look description and choose the decade it belongs to.",
+  decades:{d1920:"The 1920s",d1950:"The 1950s",d1970:"The 1970s",d1980:"The 1980s",d1990:"The 1990s",d2000:"The 2000s"},
+  looks:{
+    r1:"Drop-waist fringed dress, a beaded headband, a long pearl strand, and a sleek bob haircut.",
+    r2:"A full circle skirt cinched at the waist, a fitted cardigan, cat-eye sunglasses, and a silk headscarf.",
+    r3:"Bell-bottom jeans, a suede fringe vest, platform shoes, and a floppy felt hat.",
+    r4:"Shoulder-padded blazer, neon leg warmers over leggings, big permed hair, and chunky plastic earrings.",
+    r5:"An oversized flannel shirt over a slip dress, combat boots, and a velvet choker.",
+    r6:"Low-rise denim, a rhinestone trucker hat, a tiny shoulder bag, and a velour tracksuit jacket."
+  },
+  facts:{
+    d1920:"Flapper style was a rebellion — shorter hems and dropped waists let women move (and dance) freely for the first time.",
+    d1950:"The 'New Look' by Christian Dior brought back cinched waists and full skirts after years of wartime fabric rationing.",
+    d1970:"Bell-bottoms started as U.S. Navy uniform pants before disco and boho culture made them a street staple.",
+    d1980:"Power dressing used shoulder pads to give women a bolder silhouette in male-dominated workplaces.",
+    d1990:"Grunge fashion, popularized by bands like Nirvana, turned thrifted flannel into a global trend.",
+    d2000:"Y2K fashion mixed futuristic metallics with mall-brand logos — and it's having a full comeback today."
+  },
+  feedback:{correct:"Correct! Nice eye for detail.",wrong:"Not quite — here's the real answer:"},
+  results:{title:"Era Expert Score",high:"Certified time traveler — you really know your decades!",mid:"Pretty good! A few eras still trip you up.",low:"Decades can be tricky — read the details again next time."}
+},
+
+game3:{title:"Fashion Vocabulary",cardDesc:"Match the term to its real definition.",
+  instructions:"Pick the definition that actually matches the term.",
+  terms:{capsule:"Capsule Wardrobe",couture:"Haute Couture",fastfashion:"Fast Fashion",statement:"Statement Piece",silhouette:"Silhouette",streetwear:"Streetwear"},
+  defs:{
+    capsule:["A small, curated collection of versatile clothes that can be mixed and matched into many outfits.",
+      "A wardrobe designed exclusively for space travel.","An outfit worn once and then donated.","A clothing subscription box delivered every month."],
+    couture:["Custom-fitted, handmade high-fashion clothing created by exclusive design houses.",
+      "Mass-produced clothing sold in shopping malls.","Clothing made entirely from recycled plastic bottles.","A slang term for streetwear brand collaborations."],
+    fastfashion:["Cheaply and quickly produced clothing that copies runway trends and sells at low prices.",
+      "Clothing engineered to last for decades without wearing out.","A runway show format where models walk unusually fast.","Luxury clothing that ships within 24 hours."],
+    statement:["A bold clothing item or accessory meant to stand out and anchor an outfit.",
+      "The last item you pack for a trip.","A garment with a designer's signature stitched inside.","A piece of clothing designed to match everything exactly."],
+    silhouette:["The overall shape or outline an outfit creates on the body.",
+      "A type of lining fabric used inside jackets.","A black-and-white checkered print pattern.","A strict dress code for formal events."],
+    streetwear:["Casual, comfort-driven clothing — sneakers, hoodies, graphic tees — that grew out of skate and hip-hop culture into a global movement.",
+      "Clothing designed exclusively for runway shows.","A term for clothes sold only at open-air markets.","Formal business attire worn in offices."]
+  },
+  correctIndex:{capsule:0,couture:0,fastfashion:0,statement:0,silhouette:0,streetwear:0},
+  feedback:{correct:"Exactly right!",wrong:"Not quite — the correct definition is highlighted above."},
+  results:{title:"Vocabulary Score",high:"You speak fluent fashion — impressive vocabulary!",mid:"Good grasp of the basics, with a bit more to learn.",low:"These terms take practice — give it another go!"}
+},
+
+game4:{title:"Perfect Hairstyle",cardDesc:"Style the doll's hair for every occasion.",
+  instructions:"Choose a hairstyle and an accessory (or none) to fit the occasion.",
+  hairLabel:"Hairstyle",
+  hair:{h_loose:"Loose & Straight",h_waves:"Soft Waves",h_pony:"High Ponytail",h_braid:"Braid",h_updo:"Updo / Bun"},
+  acc:{acc_headband:"Headband",acc_clip:"Hair Clip",acc_none:"No Accessory"},
+  occasions:{
+    o1:{title:"School Day",desc:"Classes all day, then rushing between them. You need something practical."},
+    o2:{title:"Formal Event",desc:"A fancy dinner or dance. Time to look elegant and polished."},
+    o3:{title:"Sports / Gym Day",desc:"You're about to move — a lot. Hair needs to stay out of your face."},
+    o4:{title:"Social Media Photoshoot",desc:"Content day! You want a hairstyle that photographs beautifully."}
+  },
+  occasionFeedback:{
+    o1:"For school, pulled-back styles like a ponytail or braid keep hair out of your face between classes — practical wins.",
+    o2:"For formal events, soft waves or an elegant updo read polished and photograph beautifully under event lighting.",
+    o3:"For sports, secure it! Ponytails and braids (with a headband to catch flyaways) stay put no matter how hard you move.",
+    o4:"For photos, loose waves or sleek strands catch the light and movement — perfect for that camera-ready look."
+  },
+  feedback:{2:"Perfect match for the occasion!",1:"Good instinct, but one choice could work better.",0:"This combo doesn't quite suit the occasion."},
+  results:{title:"Hairstyle Report",high:"Your hair game is occasion-perfect every time!",mid:"You're getting the logic — a couple of picks missed the mark.",low:"Think about what each occasion actually needs and try again."}
+},
+
+game5:{title:"Match the Colors",cardDesc:"Pure color theory. Pick the swatch that works.",
+  instructions:"Tap the swatch that pairs best with the color above.",
+  feedback:{correct:"Yes! Great eye.",wrong:"Not the strongest pair — here's why the highlighted one works:"},
+  explain:{
+    c1:"Blue and orange are complementary colors — they sit directly opposite each other on the color wheel, which is exactly why they make each other pop.",
+    c2:"Pink and mint green are complementary — opposite hues create the highest possible contrast, so they read as an intentional, energetic pair.",
+    c3:"Yellow and violet are complementary — pairing warm and cool opposites creates instant visual balance.",
+    c4:"Red and coral-orange are analogous — they sit right next to each other on the color wheel, so they blend smoothly for a warm, harmonious look.",
+    c5:"Cream is a neutral — it doesn't compete with the teal, it just lets it shine. Neutrals pair with almost any color.",
+    c6:"Lavender and blue-violet are analogous — close neighbors on the wheel that create a soft, cohesive palette."
+  },
+  results:{title:"Color Theory Score",high:"Your color instincts are spot on — you clearly get the wheel!",mid:"Solid sense of color, with room to sharpen it further.",low:"Color pairing takes practice — replay and watch the explanations."}
+},
+
+posts:[
+  {tag:"Couture",icon:"👑",title:"What Is Haute Couture, Really?",
+    excerpt:"It's not just 'expensive clothes' — haute couture is a legally protected, centuries-old craft.",
+    body:"In France, 'haute couture' is a legally protected term: only design houses approved by the Chambre de Commerce et d'Industrie de Paris can use it. Each piece is made to order for an individual client, fitted over multiple sessions, and finished almost entirely by hand — sometimes taking hundreds or thousands of hours. That's why a single gown can cost more than a car. Couture rarely sells in large volumes; its real job is to showcase a house's craftsmanship and set the tone that eventually trickles down into the ready-to-wear and fast-fashion pieces you see in stores."},
+  {tag:"Industry",icon:"🏷️",title:"Fast Fashion vs. Slow Fashion",
+    excerpt:"Two totally different philosophies of getting dressed — and why the difference matters.",
+    body:"Fast fashion brands turn runway trends into cheap, mass-produced pieces in a matter of weeks, which keeps prices low but often relies on overproduction and underpaid labor. Slow fashion flips the model: fewer, better-made pieces designed to last years, often from brands that are transparent about materials and workers. Neither approach is 'wrong' on its own — a fully slow-fashion wardrobe isn't realistic for most teen budgets. A good middle ground: buy trend pieces secondhand, and save new purchases for basics you'll actually wear for years."},
+  {tag:"Color Theory",icon:"🎨",title:"Color Theory 101: Building Outfits That Pop",
+    excerpt:"The color wheel isn't just for art class — it's the secret to outfits that just work.",
+    body:"Every great outfit is quietly using color theory. Complementary colors (opposite on the wheel, like blue and orange) create bold, high-energy contrast. Analogous colors (neighbors on the wheel, like red and orange-red) blend into a calm, cohesive look. Neutrals — black, white, cream, gray, beige — pair with almost anything and let a statement piece do the talking. Next time you're stuck on an outfit, try naming your base color's wheel position, then pick a partner from one of these three relationships instead of guessing."},
+  {tag:"Wardrobe",icon:"🧺",title:"How to Build a Capsule Wardrobe You'll Actually Wear",
+    excerpt:"Fewer pieces, more outfits — here's the actual method, step by step.",
+    body:"Start by emptying your closet and sorting into 'love it, wear it,' 'maybe,' and 'never again.' Pick one neutral base color plus one or two accent colors so everything can mix and match. Aim for a mix of tops, bottoms, one layering piece, and shoes that all pair with at least three other items. The goal isn't owning less for its own sake — it's owning things you'll actually reach for, so getting dressed stops being a daily negotiation."},
+  {tag:"Culture",icon:"🛹",title:"A Mini History of Streetwear",
+    excerpt:"From skate parks to luxury runways — how streetwear became fashion's biggest crossover story.",
+    body:"Streetwear grew out of 1980s-90s skate, surf, and hip-hop culture — think graphic tees, logo caps, and sneakers, sold through small independent shops rather than department stores. 'Drop culture' (limited releases that sell out fast) turned sneakers and hoodies into genuine collector's items. Eventually luxury houses noticed: high-end brands started collaborating directly with streetwear labels, blurring the line between 'runway' and 'street' completely. Today a hoodie can carry as much cultural weight as a designer gown."},
+  {tag:"Sustainability",icon:"♻️",title:"Thrifting 101: Sustainable Style on a Budget",
+    excerpt:"Secondhand shopping is a skill — here's how to actually get good at it.",
+    body:"Go in with a loose plan (like 'jeans' or 'jackets') so you're not overwhelmed by racks. Check seams and zippers before buying — small damage is often fixable, but a broken zipper rarely is. Know your measurements, not just your usual size, since sizing varies wildly across decades and brands. Wash everything before wearing it. And don't be afraid to alter a great-fitting piece — a simple hem or a few new buttons can turn a $4 find into a wardrobe favorite."}
+]
+},
+
+/* ================================================================= ES ================================================================= */
+es:{
+common:{navGames:"Juegos",navPosts:"Posts",playBtn:"Jugar",backBtn:"Volver a juegos",adLabel:"Publicidad",
+  scoreLabel:"Puntaje",roundLabel:"Ronda",nextRound:"Siguiente ronda",seeResults:"Ver resultados",playAgain:"Jugar de nuevo",confirm:"Confirmar"},
+hero:{title:"El estilo es un parque de diversiones",subtitle:"Viste a una muñeca de papel, pon a prueba tu ojo para la moda, domina la teoría del color y lee notas de estilo cortitas — todo en un rinconcito brillante de internet.",cta:"Empezar a jugar"},
+gamesSection:{title:"Minijuegos",subtitle:"Cinco formas totalmente distintas de jugar con la moda."},
+postsSection:{title:"Notas de Estilo",subtitle:"Lecturas rápidas sobre moda, desde la alta costura hasta tu clóset."},
+footer:{madeWith:"hecho con",privacy:"Sin cuentas, sin rastreo, ningún dato sale nunca de tu navegador. Solo juegos e historias."},
+
+game1:{title:"SOS Outfit",cardDesc:"Viste a la muñeca según la ocasión. Suma puntos si aciertas el estilo.",
+  instructions:"Elige una prenda de cada categoría para armar un outfit completo según el escenario.",
+  cat:{top:"Parte de arriba",bottom:"Parte de abajo",shoes:"Calzado",accessory:"Accesorio"},
+  items:{t_blazer:"Blazer",t_tee:"Remera estampada",t_crop:"Top corto",t_jacket:"Campera deportiva",t_sweater:"Sweater oversize",
+    b_trousers:"Pantalón de vestir",b_jeans:"Jean",b_skirt:"Minifalda",b_leggings:"Calzas",b_sweatpants:"Jogger",
+    s_heels:"Tacos",s_sneakers:"Zapatillas urbanas",s_boots:"Botas plataforma",s_running:"Zapatillas deportivas",s_slippers:"Pantuflas",
+    a_necklace:"Collar de perlas",a_cap:"Gorra",a_earrings:"Aros statement",a_watch:"Reloj deportivo",a_scarf:"Bufanda"},
+  scenarios:{
+    sc1:{title:"Reunión familiar formal",desc:"La abuela organiza una cena importante. Toca verse prolija y elegante."},
+    sc2:{title:"Día casual en el shopping",desc:"Vas a andar con amigas. La meta es estar cómoda pero con onda."},
+    sc3:{title:"Videollamada relajada",desc:"Una junta virtual con tus amigas, sin salir de casa. Hoy manda la comodidad."},
+    sc4:{title:"Entrenamiento deportivo",desc:"Tenés práctica después del cole. Necesitás poder moverte de verdad."},
+    sc5:{title:"Salida nocturna con amigas",desc:"Una noche de diversión — es tu momento de destacar."}
+  },
+  feedback:{
+    4:"¡Outfit perfecto! Cada prenda le pega justo a la ocasión.",
+    3:"¡Casi! La mayoría de las prendas encajan con la ocasión.",
+    2:"Vas a mitad de camino — un par de prendas no combinan del todo.",
+    1:"Elección arriesgada, pero este outfit no encaja mucho con la ocasión.",
+    0:"¡Nada combina! Ninguna prenda le queda a esta ocasión."
+  },
+  results:{title:"Boletín de outfits",
+    high:"¡Tenés instinto de protagonista para vestir! Acertaste casi todos los escenarios.",
+    mid:"¡Buen esfuerzo! Ya le vas agarrando la mano a vestir según la ocasión.",
+    low:"La moda es cuestión de probar — intentá de nuevo prestando bien atención a cada escenario."}
+},
+
+game2:{title:"Adivina la Década",cardDesc:"Leé el look, adiviná la década.",
+  instructions:"Leé la descripción del look y elegí a qué década pertenece.",
+  decades:{d1920:"Los años 20",d1950:"Los años 50",d1970:"Los años 70",d1980:"Los años 80",d1990:"Los años 90",d2000:"Los años 2000"},
+  looks:{
+    r1:"Vestido con flecos y cintura baja, vincha con cuentas, un collar largo de perlas y un corte bob prolijo.",
+    r2:"Falda amplia entallada en la cintura, cárdigan ajustado, lentes de sol 'ojo de gato' y un pañuelo de seda en la cabeza.",
+    r3:"Pantalón oxford (campana), chaleco de gamuza con flecos, plataformas y un sombrero de fieltro alón.",
+    r4:"Blazer con hombreras, calentadores de pierna fluo sobre calzas, pelo con mucho volumen y aros grandes de plástico.",
+    r5:"Camisa a cuadros oversize sobre un vestido tipo slip, borcegos y un choker de terciopelo.",
+    r6:"Jean de tiro bajo, gorra trucker con brillos, mini cartera al hombro y campera de jogging de terciopelo."
+  },
+  facts:{
+    d1920:"El estilo flapper fue una rebelión: dobladillos más cortos y cinturas bajas dejaron que las mujeres se movieran (y bailaran) libremente por primera vez.",
+    d1950:"El 'New Look' de Christian Dior trajo de vuelta las cinturas marcadas y las faldas amplias tras años de racionamiento de tela por la guerra.",
+    d1970:"El pantalón oxford empezó como uniforme de la marina de EE.UU. antes de que la cultura disco y boho lo convirtiera en un básico callejero.",
+    d1980:"El 'power dressing' usaba hombreras para darle a las mujeres una silueta más fuerte en ambientes laborales dominados por hombres.",
+    d1990:"La moda grunge, popularizada por bandas como Nirvana, convirtió la camisa a cuadros de segunda mano en tendencia mundial.",
+    d2000:"La moda Y2K mezclaba metálicos futuristas con logos de marcas de shopping — y hoy está teniendo un regreso total."
+  },
+  feedback:{correct:"¡Correcto! Buen ojo para el detalle.",wrong:"No exactamente — esta es la respuesta correcta:"},
+  results:{title:"Puntaje de experta en décadas",high:"Viajera del tiempo certificada — ¡conocés muy bien las décadas!",mid:"¡Bastante bien! Algunas décadas todavía te confunden.",low:"Las décadas pueden ser complicadas — prestá más atención a los detalles la próxima vez."}
+},
+
+game3:{title:"Vocabulario de Moda",cardDesc:"Uní cada término con su definición real.",
+  instructions:"Elegí la definición que realmente corresponde al término.",
+  terms:{capsule:"Capsule Wardrobe",couture:"Alta Costura",fastfashion:"Fast Fashion",statement:"Prenda Statement",silhouette:"Silueta",streetwear:"Streetwear"},
+  defs:{
+    capsule:["Una colección pequeña y bien elegida de prendas versátiles que se pueden combinar en muchos outfits distintos.",
+      "Un guardarropa diseñado exclusivamente para viajes espaciales.","Un outfit que se usa una sola vez y después se dona.","Una caja de suscripción de ropa que llega todos los meses."],
+    couture:["Ropa de lujo hecha a medida y a mano por casas de diseño exclusivas.",
+      "Ropa producida en masa y vendida en shoppings.","Ropa hecha enteramente con botellas de plástico recicladas.","Un término coloquial para las colaboraciones entre marcas de streetwear."],
+    fastfashion:["Ropa producida rápido y barato que copia las tendencias de pasarela y se vende a bajo precio.",
+      "Ropa diseñada para durar décadas sin gastarse.","Un formato de desfile donde las modelos caminan más rápido de lo normal.","Ropa de lujo que se envía en menos de 24 horas."],
+    statement:["Una prenda o accesorio llamativo pensado para destacar y ser el centro del outfit.",
+      "Lo último que empacás para un viaje.","Una prenda con la firma de un diseñador bordada por dentro.","Una prenda diseñada para combinar exactamente con todo."],
+    silhouette:["La forma o el contorno general que un outfit crea sobre el cuerpo.",
+      "Un tipo de forro que se usa dentro de las camperas.","Un estampado a cuadros blanco y negro.","Un código de vestimenta estricto para eventos formales."],
+    streetwear:["Ropa casual y cómoda —zapatillas, buzos, remeras estampadas— que nació de la cultura del skate y el hip-hop y se volvió un movimiento global.",
+      "Ropa diseñada exclusivamente para desfiles de pasarela.","Un término para ropa que solo se vende en ferias al aire libre.","Vestimenta formal de oficina."]
+  },
+  correctIndex:{capsule:0,couture:0,fastfashion:0,statement:0,silhouette:0,streetwear:0},
+  feedback:{correct:"¡Exacto!",wrong:"No es esa — la definición correcta está resaltada arriba."},
+  results:{title:"Puntaje de vocabulario",high:"Hablás moda con fluidez — ¡vocabulario impresionante!",mid:"Buen manejo de lo básico, con un poco más para aprender.",low:"Estos términos se afianzan con práctica — ¡intentalo de nuevo!"}
+},
+
+game4:{title:"Peinado Perfecto",cardDesc:"Peiná a la muñeca para cada ocasión.",
+  instructions:"Elegí un peinado y un accesorio (o ninguno) según la ocasión.",
+  hairLabel:"Peinado",
+  hair:{h_loose:"Suelto y liso",h_waves:"Ondas suaves",h_pony:"Coleta alta",h_braid:"Trenza",h_updo:"Moño / Updo"},
+  acc:{acc_headband:"Diadema",acc_clip:"Broche/Clip",acc_none:"Sin accesorio"},
+  occasions:{
+    o1:{title:"Día de escuela",desc:"Clases todo el día y corriendo entre una y otra. Necesitás algo práctico."},
+    o2:{title:"Evento formal",desc:"Una cena elegante o un baile. Toca verse pulida y prolija."},
+    o3:{title:"Día de deporte / gimnasio",desc:"Te vas a mover mucho. El pelo no puede molestarte en la cara."},
+    o4:{title:"Foto para redes sociales",desc:"¡Día de contenido! Querés un peinado que se vea genial en cámara."}
+  },
+  occasionFeedback:{
+    o1:"Para la escuela, los peinados recogidos como la coleta o la trenza mantienen el pelo fuera de la cara entre clase y clase — gana la practicidad.",
+    o2:"Para eventos formales, las ondas suaves o un moño elegante se ven prolijos y quedan hermosos bajo la luz del evento.",
+    o3:"Para el deporte, ¡aseguralo! Las coletas y trenzas (con diadema para los pelitos sueltos) aguantan el movimiento sin moverse.",
+    o4:"Para fotos, las ondas sueltas o el pelo lacio brillante capturan la luz y el movimiento — perfecto para ese look de cámara."
+  },
+  feedback:{2:"¡Combinación perfecta para la ocasión!",1:"Buena intuición, pero una elección podría mejorar.",0:"Esta combinación no le queda tanto a la ocasión."},
+  results:{title:"Informe de peinados",high:"¡Tu manejo del pelo es perfecto para cada ocasión!",mid:"Ya entendés la lógica — un par de elecciones no dieron en el blanco.",low:"Pensá qué necesita realmente cada ocasión e intentá de nuevo."}
+},
+
+game5:{title:"Combina los Colores",cardDesc:"Pura teoría del color. Elegí el swatch correcto.",
+  instructions:"Tocá el swatch que mejor combina con el color de arriba.",
+  feedback:{correct:"¡Sí! Muy buen ojo.",wrong:"No era la combinación más fuerte — por eso funciona la resaltada:"},
+  explain:{
+    c1:"El azul y el naranja son colores complementarios — están justo opuestos en el círculo cromático, por eso resaltan tanto juntos.",
+    c2:"El rosa y el verde menta son complementarios — los tonos opuestos generan el contraste más alto posible, por eso se ven como una combinación intencional y llena de energía.",
+    c3:"El amarillo y el violeta son complementarios — combinar un cálido con su opuesto frío genera equilibrio visual instantáneo.",
+    c4:"El rojo y el naranja coral son análogos — están uno al lado del otro en el círculo cromático, por eso se mezclan suave para un look cálido y armónico.",
+    c5:"El crema es un neutro — no compite con el verde azulado, lo deja brillar. Los neutros combinan con casi cualquier color.",
+    c6:"El lavanda y el azul violáceo son análogos — vecinos cercanos en el círculo que crean una paleta suave y cohesiva."
+  },
+  results:{title:"Puntaje de teoría del color",high:"Tu instinto para el color es impecable — ¡claramente entendés el círculo cromático!",mid:"Buen sentido del color, con margen para afinarlo.",low:"Combinar colores se afianza con práctica — volvé a jugar y prestá atención a las explicaciones."}
+},
+
+posts:[
+  {tag:"Alta Costura",icon:"👑",title:"¿Qué es realmente la Alta Costura?",
+    excerpt:"No es solo 'ropa cara' — la alta costura es un oficio centenario y legalmente protegido.",
+    body:"En Francia, 'haute couture' es un término legalmente protegido: solo las casas de diseño aprobadas por la Chambre de Commerce et d'Industrie de Paris pueden usarlo. Cada prenda se hace a medida para una clienta particular, se prueba en varias sesiones y se termina casi por completo a mano — a veces con cientos o miles de horas de trabajo. Por eso un solo vestido puede costar más que un auto. La alta costura casi no se vende en volumen; su verdadero rol es mostrar el oficio de la casa y marcar el tono que después baja hacia el prêt-à-porter y las prendas de fast fashion que ves en las tiendas."},
+  {tag:"Industria",icon:"🏷️",title:"Fast Fashion vs. Slow Fashion",
+    excerpt:"Dos filosofías totalmente distintas de vestirse — y por qué la diferencia importa.",
+    body:"Las marcas de fast fashion convierten las tendencias de pasarela en prendas baratas y producidas en masa en cuestión de semanas, lo que mantiene los precios bajos pero suele apoyarse en sobreproducción y mano de obra mal pagada. El slow fashion invierte el modelo: menos prendas, mejor hechas, pensadas para durar años, muchas veces de marcas transparentes sobre materiales y trabajadores. Ninguno de los dos enfoques es 'incorrecto' por sí solo — un guardarropa 100% slow fashion no es realista para el presupuesto de la mayoría de las adolescentes. Un buen punto medio: comprar las prendas de tendencia de segunda mano y guardar las compras nuevas para básicos que realmente vas a usar por años."},
+  {tag:"Teoría del Color",icon:"🎨",title:"Teoría del Color 101: outfits que funcionan",
+    excerpt:"El círculo cromático no es solo cosa de arte — es el secreto de los outfits que sí funcionan.",
+    body:"Todo buen outfit usa teoría del color sin que lo notes. Los colores complementarios (opuestos en el círculo, como azul y naranja) crean un contraste audaz y lleno de energía. Los colores análogos (vecinos en el círculo, como rojo y naranja rojizo) se mezclan en un look calmado y cohesivo. Los neutros —negro, blanco, crema, gris, beige— combinan con casi todo y dejan que una prenda statement sea la protagonista. La próxima vez que no sepas qué combinar, ubicá tu color base en el círculo y elegí un compañero según una de estas tres relaciones en vez de adivinar."},
+  {tag:"Guardarropa",icon:"🧺",title:"Cómo armar un Capsule Wardrobe que sí vas a usar",
+    excerpt:"Menos prendas, más outfits — acá el método real, paso a paso.",
+    body:"Empezá vaciando el clóset y separando en 'lo amo y lo uso', 'tal vez' y 'nunca más'. Elegí un color base neutro y uno o dos colores de acento para que todo combine entre sí. Apuntá a una mezcla de partes de arriba, de abajo, una prenda de abrigo y calzado que combinen al menos con otras tres prendas cada uno. El objetivo no es tener menos por tener menos — es tener cosas que realmente vas a elegir, para que vestirte deje de ser una negociación diaria."},
+  {tag:"Cultura",icon:"🛹",title:"Una mini historia del Streetwear",
+    excerpt:"De las pistas de skate a las pasarelas de lujo — cómo el streetwear se volvió el cruce más grande de la moda.",
+    body:"El streetwear nació de la cultura del skate, el surf y el hip-hop de los 80 y 90 — remeras estampadas, gorras con logo y zapatillas, vendidas en tiendas independientes chicas en vez de grandes tiendas. La 'cultura del drop' (lanzamientos limitados que se agotan rápido) convirtió a las zapatillas y los buzos en verdaderas piezas de colección. Con el tiempo, las casas de lujo se dieron cuenta: marcas de alta gama empezaron a colaborar directamente con etiquetas de streetwear, borrando por completo la línea entre 'pasarela' y 'calle'. Hoy un buzo puede tener tanto peso cultural como un vestido de diseñador."},
+  {tag:"Sustentabilidad",icon:"♻️",title:"Ropa de segunda mano 101: estilo sustentable y económico",
+    excerpt:"Comprar de segunda mano es una habilidad — acá cómo volverte realmente buena en eso.",
+    body:"Andá con un plan flexible (tipo 'jeans' o 'camperas') para no abrumarte entre las perchas. Revisá costuras y cierres antes de comprar — un daño chico suele arreglarse, pero un cierre roto casi nunca. Conocé tus medidas reales, no solo tu talle habitual, porque el talle varía muchísimo entre décadas y marcas. Lavá todo antes de usarlo. Y no le tengas miedo a arreglar una prenda que te queda perfecta — un dobladillo simple o unos botones nuevos pueden convertir un hallazgo de 4 dólares en tu prenda favorita."}
+]
+},
+
+/* ================================================================= DE ================================================================= */
+de:{
+common:{navGames:"Spiele",navPosts:"Beiträge",playBtn:"Spielen",backBtn:"Zurück zu den Spielen",adLabel:"Werbung",
+  scoreLabel:"Punkte",roundLabel:"Runde",nextRound:"Nächste Runde",seeResults:"Ergebnis ansehen",playAgain:"Nochmal spielen",confirm:"Bestätigen"},
+hero:{title:"Style ist ein Spielplatz",subtitle:"Zieh eine Papierpuppe an, teste dein Modegespür, lerne Farbtheorie und lies kurze Style-Storys — alles in einer glitzernden Ecke des Internets.",cta:"Jetzt loslegen"},
+gamesSection:{title:"Minispiele",subtitle:"Fünf völlig unterschiedliche Arten, mit Mode zu spielen."},
+postsSection:{title:"Style-Notizen",subtitle:"Kurze Lesehäppchen über Mode — von Haute Couture bis zu deinem Kleiderschrank."},
+footer:{madeWith:"gemacht mit",privacy:"Keine Accounts, kein Tracking, keine Daten verlassen jemals deinen Browser. Nur Spiele und Geschichten."},
+
+game1:{title:"SOS Outfit",cardDesc:"Zieh die Puppe passend zum Anlass an und sammle Punkte für den richtigen Look.",
+  instructions:"Wähl aus jeder Kategorie ein Teil aus und stell so ein komplettes Outfit für das Szenario zusammen.",
+  cat:{top:"Oberteil",bottom:"Unterteil",shoes:"Schuhe",accessory:"Accessoire"},
+  items:{t_blazer:"Blazer",t_tee:"Print-Shirt",t_crop:"Cropped Top",t_jacket:"Sportjacke",t_sweater:"Oversize-Pullover",
+    b_trousers:"Anzughose",b_jeans:"Jeans",b_skirt:"Minirock",b_leggings:"Leggings",b_sweatpants:"Jogginghose",
+    s_heels:"High Heels",s_sneakers:"Sneaker",s_boots:"Plateaustiefel",s_running:"Laufschuhe",s_slippers:"Kuschelpantoffeln",
+    a_necklace:"Perlenkette",a_cap:"Baseballcap",a_earrings:"Statement-Ohrringe",a_watch:"Sportuhr",a_scarf:"Kuschelschal"},
+  scenarios:{
+    sc1:{title:"Feierliches Familientreffen",desc:"Oma gibt ein großes Essen. Jetzt heißt es: gepflegt und stilsicher aussehen."},
+    sc2:{title:"Lässiger Tag in der Mall",desc:"Du triffst dich einfach mit Freundinnen. Bequem, aber trotzdem süß soll es sein."},
+    sc3:{title:"Gemütlicher Videocall",desc:"Ein entspanntes Treffen mit deinen Besties vor der Kamera. Heute zählt vor allem der Komfort."},
+    sc4:{title:"Sporttraining",desc:"Nach der Schule steht Training an. Du musst dich in diesem Outfit wirklich bewegen können."},
+    sc5:{title:"Abend mit Freundinnen",desc:"Ein Abend zum Feiern — genau dein Moment, um aufzufallen."}
+  },
+  feedback:{
+    4:"Perfektes Outfit! Jedes Teil trifft genau den richtigen Look.",
+    3:"Ganz knapp dran! Der Großteil deines Outfits passt zum Anlass.",
+    2:"Du bist auf halbem Weg — ein paar Teile passen nicht so richtig.",
+    1:"Mutige Wahl, aber dieses Outfit passt eigentlich nicht zum Szenario.",
+    0:"Komplett daneben! Kein einziges Teil passt zu diesem Anlass."
+  },
+  results:{title:"Dein Outfit-Zeugnis",
+    high:"Du hast ein echtes Gespür fürs Styling — du hast fast jedes Szenario perfekt getroffen!",
+    mid:"Gut gemacht! Du bekommst langsam ein Gefühl dafür, wie man sich für den Anlass richtig anzieht.",
+    low:"Mode lebt vom Ausprobieren — versuch es noch mal und lies dir jedes Szenario genau durch."}
+},
+
+game2:{title:"Errate die Ära",cardDesc:"Lies den Look und errate das Jahrzehnt.",
+  instructions:"Lies die Beschreibung des Looks und wähl das passende Jahrzehnt aus.",
+  decades:{d1920:"Die 1920er",d1950:"Die 1950er",d1970:"Die 1970er",d1980:"Die 1980er",d1990:"Die 1990er",d2000:"Die 2000er"},
+  looks:{
+    r1:"Ein Fransenkleid mit tiefer Taille, ein perlenbesetztes Stirnband, eine lange Perlenkette und ein glatter Bubikopf.",
+    r2:"Ein weit ausgestellter Rock mit betonter Taille, eine eng geschnittene Strickjacke, eine Cat-Eye-Sonnenbrille und ein Seidentuch im Haar.",
+    r3:"Eine Schlaghose, eine Fransenweste aus Wildleder, Plateauschuhe und ein weicher Filzhut.",
+    r4:"Ein Blazer mit Schulterpolstern, neonfarbene Beinstulpen über der Leggings, große toupierte Haare und klobige Kunststoff-Ohrringe.",
+    r5:"Ein übergroßes Flanellhemd über einem Trägerkleid, Springerstiefel und ein Samt-Choker.",
+    r6:"Eine Hüftjeans, eine Truckercap mit Strasssteinen, eine winzige Umhängetasche und eine Velours-Trainingsjacke."
+  },
+  facts:{
+    d1920:"Der Flapper-Stil war eine Rebellion: Kürzere Säume und tief sitzende Taillen erlaubten es Frauen zum ersten Mal, sich frei zu bewegen — und zu tanzen.",
+    d1950:"Der 'New Look' von Christian Dior brachte nach Jahren der kriegsbedingten Stoffrationierung die betonte Taille und den weiten Rock zurück.",
+    d1970:"Die Schlaghose stammt ursprünglich aus der Uniform der US-Marine, bevor Disco- und Boho-Kultur sie zum Straßenklassiker machten.",
+    d1980:"Beim 'Power Dressing' sorgten Schulterpolster für eine kraftvollere Silhouette von Frauen in männerdominierten Berufswelten.",
+    d1990:"Der Grunge-Look, bekannt gemacht durch Bands wie Nirvana, machte gebrauchte Flanellhemden zum weltweiten Trend.",
+    d2000:"Der Y2K-Look mischte futuristische Metallic-Stoffe mit Logos von Mall-Marken — und feiert heute ein großes Comeback."
+  },
+  feedback:{correct:"Richtig! Gutes Auge fürs Detail.",wrong:"Nicht ganz — hier ist die richtige Antwort:"},
+  results:{title:"Deine Ära-Punktzahl",high:"Zertifizierte Zeitreisende — du kennst dich mit den Jahrzehnten wirklich aus!",mid:"Ziemlich gut! Bei ein paar Epochen liegst du noch daneben.",low:"Jahrzehnte können knifflig sein — lies die Details beim nächsten Mal noch genauer."}
+},
+
+game3:{title:"Mode-Vokabeln",cardDesc:"Ordne jedem Begriff seine echte Definition zu.",
+  instructions:"Wähl die Definition, die wirklich zum Begriff passt.",
+  terms:{capsule:"Kapselgarderobe",couture:"Haute Couture",fastfashion:"Fast Fashion",statement:"Statement-Piece",silhouette:"Silhouette",streetwear:"Streetwear"},
+  defs:{
+    capsule:["Eine kleine, sorgfältig zusammengestellte Sammlung vielseitiger Kleidungsstücke, die sich zu vielen Outfits kombinieren lassen.",
+      "Eine Garderobe, die ausschließlich für Weltraumreisen entworfen wurde.","Ein Outfit, das man einmal trägt und danach spendet.","Eine Kleider-Abo-Box, die jeden Monat geliefert wird."],
+    couture:["Maßgeschneiderte, von Hand gefertigte Luxusmode aus exklusiven Modehäusern.",
+      "Massenproduzierte Kleidung, die in Einkaufszentren verkauft wird.","Kleidung, die vollständig aus recycelten Plastikflaschen besteht.","Ein umgangssprachlicher Begriff für Kollaborationen zwischen Streetwear-Marken."],
+    fastfashion:["Billig und schnell produzierte Kleidung, die Laufsteg-Trends kopiert und zu niedrigen Preisen verkauft wird.",
+      "Kleidung, die so gefertigt ist, dass sie jahrzehntelang hält, ohne sich abzunutzen.","Ein Modenschau-Format, bei dem die Models ungewöhnlich schnell laufen.","Luxusmode, die innerhalb von 24 Stunden versandt wird."],
+    statement:["Ein auffälliges Kleidungsstück oder Accessoire, das aus der Masse heraussticht und das ganze Outfit trägt.",
+      "Das letzte Teil, das du für eine Reise einpackst.","Ein Kleidungsstück mit der eingenähten Signatur einer Designerin.","Ein Kleidungsstück, das exakt zu allem anderen passt."],
+    silhouette:["Die Gesamtform bzw. der Umriss, den ein Outfit am Körper erzeugt.",
+      "Ein Futterstoff, der innen in Jacken verwendet wird.","Ein schwarz-weißes Karomuster.","Eine strenge Kleiderordnung für formelle Anlässe."],
+    streetwear:["Lässige, komfortorientierte Kleidung — Sneaker, Hoodies, Print-Shirts —, die aus der Skate- und Hip-Hop-Kultur entstanden und zu einer globalen Bewegung wurde.",
+      "Kleidung, die ausschließlich für Modenschauen entworfen wird.","Ein Begriff für Kleidung, die nur auf Straßenmärkten verkauft wird.","Formelle Business-Kleidung fürs Büro."]
+  },
+  correctIndex:{capsule:0,couture:0,fastfashion:0,statement:0,silhouette:0,streetwear:0},
+  feedback:{correct:"Genau richtig!",wrong:"Nicht ganz — die richtige Definition ist oben markiert."},
+  results:{title:"Deine Vokabel-Punktzahl",high:"Du sprichst fließend Mode — beeindruckender Wortschatz!",mid:"Die Grundlagen sitzen schon gut, ein bisschen Luft nach oben ist noch da.",low:"Diese Begriffe brauchen etwas Übung — versuch es gleich noch mal!"}
+},
+
+game4:{title:"Perfekte Frisur",cardDesc:"Style die Frisur der Puppe passend zum Anlass.",
+  instructions:"Wähl eine Frisur und ein Accessoire (oder keins) passend zum Anlass.",
+  hairLabel:"Frisur",
+  hair:{h_loose:"Offen & glatt",h_waves:"Sanfte Wellen",h_pony:"Hoher Pferdeschwanz",h_braid:"Zopf",h_updo:"Hochsteckfrisur / Dutt"},
+  acc:{acc_headband:"Haarband",acc_clip:"Haarspange",acc_none:"Kein Accessoire"},
+  occasions:{
+    o1:{title:"Schultag",desc:"Den ganzen Tag Unterricht und dazwischen ständig Trubel. Du brauchst etwas Praktisches."},
+    o2:{title:"Festlicher Anlass",desc:"Ein feines Dinner oder ein Tanzabend. Jetzt heißt es: elegant und gepflegt aussehen."},
+    o3:{title:"Sport- / Fitnessstudio-Tag",desc:"Du wirst dich gleich viel bewegen. Die Haare dürfen dir dabei nicht ins Gesicht fallen."},
+    o4:{title:"Fotoshooting fürs Social Media",desc:"Content-Tag! Du willst eine Frisur, die auf Fotos richtig gut aussieht."}
+  },
+  occasionFeedback:{
+    o1:"Für die Schule halten zurückgebundene Frisuren wie Pferdeschwanz oder Zopf die Haare zwischen den Stunden aus dem Gesicht — Praktisches gewinnt hier.",
+    o2:"Bei festlichen Anlässen wirken sanfte Wellen oder eine elegante Hochsteckfrisur gepflegt und kommen im Eventlicht auf Fotos richtig gut zur Geltung.",
+    o3:"Beim Sport muss alles sitzen! Pferdeschwanz und Zopf (mit Haarband gegen fliegende Strähnchen) halten auch bei intensiver Bewegung.",
+    o4:"Für Fotos fangen offene Wellen oder glatt fallendes Haar Licht und Bewegung am schönsten ein — perfekt für den kamerareifen Look."
+  },
+  feedback:{2:"Perfekte Kombination für diesen Anlass!",1:"Guter Instinkt, aber eine Wahl könnte besser passen.",0:"Diese Kombination passt nicht so richtig zum Anlass."},
+  results:{title:"Dein Frisuren-Bericht",high:"Dein Frisurengefühl trifft jedes Mal genau den richtigen Anlass!",mid:"Du verstehst schon die Logik dahinter — ein, zwei Entscheidungen lagen daneben.",low:"Überleg dir, was der jeweilige Anlass wirklich braucht, und versuch es noch mal."}
+},
+
+game5:{title:"Farben kombinieren",cardDesc:"Reine Farbtheorie. Wähl den passenden Farbton.",
+  instructions:"Tipp auf den Farbton, der am besten zur Farbe oben passt.",
+  feedback:{correct:"Ja! Sehr gutes Auge.",wrong:"Nicht die stärkste Kombination — deshalb funktioniert die markierte Farbe:"},
+  explain:{
+    c1:"Blau und Orange sind Komplementärfarben — sie liegen sich im Farbkreis genau gegenüber, und genau deshalb bringen sie sich gegenseitig zum Leuchten.",
+    c2:"Pink und Minzgrün sind komplementär — gegenüberliegende Farbtöne erzeugen den größtmöglichen Kontrast, deshalb wirkt die Kombination bewusst gewählt und energiegeladen.",
+    c3:"Gelb und Violett sind komplementär — ein warmer Ton trifft auf sein kühles Gegenstück und sorgt so für sofortige visuelle Balance.",
+    c4:"Rot und Korallorange sind analog — sie liegen im Farbkreis direkt nebeneinander und verschmelzen deshalb zu einem warmen, stimmigen Look.",
+    c5:"Creme ist ein Neutralton — er konkurriert nicht mit dem Petrol, sondern lässt es einfach wirken. Neutraltöne passen zu fast jeder Farbe.",
+    c6:"Lavendel und Blauviolett sind analog — enge Nachbarn im Farbkreis, die eine weiche, stimmige Palette ergeben."
+  },
+  results:{title:"Deine Farbtheorie-Punktzahl",high:"Dein Farbgespür sitzt perfekt — du hast den Farbkreis wirklich verstanden!",mid:"Solides Gefühl für Farben, mit noch etwas Luft nach oben.",low:"Farben kombinieren braucht Übung — spiel noch mal und lies dir die Erklärungen genau durch."}
+},
+
+posts:[
+  {tag:"Haute Couture",icon:"👑",title:"Was ist Haute Couture eigentlich wirklich?",
+    excerpt:"Es ist nicht einfach nur 'teure Kleidung' — Haute Couture ist ein jahrhundertealtes, rechtlich geschütztes Handwerk.",
+    body:"In Frankreich ist 'Haute Couture' ein rechtlich geschützter Begriff: Nur Modehäuser, die von der Chambre de Commerce et d'Industrie de Paris zugelassen sind, dürfen ihn verwenden. Jedes Stück wird für eine einzelne Kundin maßgefertigt, über mehrere Anproben angepasst und fast vollständig von Hand fertiggestellt — manchmal dauert das Hunderte oder sogar Tausende Stunden. Deshalb kann ein einziges Kleid mehr kosten als ein Auto. Haute Couture wird kaum in großen Stückzahlen verkauft; ihre eigentliche Aufgabe ist es, das Können eines Hauses zu zeigen und den Ton anzugeben, der später in die Prêt-à-porter- und Fast-Fashion-Stücke aus den Läden einfließt."},
+  {tag:"Branche",icon:"🏷️",title:"Fast Fashion vs. Slow Fashion",
+    excerpt:"Zwei völlig unterschiedliche Philosophien beim Anziehen — und warum der Unterschied wichtig ist.",
+    body:"Fast-Fashion-Marken verwandeln Laufsteg-Trends innerhalb weniger Wochen in billige, massenproduzierte Teile. Das hält die Preise niedrig, beruht aber oft auf Überproduktion und schlecht bezahlter Arbeit. Slow Fashion dreht das Modell um: weniger, dafür besser verarbeitete Teile, die für Jahre gemacht sind, oft von Marken, die offen über Materialien und Arbeitsbedingungen sprechen. Keiner der beiden Ansätze ist für sich genommen 'falsch' — eine komplett slow-fashion-basierte Garderobe ist für die meisten Teenager-Budgets nicht realistisch. Ein guter Mittelweg: Trendteile secondhand kaufen und Neukäufe für Basics aufheben, die du wirklich jahrelang tragen wirst."},
+  {tag:"Farbtheorie",icon:"🎨",title:"Farbtheorie 101: Outfits, die wirklich funktionieren",
+    excerpt:"Der Farbkreis ist nicht nur was für den Kunstunterricht — er ist das Geheimnis hinter Outfits, die einfach passen.",
+    body:"Jedes gute Outfit nutzt Farbtheorie, auch wenn es dir nicht auffällt. Komplementärfarben (gegenüberliegend im Farbkreis, wie Blau und Orange) erzeugen einen mutigen, energiegeladenen Kontrast. Analoge Farben (Nachbarn im Farbkreis, wie Rot und Rotorange) verschmelzen zu einem ruhigen, stimmigen Look. Neutraltöne — Schwarz, Weiß, Creme, Grau, Beige — passen zu fast allem und lassen ein Statement-Piece die Hauptrolle spielen. Wenn du das nächste Mal nicht weißt, was du kombinieren sollst: Bestimm die Position deiner Grundfarbe im Farbkreis und wähl einen Partner nach einer dieser drei Beziehungen, statt einfach zu raten."},
+  {tag:"Garderobe",icon:"🧺",title:"So baust du eine Kapselgarderobe, die du wirklich trägst",
+    excerpt:"Weniger Teile, mehr Outfits — hier ist die konkrete Methode, Schritt für Schritt.",
+    body:"Räum zuerst deinen Kleiderschrank komplett aus und sortiere in 'liebe ich, trage ich', 'vielleicht' und 'nie wieder'. Wähl eine neutrale Grundfarbe plus ein oder zwei Akzentfarben, damit sich alles miteinander kombinieren lässt. Achte auf eine Mischung aus Oberteilen, Unterteilen, einem Lagen-Teil und Schuhen, die jeweils zu mindestens drei anderen Teilen passen. Es geht nicht darum, möglichst wenig zu besitzen — sondern Dinge zu besitzen, zu denen du wirklich greifst, damit Anziehen nicht mehr jeden Tag zur Verhandlungssache wird."},
+  {tag:"Kultur",icon:"🛹",title:"Eine kleine Geschichte der Streetwear",
+    excerpt:"Vom Skatepark bis zum Luxus-Laufsteg — wie Streetwear zur größten Crossover-Geschichte der Mode wurde.",
+    body:"Streetwear entstand in den 1980er- und 1990er-Jahren aus Skate-, Surf- und Hip-Hop-Kultur — Print-Shirts, Caps mit Logo und Sneaker, verkauft in kleinen unabhängigen Läden statt in Kaufhäusern. Die 'Drop-Kultur' (limitierte Releases, die in Minuten ausverkauft sind) machte Sneaker und Hoodies zu echten Sammlerstücken. Irgendwann wurden auch die Luxushäuser aufmerksam: High-End-Marken begannen, direkt mit Streetwear-Labels zusammenzuarbeiten, wodurch die Grenze zwischen 'Laufsteg' und 'Straße' komplett verschwamm. Heute kann ein Hoodie genauso viel kulturelles Gewicht haben wie ein Designerkleid."},
+  {tag:"Nachhaltigkeit",icon:"♻️",title:"Secondhand-Shopping 101: Nachhaltiger Style mit kleinem Budget",
+    excerpt:"Secondhand einkaufen ist eine Fähigkeit — so wirst du wirklich gut darin.",
+    body:"Geh mit einem groben Plan los (zum Beispiel 'Jeans' oder 'Jacken'), damit dich die vollen Kleiderstangen nicht überfordern. Prüf Nähte und Reißverschlüsse, bevor du kaufst — kleine Schäden lassen sich oft reparieren, ein kaputter Reißverschluss dagegen fast nie. Kenn deine tatsächlichen Maße, nicht nur deine übliche Größe, denn die Größenangaben schwanken zwischen Jahrzehnten und Marken enorm. Wasch alles, bevor du es trägst. Und hab keine Angst davor, ein gut sitzendes Teil zu ändern — ein einfacher Saum oder neue Knöpfe können aus einem 4-Euro-Fund dein Lieblingsstück machen."}
+]
+}
+};
+
+/* ============================= STATE ============================= */
+var state = { lang:'en', active:null };
+
+function t(lang, path){
+  var parts = path.split('.');
+  var node = I18N[lang];
+  for (var i=0;i<parts.length;i++){
+    if (node == null) return path;
+    node = node[parts[i]];
+  }
+  return (node === undefined || node === null) ? path : node;
+}
+function shuffle(arr){
+  var a = arr.slice();
+  for (var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var tmp=a[i]; a[i]=a[j]; a[j]=tmp;
+  }
+  return a;
+}
+function el(tag, cls, html){
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html !== undefined) e.innerHTML = html;
+  return e;
+}
+
+/* ============================= STATIC TEXT ============================= */
+function applyStaticI18n(){
+  document.documentElement.lang = state.lang;
+  var nodes = document.querySelectorAll('[data-i18n]');
+  nodes.forEach(function(n){
+    n.textContent = t(state.lang, n.getAttribute('data-i18n'));
+  });
+}
+
+/* ============================= PAPER DOLL SVG (Game 1 — full body) ============================= */
+function dollSVG1(){
+  return '' +
+  '<svg viewBox="0 0 220 380" role="img" aria-label="Paper doll">' +
+    '<ellipse cx="110" cy="368" rx="66" ry="9" fill="rgba(180,140,160,0.20)"/>' +
+    '<path id="d1-hair-back" d="M62 70 Q56 150 66 190 Q80 200 92 190 L92 70 Z M158 70 Q164 150 154 190 Q140 200 128 190 L128 70 Z" fill="#8a5a3b"/>' +
+    '<g id="d1-bottom-long">' +
+      '<path d="M78 190 L142 190 L150 330 Q110 344 70 330 Z" fill="#cccccc" id="d1-bottom-fill"/>' +
+    '</g>' +
+    '<g id="d1-bottom-short" style="display:none">' +
+      '<path d="M84 190 Q110 200 136 190 L142 250 Q110 262 78 250 Z" fill="#cccccc" id="d1-bottomshort-fill"/>' +
+      '<path d="M84 250 L78 330 Q95 337 96 250 Z M136 250 L142 330 Q125 337 124 250 Z" fill="#f6c9a0"/>' +
+    '</g>' +
+    '<ellipse cx="88" cy="336" rx="17" ry="9" fill="#cccccc" id="d1-shoe-l"/>' +
+    '<ellipse cx="132" cy="336" rx="17" ry="9" fill="#cccccc" id="d1-shoe-r"/>' +
+    '<path d="M72 116 Q110 100 148 116 L152 192 Q110 206 68 192 Z" fill="#cccccc" id="d1-top-fill"/>' +
+    '<rect id="d1-crop-gap" x="86" y="186" width="48" height="14" rx="6" fill="#f6c9a0" style="display:none"/>' +
+    '<circle cx="110" cy="64" r="30" fill="#f6c9a0"/>' +
+    '<circle cx="99" cy="64" r="2.6" fill="#4a3b52"/>' +
+    '<circle cx="121" cy="64" r="2.6" fill="#4a3b52"/>' +
+    '<path d="M100 76 Q110 82 120 76" stroke="#c9748f" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+    '<circle cx="90" cy="72" r="4" fill="#ffb6c1" opacity=".55"/>' +
+    '<circle cx="130" cy="72" r="4" fill="#ffb6c1" opacity=".55"/>' +
+    '<path id="d1-hair-front" d="M80 46 Q110 24 140 46 Q140 58 132 62 Q124 40 110 40 Q96 40 88 62 Q80 58 80 46 Z" fill="#8a5a3b"/>' +
+    '<circle id="d1-accessory" cx="110" cy="108" r="9" fill="#cccccc" opacity="0"/>' +
+  '</svg>';
+}
+function updateDoll1(sel){
+  var wrap = document.getElementById('g1-doll-wrap');
+  if (!wrap.dataset.built){ wrap.innerHTML = dollSVG1(); wrap.dataset.built='1'; }
+  var svg = wrap.querySelector('svg');
+  function find(id){ return svg.querySelector('#'+id); }
+  var top = findItem('top', sel.top), bottom = findItem('bottom', sel.bottom),
+      shoes = findItem('shoes', sel.shoes), acc = findItem('accessory', sel.accessory);
+
+  find('d1-top-fill').setAttribute('fill', top ? top.color : '#e6dfe8');
+  find('d1-crop-gap').style.display = (top && top.id==='t_crop') ? 'block' : 'none';
+
+  var isShort = bottom && bottom.silhouette==='short';
+  find('d1-bottom-long').style.display = isShort ? 'none' : 'block';
+  find('d1-bottom-short').style.display = isShort ? 'block' : 'none';
+  find('d1-bottom-fill').setAttribute('fill', bottom ? bottom.color : '#e6dfe8');
+  find('d1-bottomshort-fill').setAttribute('fill', bottom ? bottom.color : '#e6dfe8');
+
+  find('d1-shoe-l').setAttribute('fill', shoes ? shoes.color : '#e6dfe8');
+  find('d1-shoe-r').setAttribute('fill', shoes ? shoes.color : '#e6dfe8');
+
+  var accEl = find('d1-accessory');
+  accEl.setAttribute('fill', acc ? acc.color : '#e6dfe8');
+  accEl.setAttribute('opacity', acc ? '1' : '0');
+}
+function findItem(cat, id){
+  if (!id) return null;
+  var list = G1_ITEMS[cat];
+  for (var i=0;i<list.length;i++) if (list[i].id===id) return list[i];
+  return null;
+}
+
+/* ============================= PAPER DOLL SVG (Game 4 — head & shoulders) ============================= */
+function dollSVG4(){
+  return '' +
+  '<svg viewBox="0 0 220 220" role="img" aria-label="Doll head and shoulders">' +
+    '<path d="M40 220 Q40 160 110 152 Q180 160 180 220 Z" fill="#e3d6fb"/>' +
+    '<g id="d4-hair-back">' +
+      '<path id="h_pony-back" style="display:none" d="M150 70 Q182 90 176 140 Q168 156 150 150 Q160 110 148 84 Z" fill="#8a5a3b"/>' +
+      '<path id="h_braid-back" style="display:none" d="M148 78 Q158 100 150 122 Q160 128 150 136 Q160 142 150 150 Q158 156 148 162" stroke="#8a5a3b" stroke-width="16" fill="none" stroke-linecap="round"/>' +
+      '<circle id="h_updo-back" style="display:none" cx="112" cy="52" r="20" fill="#8a5a3b"/>' +
+      '<path id="h_loose-back" style="display:none" d="M58 66 Q52 130 62 158 L82 158 L82 66 Z M162 66 Q168 130 158 158 L138 158 L138 66 Z" fill="#8a5a3b"/>' +
+      '<path id="h_waves-back" style="display:none" d="M58 66 Q48 100 62 122 Q52 140 64 160 L82 160 L82 66 Z M162 66 Q172 100 158 122 Q168 140 156 160 L138 160 L138 66 Z" fill="#8a5a3b"/>' +
+    '</g>' +
+    '<circle cx="110" cy="96" r="34" fill="#f6c9a0"/>' +
+    '<circle cx="97" cy="96" r="3" fill="#4a3b52"/>' +
+    '<circle cx="123" cy="96" r="3" fill="#4a3b52"/>' +
+    '<path d="M98 110 Q110 117 122 110" stroke="#c9748f" stroke-width="2.6" fill="none" stroke-linecap="round"/>' +
+    '<circle cx="86" cy="104" r="4.5" fill="#ffb6c1" opacity=".55"/>' +
+    '<circle cx="134" cy="104" r="4.5" fill="#ffb6c1" opacity=".55"/>' +
+    '<g id="d4-hair-front">' +
+      '<path id="h_loose-front" style="display:none" d="M76 74 Q110 50 144 74 Q144 90 134 96 Q126 66 110 66 Q94 66 86 96 Q76 90 76 74 Z" fill="#8a5a3b"/>' +
+      '<path id="h_waves-front" style="display:none" d="M76 74 Q110 48 144 74 Q146 92 132 98 Q128 68 110 66 Q92 68 88 98 Q74 92 76 74 Z" fill="#96633f"/>' +
+      '<path id="h_pony-front" style="display:none" d="M78 76 Q110 56 142 76 Q142 88 132 92 Q124 68 110 68 Q96 68 88 92 Q78 88 78 76 Z" fill="#8a5a3b"/>' +
+      '<path id="h_braid-front" style="display:none" d="M78 76 Q110 56 142 76 Q142 88 132 92 Q124 68 110 68 Q96 68 88 92 Q78 88 78 76 Z" fill="#8a5a3b"/>' +
+      '<path id="h_updo-front" style="display:none" d="M78 78 Q110 58 142 78 Q140 88 130 90 Q122 70 110 70 Q98 70 90 90 Q80 88 78 78 Z" fill="#8a5a3b"/>' +
+    '</g>' +
+    '<path id="acc-headband-svg" style="display:none" d="M74 78 Q110 52 146 78" stroke="#ff5fa2" stroke-width="8" fill="none" stroke-linecap="round"/>' +
+    '<g id="acc-clip-svg" style="display:none"><ellipse cx="140" cy="80" rx="9" ry="5" fill="#e3b567" transform="rotate(-25 140 80)"/></g>' +
+  '</svg>';
+}
+function updateDoll4(hair, acc){
+  var wrap = document.getElementById('g4-doll-wrap');
+  if (!wrap.dataset.built){ wrap.innerHTML = dollSVG4(); wrap.dataset.built='1'; }
+  var svg = wrap.querySelector('svg');
+  G4_HAIR.forEach(function(h){
+    var front = svg.querySelector('#'+h+'-front');
+    var back = svg.querySelector('#'+h+'-back');
+    var show = (h===hair);
+    if (front) front.style.display = show ? 'block':'none';
+    if (back) back.style.display = show ? 'block':'none';
+  });
+  var hb = svg.querySelector('#acc-headband-svg'), cl = svg.querySelector('#acc-clip-svg');
+  hb.style.display = (acc==='acc_headband') ? 'block':'none';
+  cl.style.display = (acc==='acc_clip') ? 'block':'none';
+}
+
+/* ============================= GAME 1: SOS Outfit ============================= */
+var s1 = { round:0, score:0, sel:{top:null,bottom:null,shoes:null,accessory:null}, locked:false };
+function resetGame1(){ s1 = { round:0, score:0, sel:{top:null,bottom:null,shoes:null,accessory:null}, locked:false }; renderGame1(); }
+function renderGame1(){
+  var lang = state.lang;
+  document.getElementById('g1-round-pill').textContent = t(lang,'common.roundLabel')+' '+(s1.round+1)+'/5';
+  document.getElementById('g1-score-pill').textContent = t(lang,'common.scoreLabel')+': '+s1.score+'/20';
+  updateDoll1(s1.sel);
+
+  var scenario = G1_SCENARIOS[s1.round];
+  var controls = document.getElementById('g1-controls');
+  controls.innerHTML = '';
+
+  var box = el('div','scenario-box');
+  box.innerHTML = '<h4>'+t(lang,'game1.scenarios.'+scenario.id+'.title')+'</h4><p>'+t(lang,'game1.scenarios.'+scenario.id+'.desc')+'</p>';
+  controls.appendChild(box);
+
+  ['top','bottom','shoes','accessory'].forEach(function(cat){
+    var block = el('div','cat-block');
+    block.appendChild(el('span','cat-label', t(lang,'game1.cat.'+cat)));
+    var row = el('div','swatch-row');
+    G1_ITEMS[cat].forEach(function(item){
+      var btn = el('button','item-btn');
+      btn.type='button';
+      btn.setAttribute('aria-pressed', s1.sel[cat]===item.id ? 'true':'false');
+      btn.disabled = s1.locked;
+      btn.innerHTML = '<span class="dot" style="background:'+item.color+'"></span><span>'+t(lang,'game1.items.'+item.id)+'</span>';
+      btn.addEventListener('click', function(){
+        if (s1.locked) return;
+        s1.sel[cat] = item.id;
+        renderGame1();
+      });
+      row.appendChild(btn);
+    });
+    block.appendChild(row);
+    controls.appendChild(block);
+  });
+
+  var allChosen = s1.sel.top && s1.sel.bottom && s1.sel.shoes && s1.sel.accessory;
+  var actions = el('div','actions-row');
+  if (!s1.locked){
+    var confirmBtn = el('button','btn', t(lang,'common.confirm'));
+    confirmBtn.disabled = !allChosen;
+    confirmBtn.addEventListener('click', confirmOutfit1);
+    actions.appendChild(confirmBtn);
+  } else if (s1.round < 4) {
+    var nextBtn = el('button','btn', t(lang,'common.nextRound'));
+    nextBtn.addEventListener('click', function(){
+      s1.round++; s1.locked=false; s1.sel={top:null,bottom:null,shoes:null,accessory:null};
+      renderGame1();
+    });
+    actions.appendChild(nextBtn);
+  } else {
+    var againBtn = el('button','btn gold', t(lang,'common.playAgain'));
+    againBtn.addEventListener('click', resetGame1);
+    actions.appendChild(againBtn);
+  }
+  controls.appendChild(actions);
+
+  var fb = document.getElementById('g1-feedback');
+  fb.innerHTML = '';
+  if (s1.locked){
+    var pts = s1.lastPts;
+    var box2 = el('div','feedback-box'+(pts>=3?' good':''));
+    box2.innerHTML = '<strong>'+pts+'/4</strong> — '+t(lang,'game1.feedback.'+pts);
+    if (s1.round===4){
+      var total = s1.score;
+      var tier = total>=16?'high':(total>=10?'mid':'low');
+      var res = el('div','feedback-box good');
+      res.innerHTML = '<strong>'+t(lang,'game1.results.title')+' — '+total+'/20</strong><br>'+t(lang,'game1.results.'+tier);
+      fb.appendChild(res);
+    }
+    fb.appendChild(box2);
+  }
+}
+function confirmOutfit1(){
+  var scenario = G1_SCENARIOS[s1.round];
+  var pts = 0;
+  ['top','bottom','shoes','accessory'].forEach(function(cat){
+    var item = findItem(cat, s1.sel[cat]);
+    if (item && item.type === scenario.idealType) pts++;
+  });
+  s1.lastPts = pts;
+  s1.score += pts;
+  s1.locked = true;
+  renderGame1();
+}
+
+/* ============================= GAME 2: Guess the Era ============================= */
+var s2 = { round:0, score:0, answered:false, order:[] };
+function resetGame2(){ s2 = { round:0, score:0, answered:false, order:[] }; renderGame2(); }
+function renderGame2(){
+  var lang = state.lang;
+  document.getElementById('g2-round-pill').textContent = t(lang,'common.roundLabel')+' '+(s2.round+1)+'/6';
+  document.getElementById('g2-score-pill').textContent = t(lang,'common.scoreLabel')+': '+s2.score+'/6';
+  var round = G2_ROUNDS[s2.round];
+  document.getElementById('g2-look').textContent = t(lang,'game2.looks.'+round.id);
+
+  if (!s2.answered) s2.order = shuffle(round.options);
+  var optWrap = document.getElementById('g2-options');
+  optWrap.innerHTML = '';
+  s2.order.forEach(function(decadeId){
+    var btn = el('button','opt-btn', t(lang,'game2.decades.'+decadeId));
+    btn.disabled = s2.answered;
+    if (s2.answered && decadeId===round.correct) btn.classList.add('correct');
+    if (s2.answered && decadeId===s2.picked && decadeId!==round.correct) btn.classList.add('wrong');
+    btn.addEventListener('click', function(){ answerGame2(decadeId); });
+    optWrap.appendChild(btn);
+  });
+
+  var fb = document.getElementById('g2-feedback');
+  fb.innerHTML = '';
+  if (s2.answered){
+    var correct = s2.picked === round.correct;
+    var box = el('div','feedback-box'+(correct?' good':''));
+    box.innerHTML = '<strong>'+(correct? t(lang,'game2.feedback.correct') : t(lang,'game2.feedback.wrong')+' '+t(lang,'game2.decades.'+round.correct))+'</strong><br>'+t(lang,'game2.facts.'+round.correct);
+    fb.appendChild(box);
+    var actions = el('div','actions-row');
+    if (s2.round < 5){
+      var nextBtn = el('button','btn', t(lang,'common.nextRound'));
+      nextBtn.addEventListener('click', function(){ s2.round++; s2.answered=false; s2.picked=null; renderGame2(); });
+      actions.appendChild(nextBtn);
+    } else {
+      var tier = s2.score>=5?'high':(s2.score>=3?'mid':'low');
+      var res = el('div','feedback-box good');
+      res.innerHTML = '<strong>'+t(lang,'game2.results.title')+' — '+s2.score+'/6</strong><br>'+t(lang,'game2.results.'+tier);
+      fb.appendChild(res);
+      var againBtn = el('button','btn gold', t(lang,'common.playAgain'));
+      againBtn.addEventListener('click', resetGame2);
+      actions.appendChild(againBtn);
+    }
+    fb.appendChild(actions);
+  }
+}
+function answerGame2(decadeId){
+  if (s2.answered) return;
+  var round = G2_ROUNDS[s2.round];
+  s2.picked = decadeId;
+  s2.answered = true;
+  if (decadeId === round.correct) s2.score++;
+  renderGame2();
+}
+
+/* ============================= GAME 3: Vocabulary ============================= */
+var s3 = { round:0, score:0, answered:false, order:[] };
+function resetGame3(){ s3 = { round:0, score:0, answered:false, order:[] }; renderGame3(); }
+function renderGame3(){
+  var lang = state.lang;
+  document.getElementById('g3-round-pill').textContent = t(lang,'common.roundLabel')+' '+(s3.round+1)+'/6';
+  document.getElementById('g3-score-pill').textContent = t(lang,'common.scoreLabel')+': '+s3.score+'/6';
+  var termId = G3_TERMS[s3.round];
+  document.getElementById('g3-term').textContent = t(lang,'game3.terms.'+termId);
+
+  var correctIdx = I18N[lang].game3.correctIndex[termId];
+  if (!s3.answered) s3.order = shuffle([0,1,2,3]);
+  var wrap = document.getElementById('g3-defs');
+  wrap.innerHTML = '';
+  var letters = ['A','B','C','D'];
+  s3.order.forEach(function(idx, pos){
+    var defs = t(lang,'game3.defs.'+termId);
+    var card = el('div','def-card');
+    if (s3.answered && idx===correctIdx) card.classList.add('correct');
+    if (s3.answered && idx===s3.picked && idx!==correctIdx) card.classList.add('wrong');
+    card.innerHTML = '<span class="letter">'+letters[pos]+'</span><span>'+defs[idx]+'</span>';
+    if (!s3.answered){
+      card.style.cursor='pointer';
+      card.addEventListener('click', function(){ answerGame3(idx, correctIdx); });
+    }
+    wrap.appendChild(card);
+  });
+
+  var fb = document.getElementById('g3-feedback');
+  fb.innerHTML = '';
+  if (s3.answered){
+    var correct = s3.picked === correctIdx;
+    var box = el('div','feedback-box'+(correct?' good':''));
+    box.innerHTML = '<strong>'+(correct? t(lang,'game3.feedback.correct') : t(lang,'game3.feedback.wrong'))+'</strong>';
+    fb.appendChild(box);
+    var actions = el('div','actions-row');
+    if (s3.round < 5){
+      var nextBtn = el('button','btn', t(lang,'common.nextRound'));
+      nextBtn.addEventListener('click', function(){ s3.round++; s3.answered=false; s3.picked=null; renderGame3(); });
+      actions.appendChild(nextBtn);
+    } else {
+      var tier = s3.score>=5?'high':(s3.score>=3?'mid':'low');
+      var res = el('div','feedback-box good');
+      res.innerHTML = '<strong>'+t(lang,'game3.results.title')+' — '+s3.score+'/6</strong><br>'+t(lang,'game3.results.'+tier);
+      fb.appendChild(res);
+      var againBtn = el('button','btn gold', t(lang,'common.playAgain'));
+      againBtn.addEventListener('click', resetGame3);
+      actions.appendChild(againBtn);
+    }
+    fb.appendChild(actions);
+  }
+}
+function answerGame3(idx, correctIdx){
+  if (s3.answered) return;
+  s3.picked = idx;
+  s3.answered = true;
+  if (idx === correctIdx) s3.score++;
+  renderGame3();
+}
+
+/* ============================= GAME 4: Perfect Hairstyle ============================= */
+var s4 = { round:0, score:0, hair:null, acc:null, locked:false };
+function resetGame4(){ s4 = { round:0, score:0, hair:null, acc:null, locked:false }; renderGame4(); }
+function renderGame4(){
+  var lang = state.lang;
+  document.getElementById('g4-round-pill').textContent = t(lang,'common.roundLabel')+' '+(s4.round+1)+'/4';
+  document.getElementById('g4-score-pill').textContent = t(lang,'common.scoreLabel')+': '+s4.score+'/8';
+  updateDoll4(s4.hair, s4.acc);
+
+  var occasion = G4_OCCASIONS[s4.round];
+  var controls = document.getElementById('g4-controls');
+  controls.innerHTML = '';
+
+  var box = el('div','scenario-box');
+  box.innerHTML = '<h4>'+t(lang,'game4.occasions.'+occasion.id+'.title')+'</h4><p>'+t(lang,'game4.occasions.'+occasion.id+'.desc')+'</p>';
+  controls.appendChild(box);
+
+  var hairBlock = el('div','cat-block');
+  hairBlock.appendChild(el('span','cat-label', t(lang,'game4.hairLabel')));
+  var hairRow = el('div','swatch-row');
+  G4_HAIR.forEach(function(id){
+    var btn = el('button','item-btn', t(lang,'game4.hair.'+id));
+    btn.setAttribute('aria-pressed', s4.hair===id?'true':'false');
+    btn.disabled = s4.locked;
+    btn.addEventListener('click', function(){ s4.hair=id; renderGame4(); });
+    hairRow.appendChild(btn);
+  });
+  hairBlock.appendChild(hairRow);
+  controls.appendChild(hairBlock);
+
+  var accBlock = el('div','cat-block');
+  accBlock.appendChild(el('span','cat-label', t(lang,'game1.cat.accessory')));
+  var accRow = el('div','swatch-row');
+  G4_ACC.forEach(function(id){
+    var btn = el('button','item-btn', t(lang,'game4.acc.'+id));
+    btn.setAttribute('aria-pressed', s4.acc===id?'true':'false');
+    btn.disabled = s4.locked;
+    btn.addEventListener('click', function(){ s4.acc=id; renderGame4(); });
+    accRow.appendChild(btn);
+  });
+  accBlock.appendChild(accRow);
+  controls.appendChild(accBlock);
+
+  var actions = el('div','actions-row');
+  if (!s4.locked){
+    var confirmBtn = el('button','btn', t(lang,'common.confirm'));
+    confirmBtn.disabled = !(s4.hair && s4.acc);
+    confirmBtn.addEventListener('click', confirmHair4);
+    actions.appendChild(confirmBtn);
+  } else if (s4.round < 3){
+    var nextBtn = el('button','btn', t(lang,'common.nextRound'));
+    nextBtn.addEventListener('click', function(){ s4.round++; s4.locked=false; s4.hair=null; s4.acc=null; renderGame4(); });
+    actions.appendChild(nextBtn);
+  } else {
+    var againBtn = el('button','btn gold', t(lang,'common.playAgain'));
+    againBtn.addEventListener('click', resetGame4);
+    actions.appendChild(againBtn);
+  }
+  controls.appendChild(actions);
+
+  var fb = document.getElementById('g4-feedback');
+  fb.innerHTML = '';
+  if (s4.locked){
+    var pts = s4.lastPts;
+    var box2 = el('div','feedback-box'+(pts>=1?' good':''));
+    box2.innerHTML = '<strong>'+pts+'/2</strong> — '+t(lang,'game4.feedback.'+pts)+'<br>'+t(lang,'game4.occasionFeedback.'+occasion.id);
+    if (s4.round===3){
+      var tier = s4.score>=6?'high':(s4.score>=3?'mid':'low');
+      var res = el('div','feedback-box good');
+      res.innerHTML = '<strong>'+t(lang,'game4.results.title')+' — '+s4.score+'/8</strong><br>'+t(lang,'game4.results.'+tier);
+      fb.appendChild(res);
+    }
+    fb.appendChild(box2);
+  }
+}
+function confirmHair4(){
+  var occasion = G4_OCCASIONS[s4.round];
+  var pts = 0;
+  if (occasion.hair.indexOf(s4.hair) !== -1) pts++;
+  if (occasion.acc.indexOf(s4.acc) !== -1) pts++;
+  s4.lastPts = pts;
+  s4.score += pts;
+  s4.locked = true;
+  renderGame4();
+}
+
+/* ============================= GAME 5: Match the Colors ============================= */
+var s5 = { round:0, score:0, answered:false, order:[] };
+function resetGame5(){ s5 = { round:0, score:0, answered:false, order:[] }; renderGame5(); }
+function renderGame5(){
+  var lang = state.lang;
+  document.getElementById('g5-round-pill').textContent = t(lang,'common.roundLabel')+' '+(s5.round+1)+'/6';
+  document.getElementById('g5-score-pill').textContent = t(lang,'common.scoreLabel')+': '+s5.score+'/6';
+  var round = G5_ROUNDS[s5.round];
+  document.getElementById('g5-base').style.background = round.base;
+
+  if (!s5.answered) s5.order = shuffle(round.options.map(function(o,i){ return i; }));
+  var wrap = document.getElementById('g5-options');
+  wrap.innerHTML = '';
+  s5.order.forEach(function(idx){
+    var opt = round.options[idx];
+    var sw = el('button','color-opt');
+    sw.style.background = opt.hex;
+    sw.setAttribute('aria-label', opt.hex);
+    if (s5.answered && opt.correct) sw.classList.add('correct');
+    if (s5.answered && idx===s5.picked && !opt.correct) sw.classList.add('wrong');
+    sw.disabled = s5.answered;
+    sw.addEventListener('click', function(){ answerGame5(idx); });
+    wrap.appendChild(sw);
+  });
+
+  var fb = document.getElementById('g5-feedback');
+  fb.innerHTML = '';
+  if (s5.answered){
+    var picked = round.options[s5.picked];
+    var box = el('div','feedback-box'+(picked.correct?' good':''));
+    box.innerHTML = '<strong>'+(picked.correct? t(lang,'game5.feedback.correct') : t(lang,'game5.feedback.wrong'))+'</strong><div class="color-explain" style="margin-top:8px;">'+t(lang,'game5.explain.'+round.id)+'</div>';
+    fb.appendChild(box);
+    var actions = el('div','actions-row');
+    if (s5.round < 5){
+      var nextBtn = el('button','btn', t(lang,'common.nextRound'));
+      nextBtn.addEventListener('click', function(){ s5.round++; s5.answered=false; s5.picked=null; renderGame5(); });
+      actions.appendChild(nextBtn);
+    } else {
+      var tier = s5.score>=5?'high':(s5.score>=3?'mid':'low');
+      var res = el('div','feedback-box good');
+      res.innerHTML = '<strong>'+t(lang,'game5.results.title')+' — '+s5.score+'/6</strong><br>'+t(lang,'game5.results.'+tier);
+      fb.appendChild(res);
+      var againBtn = el('button','btn gold', t(lang,'common.playAgain'));
+      againBtn.addEventListener('click', resetGame5);
+      actions.appendChild(againBtn);
+    }
+    fb.appendChild(actions);
+  }
+}
+function answerGame5(idx){
+  if (s5.answered) return;
+  var round = G5_ROUNDS[s5.round];
+  s5.picked = idx;
+  s5.answered = true;
+  if (round.options[idx].correct) s5.score++;
+  renderGame5();
+}
+
+/* ============================= POSTS ============================= */
+function renderPosts(){
+  var lang = state.lang;
+  var posts = I18N[lang].posts;
+  var grid = document.getElementById('posts-grid');
+  grid.innerHTML = '';
+  posts.forEach(function(post, i){
+    var card = el('div','post-card');
+    var readMoreLabel = lang==='es' ? 'Leer más' : (lang==='de' ? 'Weiterlesen' : 'Read more');
+    var readLessLabel = lang==='es' ? 'Leer menos' : (lang==='de' ? 'Weniger anzeigen' : 'Read less');
+    card.innerHTML =
+      '<div class="post-banner">'+post.icon+'</div>'+
+      '<div class="post-body">'+
+        '<span class="post-tag">'+post.tag+'</span>'+
+        '<h3>'+post.title+'</h3>'+
+        '<p class="post-excerpt">'+post.excerpt+'</p>'+
+        '<p class="post-full">'+post.body+'</p>'+
+        '<button class="btn small secondary read-toggle">'+readMoreLabel+'</button>'+
+      '</div>';
+    var btn = card.querySelector('.read-toggle');
+    var full = card.querySelector('.post-full');
+    btn.addEventListener('click', function(){
+      var open = full.classList.toggle('open');
+      btn.textContent = open ? readLessLabel : readMoreLabel;
+    });
+    grid.appendChild(card);
+    if (i === 2){
+      var ad = el('div','ad-slot');
+      ad.style.gridColumn = '1 / -1';
+      ad.textContent = t(lang,'common.adLabel');
+      grid.appendChild(ad);
+    }
+  });
+}
+
+/* ============================= GAME OPEN/CLOSE ============================= */
+function openGame(n){
+  state.active = n;
+  document.getElementById('games-grid').style.display = 'none';
+  for (var i=1;i<=5;i++){ document.getElementById('panel-'+i).hidden = (i!==n); }
+  document.getElementById('panel-'+n).scrollIntoView({behavior:'smooth', block:'start'});
+}
+function closeGame(){
+  state.active = null;
+  document.getElementById('games-grid').style.display = '';
+  for (var i=1;i<=5;i++){ document.getElementById('panel-'+i).hidden = true; }
+  document.getElementById('games').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ============================= INIT ============================= */
+function renderAll(){
+  applyStaticI18n();
+  renderGame1();
+  renderGame2();
+  renderGame3();
+  renderGame4();
+  renderGame5();
+  renderPosts();
+}
+function setLanguage(lang){
+  state.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.setAttribute('aria-pressed', b.getAttribute('data-lang')===lang ? 'true':'false');
+  });
+  renderAll();
+}
+
+document.addEventListener('click', function(e){
+  var openBtn = e.target.closest('[data-open]');
+  if (openBtn){ openGame(parseInt(openBtn.getAttribute('data-open'),10)); return; }
+  var closeBtn = e.target.closest('[data-close]');
+  if (closeBtn){ closeGame(); return; }
+  var langBtn = e.target.closest('.lang-btn');
+  if (langBtn){ setLanguage(langBtn.getAttribute('data-lang')); return; }
+});
+
+resetGame1(); resetGame2(); resetGame3(); resetGame4(); resetGame5();
+renderAll();
+
+})();
+</script>
+</body>
+</html>
