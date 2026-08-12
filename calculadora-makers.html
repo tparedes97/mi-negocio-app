@@ -8,160 +8,347 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Quicksand:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#fdf0f5; --sage:#b98fd1; --sage-dark:#8a5fae; --clay:#e8628f;
-    --brown:#3d1f36; --line:#f3d3de;
+    --cream:#fdf3f6; --paper:#ffffff; --sage:#b98fd1; --sage-dark:#8a5fae; --clay:#e8628f;
+    --brown:#3d1f36; --line:#f3d3de; --muted:#8a6b7c;
     --pink-50:#fdedf2; --pink-100:#fbdbe6; --pink-200:#f6c3d6;
-    --plum-800:#4a2140; --gold:#eab766; --coral:#f2789a;
-    --shadow-pink: 0 10px 30px -12px rgba(216,90,134,0.28);
+    --lavender-50:#f6effc; --plum-800:#4a2140; --plum-900:#33122e; --gold:#eab766; --coral:#f2789a;
+    --shadow-pink: 0 10px 30px -14px rgba(216,90,134,0.32);
+    --shadow-card: 0 16px 34px -24px rgba(107,44,84,0.28);
+    --nav-h: 74px;
+    --container-max: 1320px;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  html{ -webkit-font-smoothing:antialiased; }
-  body{
-    background:
-      radial-gradient(circle at 12% 8%, #fbe0ea 0%, transparent 45%),
-      radial-gradient(circle at 88% 6%, #e4d4f5 0%, transparent 40%),
-      radial-gradient(circle at 90% 92%, #fbe0ea 0%, transparent 45%),
-      linear-gradient(160deg, #fdf2f6 0%, #f6ecf9 100%);
-    background-attachment:fixed;
-    color:var(--brown); font-family:'Quicksand', sans-serif; font-weight:500;
-    min-height:100vh; display:flex; justify-content:center; padding:28px 14px 60px;
-  }
-  .app{
-    width:100%; max-width:460px; background:#fffbfc; border-radius:28px;
-    padding:22px 18px 26px; box-shadow:0 24px 60px -24px rgba(107,44,84,0.35), 0 0 0 1px #fbe4ec;
-    position:relative; overflow:hidden;
-  }
-  .app::before{
-    content:""; position:absolute; top:-60px; right:-60px; width:160px; height:160px;
-    background:radial-gradient(circle, #f6c9da 0%, transparent 70%); pointer-events:none;
-  }
-  header{ margin-bottom:18px; text-align:center; position:relative; }
-  .lang-toggle{ display:flex; justify-content:center; align-items:center; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
-  .lang-toggle button{ padding:6px 15px; border:1.5px solid var(--sage); border-radius:20px; background:#fff; color:var(--sage-dark); font-family:'Quicksand', sans-serif; font-size:11px; font-weight:700; letter-spacing:.03em; cursor:pointer; transition:transform .15s ease, background .15s ease; }
+  html{ -webkit-font-smoothing:antialiased; scroll-behavior:smooth; scroll-padding-top:calc(var(--nav-h) + 16px); }
+  body{ background:var(--cream); color:var(--brown); font-family:'Quicksand', sans-serif; font-weight:500; line-height:1.5; }
+  img,svg{ max-width:100%; display:block; }
+  button{ font-family:inherit; }
+  .container{ width:100%; max-width:var(--container-max); margin-inline:auto; padding-inline:clamp(18px,4vw,48px); }
+  a{ color:inherit; }
+  h1,h2,h3{ text-wrap:balance; }
+  :focus-visible{ outline:2.5px solid var(--sage-dark); outline-offset:2px; border-radius:4px; }
+
+  /* ---------- Header / Nav ---------- */
+  .site-header{ position:sticky; top:0; z-index:60; height:var(--nav-h); display:flex; align-items:center;
+    background:rgba(255,251,253,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; gap:18px; }
+  .logo{ font-family:'Cormorant Garamond', serif; font-weight:700; font-style:italic; font-size:24px; color:var(--brown); text-decoration:none; white-space:nowrap; }
+  .logo span{ color:var(--clay); }
+  .nav-toggle{ display:none; flex-direction:column; justify-content:center; gap:4px; width:38px; height:34px; border:1.3px solid var(--line); border-radius:10px; background:#fff; cursor:pointer; }
+  .nav-toggle span{ display:block; width:18px; height:2px; background:var(--brown); margin-inline:auto; border-radius:2px; }
+  .nav-panel{ display:flex; align-items:center; gap:22px; flex:1; justify-content:flex-end; }
+  .nav-links{ display:flex; gap:4px; }
+  .nav-links .main-tab-btn{ border:none; background:none; padding:9px 13px; border-radius:20px; font-size:13.5px; font-weight:700; color:var(--muted); cursor:pointer; transition:background .15s ease, color .15s ease; white-space:nowrap; }
+  .nav-links .main-tab-btn:hover{ background:var(--pink-50); color:var(--brown); }
+  .nav-links .main-tab-btn.active{ background:var(--clay); color:#fff; }
+  .nav-controls{ display:flex; align-items:center; gap:10px; }
+  .lang-toggle{ display:flex; gap:5px; }
+  .lang-toggle button{ padding:6px 13px; border:1.5px solid var(--sage); border-radius:20px; background:#fff; color:var(--sage-dark); font-size:11px; font-weight:700; letter-spacing:.03em; cursor:pointer; transition:transform .15s ease, background .15s ease; }
   .lang-toggle button:hover{ transform:translateY(-1px); }
   .lang-toggle button.active{ background:var(--sage); color:#fff; box-shadow:0 4px 12px -4px rgba(138,95,174,0.5); }
-  .eyebrow{ font-family:'Caveat', cursive; font-size:20px; font-weight:700; letter-spacing:.01em; color:var(--clay); transform:rotate(-2deg); display:inline-block; }
-  h1{ font-family:'Cormorant Garamond', serif; font-weight:700; font-style:italic; font-size:29px; margin-top:2px; line-height:1.15; text-wrap:balance; color:var(--brown); }
-  .sub{ font-size:12.5px; color:#8a6b7c; margin-top:8px; font-weight:500; }
+  .currency-select{ padding:7px 10px; border:1.5px solid var(--sage); border-radius:20px; background:#fff; color:var(--sage-dark); font-family:'Quicksand', sans-serif; font-size:11px; font-weight:700; cursor:pointer; }
+  .btn-cta{ padding:10px 18px; border:none; border-radius:20px; background:linear-gradient(135deg, var(--clay), var(--coral)); color:#fff; font-weight:700; font-size:12.5px; cursor:pointer; box-shadow:var(--shadow-pink); transition:transform .15s ease; white-space:nowrap; }
+  .btn-cta:hover{ transform:translateY(-1px); }
+  .nav-controls .btn-cta{ display:none; }
 
-  .cat-tabs{ display:flex; gap:7px; margin-bottom:18px; }
-  .cat-tabs button{ flex:1; padding:11px 4px; border:1.5px solid var(--line); border-radius:16px; background:#fff; font-family:'Quicksand',sans-serif; font-size:11.5px; font-weight:700; color:var(--brown); cursor:pointer; transition:all .15s ease; }
+  /* ---------- Hero ---------- */
+  .hero{ position:relative; overflow:hidden;
+    background:
+      radial-gradient(circle at 8% 15%, #fbdcea 0%, transparent 45%),
+      radial-gradient(circle at 92% 0%, #e4d4f5 0%, transparent 42%),
+      linear-gradient(160deg, #fdf2f6 0%, #f6ecf9 100%);
+    padding-block:56px 68px; }
+  .hero-grid{ display:grid; grid-template-columns:1fr; gap:44px; align-items:center; }
+  .eyebrow{ font-family:'Caveat', cursive; font-size:21px; font-weight:700; color:var(--clay); display:inline-block; transform:rotate(-2deg); }
+  .hero h1{ font-family:'Cormorant Garamond', serif; font-weight:700; font-style:italic; font-size:clamp(2.1rem, 1.55rem + 2.1vw, 3.6rem); line-height:1.08; margin-top:10px; color:var(--brown); max-width:14ch; }
+  .hero .sub{ font-size:clamp(14px,1.1vw + 10px,17px); color:var(--muted); margin-top:16px; max-width:46ch; }
+  .hero-ctas{ display:flex; gap:12px; margin-top:26px; flex-wrap:wrap; }
+  .btn-ghost{ padding:12px 22px; border:1.5px solid var(--sage); border-radius:22px; background:#fff; color:var(--sage-dark); font-weight:700; font-size:13.5px; cursor:pointer; }
+  .hero-ctas .btn-cta{ padding:12px 24px; font-size:13.5px; }
+  .hero-stats{ display:flex; gap:22px; margin-top:30px; flex-wrap:wrap; }
+  .hero-stats .stat b{ display:block; font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--clay); }
+  .hero-stats .stat span{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; font-weight:700; }
+
+  .hero-visual{ position:relative; min-height:280px; }
+  .floating-badge{ position:absolute; width:52px; height:52px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:var(--shadow-card); animation:float 6s ease-in-out infinite; }
+  .badge-1{ top:6%; left:4%; animation-delay:0s; }
+  .badge-2{ top:64%; left:0%; animation-delay:1.4s; }
+  .badge-3{ top:2%; right:10%; animation-delay:.7s; }
+  @keyframes float{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-10px);} }
+  .preview-card{ margin-inline:auto; max-width:300px; background:linear-gradient(160deg, var(--plum-800), #6b2c54); color:var(--cream); border-radius:22px; padding:22px; box-shadow:0 26px 50px -20px rgba(74,33,64,0.55); transform:rotate(2deg); }
+  .preview-card-title{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:18px; margin-bottom:12px; }
+  .preview-line{ display:flex; justify-content:space-between; font-size:12px; padding:5px 0; border-bottom:1px solid rgba(253,240,245,0.14); }
+  .preview-final{ display:flex; justify-content:space-between; align-items:baseline; margin-top:10px; padding-top:10px; border-top:1.5px solid var(--gold); font-family:'Cormorant Garamond',serif; font-size:19px; font-weight:700; }
+  .preview-final b{ color:var(--gold); }
+
+  /* ---------- Sections (shared) ---------- */
+  .section-head{ max-width:56ch; margin-bottom:30px; }
+  .section-kicker{ font-family:'Quicksand',sans-serif; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--sage-dark); }
+  .section-head h2{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:clamp(1.6rem, 1.2rem + 1.3vw, 2.3rem); margin-top:6px; color:var(--brown); }
+  .section-head p{ margin-top:10px; font-size:14px; color:var(--muted); }
+  .main-section{ padding-block:60px; }
+  .main-section:nth-of-type(odd){ background:var(--paper); }
+  #section-recetas{ background:var(--lavender-50); }
+  #section-consejos{ background:var(--pink-50); }
+  #section-ia{ background:var(--paper); }
+
+  .ad-slot{ border:1.5px dashed var(--pink-200); border-radius:16px; padding:16px; text-align:center; font-size:10.5px; font-weight:700; color:var(--clay); letter-spacing:.05em; text-transform:uppercase; margin-block:28px; background:var(--pink-50); }
+
+  /* ---------- Categories ---------- */
+  .categories-bar{ margin-bottom:26px; }
+  .categories-bar .label{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:10px; display:block; }
+  .cat-tabs{ display:flex; gap:10px; flex-wrap:wrap; }
+  .cat-tabs button{ padding:12px 20px; border:1.5px solid var(--line); border-radius:18px; background:#fff; font-size:13px; font-weight:700; color:var(--brown); cursor:pointer; transition:all .15s ease; }
+  .cat-tabs button:hover{ border-color:var(--clay); }
   .cat-tabs button.active{ background:linear-gradient(135deg, var(--clay), var(--coral)); color:#fff; border-color:transparent; box-shadow:var(--shadow-pink); }
-  .tab-section{ display:none; }
-  .tab-section.active{ display:block; }
 
-  .ad-slot{ border:1.5px dashed var(--pink-200); border-radius:16px; padding:14px; text-align:center; font-family:'Quicksand',sans-serif; font-size:10.5px; font-weight:700; color:var(--clay); letter-spacing:.05em; text-transform:uppercase; margin:18px 0; background:var(--pink-50); }
-  .card{ background:#fffdfd; border:1px solid var(--line); border-radius:20px; padding:18px; margin-bottom:16px; box-shadow:0 12px 28px -20px rgba(107,44,84,0.25); }
-  .card h2{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:19px; margin-bottom:10px; color:var(--brown); }
-  .card .note{ font-size:11.5px; color:#8a6b7c; margin-bottom:12px; line-height:1.55; }
+  /* ---------- Calculator layout ---------- */
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+  .calc-layout{ display:grid; grid-template-columns:1fr; gap:28px; align-items:start; }
+  .calc-main{ display:flex; flex-direction:column; gap:24px; min-width:0; }
+  .card{ background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:24px; box-shadow:var(--shadow-card); }
+  .card h2{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:21px; margin-bottom:10px; color:var(--brown); }
+  .card .note{ font-size:12.5px; color:var(--muted); margin-bottom:16px; line-height:1.55; max-width:60ch; }
+  .table-scroll{ overflow-x:auto; }
 
-  label{ font-family:'Quicksand', sans-serif; font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; font-weight:700; color:#a97e91; display:block; margin-bottom:4px; }
-  input, select{ width:100%; border:1.3px solid var(--line); border-radius:12px; padding:9px 11px; font-family:'Quicksand',sans-serif; font-weight:600; font-size:13px; background:#fffdfb; color:var(--brown); }
+  label{ font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; font-weight:700; color:#a97e91; display:block; margin-bottom:5px; }
+  input, select{ width:100%; border:1.3px solid var(--line); border-radius:12px; padding:10px 12px; font-family:'Quicksand',sans-serif; font-weight:600; font-size:13.5px; background:#fffdfb; color:var(--brown); }
   input:focus, select:focus{ outline:2px solid var(--sage); outline-offset:1px; border-color:var(--sage); }
 
-  .ing-row{ background:var(--pink-50); border:1px solid var(--line); border-radius:16px; padding:13px; margin-bottom:11px; position:relative; }
-  .ing-row .remove{ position:absolute; top:8px; right:8px; width:22px; height:22px; display:flex; align-items:center; justify-content:center; background:#fff; border:1px solid var(--pink-200); border-radius:50%; color:var(--clay); font-size:12px; cursor:pointer; font-weight:700; }
-  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
-  .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:8px; }
-  .row-cost{ font-family:'Quicksand', sans-serif; font-size:11.5px; color:var(--sage-dark); margin-top:6px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .ingredients-grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:14px; }
+  .ing-row{ background:var(--pink-50); border:1px solid var(--line); border-radius:16px; padding:16px; position:relative; }
+  .ing-row .remove{ position:absolute; top:10px; right:10px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:#fff; border:1px solid var(--pink-200); border-radius:50%; color:var(--clay); font-size:12px; cursor:pointer; font-weight:700; }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+  .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:10px; }
+  .row-cost{ font-size:11.5px; color:var(--sage-dark); margin-top:6px; font-weight:700; font-variant-numeric:tabular-nums; }
 
-  .add-btn{ width:100%; padding:12px; border:1.5px dashed var(--clay); border-radius:14px; background:var(--pink-50); color:var(--clay); font-family:'Quicksand',sans-serif; font-weight:700; font-size:12.5px; cursor:pointer; margin-top:4px; transition:background .15s ease; }
+  .add-btn{ width:100%; padding:13px; border:1.5px dashed var(--clay); border-radius:14px; background:var(--pink-50); color:var(--clay); font-weight:700; font-size:13px; cursor:pointer; transition:background .15s ease; }
   .add-btn:hover{ background:var(--pink-100); }
 
-  .summary{ background:linear-gradient(160deg, var(--plum-800), #6b2c54); color:var(--cream); border-radius:20px; padding:20px; margin-bottom:16px; box-shadow:0 16px 32px -18px rgba(74,33,64,0.55); }
-  .summary .line{ display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; padding:5px 0; border-bottom:1px solid rgba(253,240,245,0.14); font-variant-numeric:tabular-nums; }
+  .other-costs-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+  .field-full{ grid-column:1 / -1; }
+
+  .calc-summary-col{ position:static; }
+  .summary{ background:linear-gradient(160deg, var(--plum-800), #6b2c54); color:var(--cream); border-radius:20px; padding:26px; box-shadow:0 20px 40px -20px rgba(74,33,64,0.55); }
+  .summary .line{ display:flex; justify-content:space-between; gap:10px; font-size:12.5px; font-weight:600; padding:6px 0; border-bottom:1px solid rgba(253,240,245,0.14); font-variant-numeric:tabular-nums; }
   .summary .line:last-child{ border-bottom:none; }
-  .summary .final{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:23px; margin-top:10px; padding-top:12px; border-top:1.5px solid var(--gold); display:flex; justify-content:space-between; align-items:baseline; font-variant-numeric:tabular-nums; }
+  .summary .final{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:25px; margin-top:12px; padding-top:14px; border-top:1.5px solid var(--gold); display:flex; justify-content:space-between; align-items:baseline; font-variant-numeric:tabular-nums; }
   .summary .final b{ color:var(--gold); }
 
-  table.eq-table{ width:100%; border-collapse:collapse; font-size:11.5px; }
-  table.eq-table th{ font-family:'Quicksand',sans-serif; font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; text-align:left; padding:6px 4px; color:#a97e91; border-bottom:1.5px solid var(--line); }
-  table.eq-table td{ padding:7px 4px; border-bottom:1px solid var(--line); font-weight:500; }
+  table.eq-table{ width:100%; min-width:420px; border-collapse:collapse; font-size:12.5px; }
+  table.eq-table th{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; text-align:left; padding:8px 6px; color:#a97e91; border-bottom:1.5px solid var(--line); }
+  table.eq-table td{ padding:8px 6px; border-bottom:1px solid var(--line); font-weight:500; }
   table.eq-table tr:last-child td{ border-bottom:none; }
 
-  .tip{ background:var(--pink-50); border:1px solid var(--pink-200); border-radius:14px; padding:11px 13px; margin-bottom:10px; font-size:11.5px; line-height:1.55; }
-  .tip b{ display:block; margin-bottom:3px; color:var(--clay); font-size:12px; }
-
-  .main-section{ display:none; }
-  .main-section.active{ display:block; }
-
-  .content-card{ background:#fffdfd; border:1px solid var(--line); border-radius:20px; padding:18px; margin-bottom:14px; box-shadow:0 12px 28px -20px rgba(107,44,84,0.25); }
-  .content-card .kicker{ font-family:'Quicksand',sans-serif; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--sage-dark); }
-  .content-card h3{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:18px; margin-top:6px; margin-bottom:9px; color:var(--brown); }
-  .content-card p{ font-size:12.5px; line-height:1.6; color:#6b4f5e; margin-bottom:6px; }
-  .content-card ul{ padding-left:18px; margin-bottom:6px; }
-  .content-card li{ font-size:12.5px; line-height:1.6; color:#6b4f5e; margin-bottom:3px; }
-  .safety-note{ background:#fdeae6; border:1px solid #f0b8a8; border-radius:12px; padding:10px 12px; font-size:11.5px; color:#8a3a24; line-height:1.5; margin-top:8px; }
+  /* ---------- Content card grids ---------- */
+  #recetas-container, #consejos-container, #ia-container{ display:grid; grid-template-columns:1fr; gap:22px; }
+  .content-card{ background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:22px; box-shadow:var(--shadow-card); }
+  .content-card .kicker{ font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--sage-dark); }
+  .content-card h3{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:19px; margin-top:6px; margin-bottom:10px; color:var(--brown); }
+  .content-card p{ font-size:13px; line-height:1.6; color:#6b4f5e; margin-bottom:6px; }
+  .content-card ul{ padding-left:19px; margin-bottom:6px; }
+  .content-card li{ font-size:13px; line-height:1.6; color:#6b4f5e; margin-bottom:4px; }
+  .safety-note{ background:#fdeae6; border:1px solid #f0b8a8; border-radius:12px; padding:11px 13px; font-size:12px; color:#8a3a24; line-height:1.5; margin-top:10px; }
   .safety-note b{ display:block; margin-bottom:2px; }
-  .recipe-subtabs{ display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
-  .recipe-subtabs button{ padding:7px 14px; border:1.3px solid var(--line); border-radius:20px; background:#fff; font-family:'Quicksand',sans-serif; font-size:11px; font-weight:700; cursor:pointer; color:var(--brown); }
+  .recipe-subtabs{ grid-column:1 / -1; display:flex; gap:8px; flex-wrap:wrap; }
+  .recipe-subtabs button{ padding:8px 16px; border:1.3px solid var(--line); border-radius:20px; background:#fff; font-size:12px; font-weight:700; cursor:pointer; color:var(--brown); }
   .recipe-subtabs button.active{ background:var(--sage); color:#fff; border-color:var(--sage); }
 
-  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+  /* ---------- Footer ---------- */
+  .site-footer{ background:linear-gradient(160deg, var(--plum-900), var(--plum-800)); color:var(--pink-50); padding-block:44px 28px; }
+  .footer-inner{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px; }
+  .footer-logo{ font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:700; font-size:20px; }
+  .footer-tag{ font-size:12.5px; color:#e6c8d8; margin-top:4px; }
+  .footer-rights{ font-size:11px; color:#c9a3bb; }
+
+  /* ---------- Motion ---------- */
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } html{ scroll-behavior:auto; } }
+
+  /* ---------- Breakpoints ---------- */
+  @media (min-width:640px){
+    .other-costs-grid{ grid-template-columns:1fr 1fr; }
+    .ingredients-grid{ grid-template-columns:1fr 1fr; }
+    #consejos-container, #ia-container{ grid-template-columns:1fr 1fr; }
+  }
+  @media (min-width:860px){
+    .hero-grid{ grid-template-columns:1.15fr 0.85fr; }
+  }
+  @media (min-width:900px){
+    .nav-toggle{ display:none; }
+    .nav-panel{ display:flex !important; position:static; box-shadow:none; padding:0; background:none; }
+    .nav-controls .btn-cta{ display:inline-block; }
+  }
+  @media (max-width:899px){
+    .nav-panel{ position:absolute; top:var(--nav-h); left:0; right:0; background:#fffbfc; border-bottom:1px solid var(--line);
+      flex-direction:column; align-items:stretch; gap:16px; padding:18px clamp(18px,4vw,48px) 24px; display:none;
+      box-shadow:0 20px 30px -20px rgba(107,44,84,0.3); }
+    .nav-panel.open{ display:flex; }
+    .nav-links{ flex-direction:column; gap:2px; }
+    .nav-links .main-tab-btn{ text-align:left; padding:11px 13px; }
+    .nav-controls{ flex-wrap:wrap; }
+    .nav-controls .btn-cta{ display:inline-block; width:100%; text-align:center; }
+    .nav-toggle{ display:flex; }
+  }
+  @media (min-width:960px){
+    .calc-layout{ grid-template-columns:minmax(0,1fr) 380px; }
+    .calc-summary-col{ position:sticky; top:calc(var(--nav-h) + 24px); }
+    .ingredients-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (min-width:1100px){
+    #recetas-container, #consejos-container, #ia-container{ grid-template-columns:repeat(3,1fr); }
+  }
+  @media (max-width:539px){
+    .cat-tabs{ flex-direction:column; }
+    .cat-tabs button{ width:100%; }
+    .grid2, .grid3{ grid-template-columns:1fr; }
+    .hero-ctas{ flex-direction:column; }
+    .hero-ctas button{ width:100%; }
+  }
 </style>
 </head>
 <body>
-<div class="app">
 
-  <header>
-    <div class="lang-toggle">
-      <button id="lang-es" class="active">ES</button>
-      <button id="lang-en">EN</button>
-      <select id="currency-select" style="width:auto; padding:6px 10px; border:1.5px solid var(--sage); border-radius:20px; background:#fff; color:var(--sage-dark); font-family:'Quicksand', sans-serif; font-size:10.5px; font-weight:700;">
-        <option value="PEN">S/ Soles (PEN)</option>
-        <option value="USD">$ Dólares (USD)</option>
-        <option value="MXN">$ Pesos MX (MXN)</option>
-        <option value="COP">$ Pesos COP (COP)</option>
-        <option value="CLP">$ Pesos CL (CLP)</option>
-        <option value="ARS">$ Pesos AR (ARS)</option>
-        <option value="EUR">€ Euros (EUR)</option>
-      </select>
+<header class="site-header">
+  <div class="container nav-inner">
+    <a class="logo" href="#top">✨ Coste<span>álo</span></a>
+    <button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+    <div id="nav-panel" class="nav-panel">
+      <nav class="nav-links" aria-label="Secciones">
+        <button class="main-tab-btn active" data-section="calc" data-i18n="navCalc">🧮 Calculadora</button>
+        <button class="main-tab-btn" data-section="recetas" data-i18n="navRecetas">📖 Recetas</button>
+        <button class="main-tab-btn" data-section="consejos" data-i18n="navConsejos">💡 Consejos</button>
+        <button class="main-tab-btn" data-section="ia" data-i18n="navIA">🤖 IA</button>
+      </nav>
+      <div class="nav-controls">
+        <div class="lang-toggle">
+          <button id="lang-es" class="active">ES</button>
+          <button id="lang-en">EN</button>
+        </div>
+        <select id="currency-select" class="currency-select">
+          <option value="PEN">S/ Soles (PEN)</option>
+          <option value="USD">$ Dólares (USD)</option>
+          <option value="MXN">$ Pesos MX (MXN)</option>
+          <option value="COP">$ Pesos COP (COP)</option>
+          <option value="CLP">$ Pesos CL (CLP)</option>
+          <option value="ARS">$ Pesos AR (ARS)</option>
+          <option value="EUR">€ Euros (EUR)</option>
+        </select>
+        <button class="btn-cta scroll-to-calc" data-t="heroCta"></button>
+      </div>
     </div>
-    <div class="eyebrow" data-i18n="eyebrow">para makers</div>
-    <h1 data-i18n="title">¿Cuánto cobro por esto?</h1>
-    <div class="sub" data-i18n="subtitle">Calcula el precio real de tu producto, insumo por insumo</div>
-  </header>
-
-  <nav class="cat-tabs" id="main-tabs" style="margin-bottom:10px;">
-    <button class="main-tab-btn active" data-section="calc" data-i18n="navCalc">🧮 Calculadora</button>
-    <button class="main-tab-btn" data-section="recetas" data-i18n="navRecetas">📖 Recetas</button>
-    <button class="main-tab-btn" data-section="consejos" data-i18n="navConsejos">💡 Consejos</button>
-    <button class="main-tab-btn" data-section="ia" data-i18n="navIA">🤖 IA</button>
-  </nav>
-
-  <div id="section-calc" class="main-section active">
-  <div class="cat-tabs" id="cat-tabs">
-    <button class="tab-btn active" data-cat="reposteria" data-i18n="tabReposteria">🧁 Repostería</button>
-    <button class="tab-btn" data-cat="velas" data-i18n="tabVelas">🕯️ Velas/Jabones</button>
-    <button class="tab-btn" data-cat="resina" data-i18n="tabResina">💧 Resina</button>
   </div>
+</header>
 
-  <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+<main id="top">
 
-  <div id="calc-container"></div>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow" data-i18n="eyebrow">para makers</div>
+        <h1 data-i18n="title">¿Cuánto cobro por esto?</h1>
+        <p class="sub" data-i18n="subtitle">Calcula el precio real de tu producto, insumo por insumo</p>
+        <div class="hero-ctas">
+          <button class="btn-cta scroll-to-calc" data-t="heroCta"></button>
+          <button class="btn-ghost scroll-to-recetas" data-t="navRecetas"></button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><b>3</b><span data-t="statCategories">Categorías</span></div>
+          <div class="stat"><b>+20</b><span data-t="statIngredients">Insumos precargados</span></div>
+          <div class="stat"><b>7</b><span data-t="statCurrencies">Monedas</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="floating-badge badge-1">🧁</div>
+        <div class="floating-badge badge-2">🕯️</div>
+        <div class="floating-badge badge-3">💧</div>
+        <div class="preview-card">
+          <div class="preview-card-title" data-t="heroPreviewTitle"></div>
+          <div class="preview-line"><span data-t="heroPreviewIngredients"></span><span>S/ 6.40</span></div>
+          <div class="preview-line"><span data-t="heroPreviewLabor"></span><span>S/ 5.00</span></div>
+          <div class="preview-line"><span data-t="heroPreviewPackaging"></span><span>S/ 2.00</span></div>
+          <div class="preview-final"><span data-t="heroPreviewFinal"></span><b>S/ 21.00</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+  <section id="section-calc" class="main-section">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker" data-t="navCalc"></div>
+        <h2 data-t="calcSectionTitle"></h2>
+        <p data-t="calcSectionSub"></p>
+      </div>
+
+      <div class="categories-bar">
+        <span class="label" data-t="categoriesLabel"></span>
+        <div class="cat-tabs" id="cat-tabs">
+          <button class="tab-btn active" data-cat="reposteria" data-i18n="tabReposteria">🧁 Repostería</button>
+          <button class="tab-btn" data-cat="velas" data-i18n="tabVelas">🕯️ Velas/Jabones</button>
+          <button class="tab-btn" data-cat="resina" data-i18n="tabResina">💧 Resina</button>
+        </div>
+      </div>
+
+      <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+
+      <div id="calc-container"></div>
+
+      <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+    </div>
+  </section>
+
+  <section id="section-recetas" class="main-section">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker" data-t="navRecetas"></div>
+        <h2 data-t="recetasSectionTitle"></h2>
+        <p data-t="recetasSectionSub"></p>
+      </div>
+      <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+      <div id="recetas-container"></div>
+      <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+    </div>
+  </section>
+
+  <section id="section-consejos" class="main-section">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker" data-t="navConsejos"></div>
+        <h2 data-t="consejosSectionTitle"></h2>
+        <p data-t="consejosSectionSub"></p>
+      </div>
+      <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+      <div id="consejos-container"></div>
+      <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+    </div>
+  </section>
+
+  <section id="section-ia" class="main-section">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker" data-t="navIA"></div>
+        <h2 data-t="iaSectionTitle"></h2>
+        <p data-t="iaSectionSub"></p>
+      </div>
+      <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+      <div id="ia-container"></div>
+      <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <div class="footer-logo">✨ Costéalo</div>
+      <div class="footer-tag" data-t="footerTagline"></div>
+    </div>
+    <div class="footer-rights" data-t="footerRights"></div>
   </div>
-
-  <div id="section-recetas" class="main-section">
-    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
-    <div id="recetas-container"></div>
-    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
-  </div>
-
-  <div id="section-consejos" class="main-section">
-    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
-    <div id="consejos-container"></div>
-    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
-  </div>
-
-  <div id="section-ia" class="main-section">
-    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
-    <div id="ia-container"></div>
-    <div class="ad-slot" data-i18n="ad">espacio publicitario</div>
-  </div>
-
-</div>
+</footer>
 
 <script>
 let LANG = 'es';
@@ -180,6 +367,26 @@ const GLOBAL_T = {
   navRecetas:{es:"📖 Recetas", en:"📖 Recipes"},
   navConsejos:{es:"💡 Consejos", en:"💡 Tips"},
   navIA:{es:"🤖 IA", en:"🤖 AI"},
+  heroCta:{es:"Comenzar a calcular →", en:"Start calculating →"},
+  statCategories:{es:"Categorías", en:"Categories"},
+  statIngredients:{es:"Insumos precargados", en:"Preloaded ingredients"},
+  statCurrencies:{es:"Monedas", en:"Currencies"},
+  categoriesLabel:{es:"Elige tu categoría", en:"Choose your category"},
+  calcSectionTitle:{es:"Calculadora de precios", en:"Price calculator"},
+  calcSectionSub:{es:"Completa los datos de tu receta y obtén el precio sugerido al instante.", en:"Fill in your recipe's details and get the suggested price instantly."},
+  recetasSectionTitle:{es:"Recetas paso a paso", en:"Step-by-step recipes"},
+  recetasSectionSub:{es:"Guías básicas para tus productos más populares.", en:"Basic guides for your most popular products."},
+  consejosSectionTitle:{es:"Consejos de negocio", en:"Business tips"},
+  consejosSectionSub:{es:"Ideas prácticas para vender mejor y cuidar tu margen.", en:"Practical ideas to sell better and protect your margin."},
+  iaSectionTitle:{es:"IA para tu negocio", en:"AI for your business"},
+  iaSectionSub:{es:"Usa la inteligencia artificial como una aliada más de tu marca.", en:"Use artificial intelligence as another ally for your brand."},
+  footerTagline:{es:"Hecho con cariño para makers que cobran lo justo.", en:"Made with love for makers who charge what's fair."},
+  footerRights:{es:"Todos los derechos reservados.", en:"All rights reserved."},
+  heroPreviewTitle:{es:"Vela de soja 🕯️", en:"Soy candle 🕯️"},
+  heroPreviewIngredients:{es:"Insumos", en:"Ingredients"},
+  heroPreviewLabor:{es:"Mano de obra", en:"Labor"},
+  heroPreviewPackaging:{es:"Empaque", en:"Packaging"},
+  heroPreviewFinal:{es:"Precio sugerido", en:"Suggested price"},
 };
 
 /* ---------- Diccionarios de insumos por categoría ---------- */
@@ -271,7 +478,7 @@ const RESIN_RATIOS = [
 
 /* ---------- Estado por categoría ---------- */
 const state = {};
-['reposteria','velas','resina'].forEach(cat => { state[cat] = { rows: [], counter: 0 }; });
+['reposteria','velas','resina'].forEach(cat => { state[cat] = { rows: [], counter: 0, built: false }; });
 let activeCat = 'reposteria';
 
 function ingredientOptionsHtml(cat, selected){
@@ -284,64 +491,104 @@ function unitOptionsHtml(selected, restrictToWeight){
   return opts.map(u => `<option value="${u.v}" ${u.v===selected?'selected':''}>${u.l[LANG]}</option>`).join('');
 }
 
-function renderCalculator(cat){
+function buildCalculatorPanel(cat){
   const container = document.getElementById('calc-container');
   const isRatioTable = cat === 'resina';
-  container.innerHTML = `
-    <div class="card">
-      <h2 data-t="${isRatioTable ? 'eqTitleRatio' : 'eqTitleCup'}"></h2>
-      <div class="note" data-t="${isRatioTable ? 'eqNoteRatio' : 'eqNoteCup'}"></div>
-      <table class="eq-table" id="eq-table-${cat}"></table>
+
+  const panel = document.createElement('div');
+  panel.className = 'calc-panel';
+  panel.id = `calc-panel-${cat}`;
+  panel.innerHTML = `
+    <div class="calc-layout">
+      <div class="calc-main">
+        <div class="card">
+          <h2 data-t="${isRatioTable ? 'eqTitleRatio' : 'eqTitleCup'}"></h2>
+          <div class="note" data-t="${isRatioTable ? 'eqNoteRatio' : 'eqNoteCup'}"></div>
+          <div class="table-scroll"><table class="eq-table" id="eq-table-${cat}"></table></div>
+        </div>
+        <div class="card">
+          <h2 data-t="ingTitle"></h2>
+          <div class="note" data-t="ingNote"></div>
+          <div class="ingredients-grid" id="ingredients-list-${cat}"></div>
+          <button class="add-btn" id="add-ingredient-${cat}" data-t="addBtn"></button>
+        </div>
+        <div class="card">
+          <h2 data-t="othersTitle"></h2>
+          <div class="other-costs-grid">
+            <div class="field">
+              <label id="labor-hours-label-${cat}"></label>
+              <input type="number" id="labor-hours-${cat}" placeholder="Ej: 2" step="0.25">
+            </div>
+            <div class="field">
+              <label id="labor-rate-label-${cat}"></label>
+              <input type="number" id="labor-rate-${cat}" placeholder="Ej: 15">
+            </div>
+            <div class="field">
+              <label id="packaging-label-${cat}"></label>
+              <input type="number" id="packaging-${cat}" placeholder="Ej: 5">
+            </div>
+            <div class="field">
+              <label id="equipment-label-${cat}"></label>
+              <input type="number" id="equipment-${cat}" placeholder="Ej: 2">
+            </div>
+            <div class="field">
+              <label id="overhead-label-${cat}"></label>
+              <input type="number" id="overhead-${cat}" placeholder="Ej: 3">
+            </div>
+            <div class="field">
+              <label data-t="servingsLabel"></label>
+              <input type="number" id="servings-${cat}" placeholder="Ej: 8">
+            </div>
+            <div class="field field-full">
+              <label data-t="marginLabel"></label>
+              <input type="number" id="margin-${cat}" placeholder="Ej: 40">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="calc-summary-col">
+        <div class="summary" id="summary-${cat}"></div>
+      </div>
     </div>
-    <div class="ad-slot" data-i18n="ad"></div>
-    <div class="card">
-      <h2 data-t="ingTitle"></h2>
-      <div class="note" data-t="ingNote"></div>
-      <div id="ingredients-list-${cat}"></div>
-      <button class="add-btn" id="add-ingredient-${cat}" data-t="addBtn"></button>
-    </div>
-    <div class="ad-slot" data-i18n="ad"></div>
-    <div class="card">
-      <h2 data-t="othersTitle"></h2>
-      <label id="labor-hours-label-${cat}"></label>
-      <input type="number" id="labor-hours-${cat}" placeholder="Ej: 2" step="0.25" style="margin-bottom:10px;">
-      <label id="labor-rate-label-${cat}"></label>
-      <input type="number" id="labor-rate-${cat}" placeholder="Ej: 15" style="margin-bottom:10px;">
-      <label id="packaging-label-${cat}"></label>
-      <input type="number" id="packaging-${cat}" placeholder="Ej: 5" style="margin-bottom:10px;">
-      <label id="equipment-label-${cat}"></label>
-      <input type="number" id="equipment-${cat}" placeholder="Ej: 2" style="margin-bottom:10px;">
-      <label id="overhead-label-${cat}"></label>
-      <input type="number" id="overhead-${cat}" placeholder="Ej: 3" style="margin-bottom:10px;">
-      <label data-t="servingsLabel"></label>
-      <input type="number" id="servings-${cat}" placeholder="Ej: 8" style="margin-bottom:10px;">
-      <label data-t="marginLabel"></label>
-      <input type="number" id="margin-${cat}" placeholder="Ej: 40">
-    </div>
-    <div class="summary" id="summary-${cat}"></div>
   `;
-  applyScopedTranslations(container);
+  container.appendChild(panel);
+
+  applyScopedTranslations(panel, cat);
   document.getElementById(`add-ingredient-${cat}`).addEventListener('click', () => addIngredientRow(cat));
   ['labor-hours','labor-rate','packaging','equipment','overhead','servings','margin'].forEach(f => {
     document.getElementById(`${f}-${cat}`).addEventListener('input', () => calculate(cat));
   });
   renderEqTable(cat);
-  if(state[cat].rows.length === 0){
-    addIngredientRow(cat);
-    addIngredientRow(cat);
-  } else {
-    state[cat].rows.forEach(id => rebuildRowLabels(cat, document.getElementById(id)));
-  }
+  addIngredientRow(cat);
+  addIngredientRow(cat);
   calculate(cat);
+  state[cat].built = true;
 }
 
-function applyScopedTranslations(scope){
+function showCalculatorPanel(cat){
+  if(!state[cat].built) buildCalculatorPanel(cat);
+  document.querySelectorAll('.calc-panel').forEach(p => p.classList.toggle('active', p.id === `calc-panel-${cat}`));
+}
+
+function refreshAllCalculatorPanels(){
+  Object.keys(state).forEach(cat => {
+    if(!state[cat].built) return;
+    const panel = document.getElementById(`calc-panel-${cat}`);
+    applyScopedTranslations(panel, cat);
+    renderEqTable(cat);
+    state[cat].rows.forEach(id => {
+      const row = document.getElementById(id);
+      if(row) refreshRowLabelsInPlace(cat, row);
+    });
+    calculate(cat);
+  });
+}
+
+function applyScopedTranslations(scope, cat){
   scope.querySelectorAll('[data-t]').forEach(el => {
     const key = el.dataset.t;
     if(T[key]) el.textContent = T[key][LANG];
   });
-  scope.querySelectorAll('[data-i18n="ad"]').forEach(el => el.textContent = GLOBAL_T.ad[LANG]);
-  const cat = document.querySelector('.tab-btn.active').dataset.cat;
   const laborRateEl = document.getElementById(`labor-rate-label-${cat}`);
   if(laborRateEl) laborRateEl.textContent = `${T.laborRateLabel[LANG]} (${CURRENCY})`;
   const packagingEl = document.getElementById(`packaging-label-${cat}`);
@@ -389,7 +636,7 @@ function refreshUnitOptions(cat, row){
   });
 }
 
-function rebuildRowLabels(cat, row){
+function refreshRowLabelsInPlace(cat, row){
   const typeSel = row.querySelector('.ing-type');
   const currentType = typeSel.value;
   typeSel.innerHTML = ingredientOptionsHtml(cat, currentType);
@@ -616,15 +863,37 @@ function renderIA(){
 }
 
 /* ---------- Navegación principal ---------- */
+const navToggle = document.getElementById('nav-toggle');
+const navPanel = document.getElementById('nav-panel');
+function closeMobileNav(){
+  navPanel.classList.remove('open');
+  navToggle.setAttribute('aria-expanded', 'false');
+}
+navToggle.addEventListener('click', () => {
+  const isOpen = navPanel.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded', String(isOpen));
+});
+
 document.querySelectorAll('.main-tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.main-section').forEach(s => s.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('section-'+btn.dataset.section).classList.add('active');
-    if(btn.dataset.section === 'recetas') renderRecetas();
-    if(btn.dataset.section === 'consejos') renderConsejos();
-    if(btn.dataset.section === 'ia') renderIA();
+    const target = document.getElementById('section-'+btn.dataset.section);
+    if(target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+    closeMobileNav();
+  });
+});
+
+document.querySelectorAll('.scroll-to-calc').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById('section-calc').scrollIntoView({ behavior:'smooth', block:'start' });
+    closeMobileNav();
+  });
+});
+document.querySelectorAll('.scroll-to-recetas').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById('section-recetas').scrollIntoView({ behavior:'smooth', block:'start' });
+    closeMobileNav();
   });
 });
 
@@ -634,7 +903,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     activeCat = btn.dataset.cat;
-    renderCalculator(activeCat);
+    showCalculatorPanel(activeCat);
   });
 });
 
@@ -643,7 +912,7 @@ document.getElementById('lang-es').addEventListener('click', () => setLang('es')
 document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
 document.getElementById('currency-select').addEventListener('change', (e) => {
   CURRENCY = CURRENCIES[e.target.value];
-  renderCalculator(activeCat);
+  refreshAllCalculatorPanels();
 });
 function setLang(lang){
   LANG = lang;
@@ -653,11 +922,14 @@ function setLang(lang){
     const key = el.dataset.i18n;
     if(GLOBAL_T[key]) el.textContent = GLOBAL_T[key][LANG];
   });
-  renderCalculator(activeCat);
-  const activeSection = document.querySelector('.main-tab-btn.active').dataset.section;
-  if(activeSection === 'recetas') renderRecetas();
-  if(activeSection === 'consejos') renderConsejos();
-  if(activeSection === 'ia') renderIA();
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.dataset.t;
+    if(GLOBAL_T[key]) el.textContent = GLOBAL_T[key][LANG];
+  });
+  refreshAllCalculatorPanels();
+  renderRecetas();
+  renderConsejos();
+  renderIA();
 }
 
 /* Init */
@@ -665,7 +937,14 @@ document.querySelectorAll('[data-i18n]').forEach(el => {
   const key = el.dataset.i18n;
   if(GLOBAL_T[key]) el.textContent = GLOBAL_T[key][LANG];
 });
-renderCalculator(activeCat);
+document.querySelectorAll('[data-t]').forEach(el => {
+  const key = el.dataset.t;
+  if(GLOBAL_T[key]) el.textContent = GLOBAL_T[key][LANG];
+});
+showCalculatorPanel(activeCat);
+renderRecetas();
+renderConsejos();
+renderIA();
 </script>
 </body>
 </html>
