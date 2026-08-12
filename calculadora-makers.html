@@ -153,6 +153,10 @@
   .recipe-subtabs{ grid-column:1 / -1; display:flex; gap:8px; flex-wrap:wrap; }
   .recipe-subtabs button{ padding:8px 16px; border:1.3px solid var(--line); border-radius:20px; background:#fff; font-size:12px; font-weight:700; cursor:pointer; color:var(--brown); }
   .recipe-subtabs button.active{ background:var(--sage); color:#fff; border-color:var(--sage); }
+  .recipe-meta{ font-size:11px; font-weight:700; color:var(--clay); background:var(--pink-50); border-radius:20px; padding:6px 12px; display:inline-block; margin-bottom:12px; }
+  .content-card li.ingredient-group{ list-style:none; margin-left:-19px; margin-top:10px; font-weight:700; color:var(--sage-dark); text-transform:uppercase; font-size:11px; letter-spacing:.04em; }
+  .content-card li.ingredient-group:first-child{ margin-top:0; }
+  .recipe-source{ font-size:11px; color:var(--muted); line-height:1.5; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); font-style:italic; }
 
   /* ---------- Foro (FAQ + preguntas) ---------- */
   .forum-top{ display:grid; grid-template-columns:1fr; gap:24px; margin-bottom:28px; }
@@ -844,37 +848,575 @@ function calculate(cat){
 const RECIPES = {
   reposteria: [
     {
-      title:{es:"Cupcakes básicos de vainilla (12 unidades)", en:"Basic vanilla cupcakes (12 units)", de:"Einfache Vanille-Cupcakes (12 Stück)"},
+      title:{es:"🍰 Keke de vainilla clásico", en:"🍰 Classic vanilla cake", de:"🍰 Klassischer Vanillekuchen"},
+      meta:{es:"Rinde 1 keke de 26 cm (~850 g) · 12–16 porciones · 60 min · S/10–12", en:"Yields one 26 cm cake (~850 g) · 12–16 servings · 60 min · S/10–12", de:"Ergibt 1 Kuchen, 26 cm (~850 g) · 12–16 Portionen · 60 Min. · S/10–12"},
       ingredients:{
-        es:["2 tazas de harina común","1 taza de azúcar blanca","1/2 taza de mantequilla","2 huevos","1 taza de leche","2 cdtas de polvo de hornear","1 cdta de esencia de vainilla"],
-        en:["2 cups all-purpose flour","1 cup granulated sugar","1/2 cup butter","2 eggs","1 cup milk","2 tsp baking powder","1 tsp vanilla extract"],
-        de:["2 Tassen Weizenmehl","1 Tasse weißer Zucker","1/2 Tasse Butter","2 Eier","1 Tasse Milch","2 TL Backpulver","1 TL Vanilleextrakt"],
+        es:["4 huevos — 200 g","200 g azúcar","200 g harina preparada","100 g mantequilla","120 ml leche evaporada","10 ml esencia de vainilla"],
+        en:["4 eggs — 200 g","200 g sugar","200 g self-rising flour","100 g butter","120 ml evaporated milk","10 ml vanilla extract"],
+        de:["4 Eier — 200 g","200 g Zucker","200 g selbstreagierendes Mehl","100 g Butter","120 ml Kondensmilch (ungesüßt)","10 ml Vanilleextrakt"],
       },
       steps:{
-        es:["Precalienta el horno a 180°C.","Bate la mantequilla con el azúcar hasta cremar.","Agrega los huevos uno a uno, luego la vainilla.","Alterna la harina (con el polvo de hornear) y la leche.","Distribuye en moldes y hornea 18-20 min."],
-        en:["Preheat the oven to 350°F.","Cream the butter with the sugar.","Add eggs one at a time, then the vanilla.","Alternate adding the flour (with baking powder) and milk.","Divide into molds and bake 18-20 min."],
-        de:["Backofen auf 180°C vorheizen.","Butter mit dem Zucker cremig schlagen.","Die Eier nacheinander hinzufügen, dann die Vanille.","Das Mehl (mit dem Backpulver) und die Milch abwechselnd unterrühren.","In Formen füllen und 18–20 Min. backen."],
+        es:["Precalentar el horno a 180 °C.","Batir los huevos con el azúcar hasta que la mezcla aumente de volumen y se vea clara.","Incorporar la mantequilla previamente derretida y la vainilla.","Tamizar la harina.","Incorporar la harina en tres partes, alternando con la leche evaporada.","Mezclar suavemente hasta obtener una masa homogénea.","Verter en un molde de 26 cm previamente engrasado.","Hornear aproximadamente 40–45 minutos.","Comprobar con un palillo. Si sale limpio, retirar.","Enfriar antes de desmoldar."],
+        en:["Preheat the oven to 180 °C (350 °F).","Beat the eggs with the sugar until the mixture increases in volume and turns pale.","Fold in the melted butter and the vanilla.","Sift the flour.","Add the flour in three parts, alternating with the evaporated milk.","Mix gently until you get a smooth batter.","Pour into a greased 26 cm pan.","Bake for about 40–45 minutes.","Check with a toothpick — if it comes out clean, remove from the oven.","Cool before unmolding."],
+        de:["Backofen auf 180 °C vorheizen.","Die Eier mit dem Zucker schlagen, bis die Mischung an Volumen zunimmt und hell wird.","Die zuvor geschmolzene Butter und die Vanille unterheben.","Das Mehl sieben.","Das Mehl in drei Teilen abwechselnd mit der Kondensmilch unterrühren.","Vorsichtig mischen, bis ein homogener Teig entsteht.","In eine gefettete 26-cm-Form füllen.","Etwa 40–45 Minuten backen.","Mit einem Holzstäbchen prüfen — kommt es sauber heraus, aus dem Ofen nehmen.","Vor dem Stürzen abkühlen lassen."],
+      },
+      source:{es:"Fórmula basada en una receta publicada por Nestlé Perú, que indica 4 huevos, azúcar, harina, mantequilla y leche evaporada, horneados a 180 °C durante unos 45 minutos.", en:"Formula based on a recipe published by Nestlé Peru, which calls for 4 eggs, sugar, flour, butter, and evaporated milk, baked at 180 °C for about 45 minutes.", de:"Rezeptur basierend auf einem von Nestlé Peru veröffentlichten Rezept mit 4 Eiern, Zucker, Mehl, Butter und Kondensmilch, gebacken bei 180 °C für etwa 45 Minuten."},
+    },
+    {
+      title:{es:"🍫 Keke húmedo de chocolate", en:"🍫 Moist chocolate cake", de:"🍫 Saftiger Schokoladenkuchen"},
+      meta:{es:"Rinde 1 keke de 20–22 cm (~900 g) · 12 porciones · S/15–18 · ~S/1.25–1.50/porción", en:"Yields one 20–22 cm cake (~900 g) · 12 servings · S/15–18 · ~S/1.25–1.50/serving", de:"Ergibt 1 Kuchen, 20–22 cm (~900 g) · 12 Portionen · S/15–18 · ~S/1,25–1,50/Portion"},
+      ingredients:{
+        es:["180 g harina sin preparar","45 g cacao en polvo","200 g azúcar","2 huevos","120 ml leche","100 ml aceite vegetal","120 ml agua caliente","8 g polvo de hornear","3 g bicarbonato","2 g sal","5 ml vainilla"],
+        en:["180 g all-purpose flour","45 g cocoa powder","200 g sugar","2 eggs","120 ml milk","100 ml vegetable oil","120 ml hot water","8 g baking powder","3 g baking soda","2 g salt","5 ml vanilla extract"],
+        de:["180 g Weizenmehl (ohne Triebmittel)","45 g Kakaopulver","200 g Zucker","2 Eier","120 ml Milch","100 ml Pflanzenöl","120 ml heißes Wasser","8 g Backpulver","3 g Natron","2 g Salz","5 ml Vanilleextrakt"],
+      },
+      steps:{
+        es:["Precalentar el horno a 175 °C.","Tamizar harina, cacao, polvo de hornear, bicarbonato y sal.","En otro recipiente batir huevos, azúcar, aceite y vainilla.","Agregar los secos alternando con la leche.","Incorporar el agua caliente poco a poco. La mezcla quedará relativamente líquida; es normal.","Verter en un molde engrasado.","Hornear 35–45 minutos.","Dejar enfriar completamente antes de cortar."],
+        en:["Preheat the oven to 175 °C (345 °F).","Sift together the flour, cocoa, baking powder, baking soda, and salt.","In another bowl, beat the eggs, sugar, oil, and vanilla.","Add the dry ingredients alternating with the milk.","Stir in the hot water gradually. The batter will be fairly thin — that's normal.","Pour into a greased pan.","Bake for 35–45 minutes.","Let cool completely before slicing."],
+        de:["Backofen auf 175 °C vorheizen.","Mehl, Kakao, Backpulver, Natron und Salz sieben.","In einer anderen Schüssel Eier, Zucker, Öl und Vanille verquirlen.","Die trockenen Zutaten abwechselnd mit der Milch unterrühren.","Nach und nach das heiße Wasser einrühren. Der Teig wird recht flüssig — das ist normal.","In eine gefettete Form füllen.","35–45 Minuten backen.","Vor dem Anschneiden vollständig abkühlen lassen."],
+      },
+    },
+    {
+      title:{es:"🥕 Carrot Cake", en:"🥕 Carrot Cake", de:"🥕 Carrot Cake"},
+      meta:{es:"Rinde 1 torta de 20 cm (~1 kg) · 12 porciones · S/18–22", en:"Yields one 20 cm cake (~1 kg) · 12 servings · S/18–22", de:"Ergibt 1 Torte, 20 cm (~1 kg) · 12 Portionen · S/18–22"},
+      ingredients:{
+        es:["250 g zanahoria rallada","200 g harina","180 g azúcar rubia","3 huevos","120 ml aceite","80 g pecanas o nueces","8 g polvo de hornear","3 g canela","1 g nuez moscada","2 g sal","5 ml vainilla"],
+        en:["250 g grated carrot","200 g flour","180 g brown sugar","3 eggs","120 ml oil","80 g pecans or walnuts","8 g baking powder","3 g cinnamon","1 g nutmeg","2 g salt","5 ml vanilla extract"],
+        de:["250 g geriebene Karotten","200 g Mehl","180 g brauner Zucker","3 Eier","120 ml Öl","80 g Pekan- oder Walnüsse","8 g Backpulver","3 g Zimt","1 g Muskatnuss","2 g Salz","5 ml Vanilleextrakt"],
+      },
+      steps:{
+        es:["Precalentar a 175 °C.","Mezclar harina, polvo de hornear, canela, nuez moscada y sal.","Batir huevos, azúcar y aceite.","Añadir vainilla.","Incorporar los ingredientes secos.","Agregar zanahoria y nueces.","Mezclar solamente hasta integrar.","Colocar en molde de 20 cm.","Hornear 40–50 minutos.","Enfriar completamente antes de rellenar o decorar."],
+        en:["Preheat to 175 °C (345 °F).","Mix the flour, baking powder, cinnamon, nutmeg, and salt.","Beat the eggs, sugar, and oil together.","Add the vanilla.","Fold in the dry ingredients.","Add the carrot and nuts.","Mix just until combined.","Pour into a 20 cm pan.","Bake for 40–50 minutes.","Cool completely before filling or decorating."],
+        de:["Auf 175 °C vorheizen.","Mehl, Backpulver, Zimt, Muskat und Salz vermischen.","Eier, Zucker und Öl verquirlen.","Vanille hinzufügen.","Die trockenen Zutaten unterheben.","Karotten und Nüsse hinzufügen.","Nur so lange mischen, bis alles verbunden ist.","In eine 20-cm-Form füllen.","40–50 Minuten backen.","Vor dem Füllen oder Dekorieren vollständig abkühlen lassen."],
+      },
+    },
+    {
+      title:{es:"❤️ Red Velvet", en:"❤️ Red Velvet", de:"❤️ Red Velvet"},
+      meta:{es:"Rinde 1 torta de 20 cm · 10–12 porciones · S/25–30", en:"Yields one 20 cm cake · 10–12 servings · S/25–30", de:"Ergibt 1 Torte, 20 cm · 10–12 Portionen · S/25–30"},
+      ingredients:{
+        es:["250 g harina","200 g azúcar","2 huevos","120 ml aceite","180 ml buttermilk","15 g cacao","5 ml vainilla","5 ml vinagre","5 g bicarbonato","2 g sal","Colorante rojo"],
+        en:["250 g flour","200 g sugar","2 eggs","120 ml oil","180 ml buttermilk","15 g cocoa powder","5 ml vanilla extract","5 ml vinegar","5 g baking soda","2 g salt","Red food coloring"],
+        de:["250 g Mehl","200 g Zucker","2 Eier","120 ml Öl","180 ml Buttermilch","15 g Kakaopulver","5 ml Vanilleextrakt","5 ml Essig","5 g Natron","2 g Salz","Rote Lebensmittelfarbe"],
+      },
+      steps:{
+        es:["Precalentar a 175 °C.","Mezclar harina, cacao, bicarbonato y sal.","Batir huevos con azúcar.","Incorporar aceite y vainilla.","Agregar el buttermilk.","Incorporar los secos.","Añadir colorante rojo hasta obtener el tono deseado.","Mezclar el bicarbonato con el vinagre y añadir inmediatamente.","Colocar en molde.","Hornear 30–40 minutos.","Enfriar antes de rellenar."],
+        en:["Preheat to 175 °C (345 °F).","Mix the flour, cocoa, baking soda, and salt.","Beat the eggs with the sugar.","Add the oil and vanilla.","Stir in the buttermilk.","Fold in the dry ingredients.","Add red food coloring until you reach the desired shade.","Mix the baking soda with the vinegar and add immediately.","Pour into the pan.","Bake for 30–40 minutes.","Cool before filling."],
+        de:["Auf 175 °C vorheizen.","Mehl, Kakao, Natron und Salz vermischen.","Eier mit dem Zucker verquirlen.","Öl und Vanille unterrühren.","Die Buttermilch hinzufügen.","Die trockenen Zutaten unterheben.","Rote Lebensmittelfarbe hinzufügen, bis der gewünschte Farbton erreicht ist.","Das Natron mit dem Essig verrühren und sofort hinzufügen.","In die Form füllen.","30–40 Minuten backen.","Vor dem Füllen abkühlen lassen."],
+      },
+    },
+    {
+      title:{es:"🍋 Keke de limón y arándanos", en:"🍋 Lemon blueberry cake", de:"🍋 Zitronen-Heidelbeer-Kuchen"},
+      meta:{es:"Rinde 1 keke (~1 kg) · 12–14 porciones · S/22–26", en:"Yields one cake (~1 kg) · 12–14 servings · S/22–26", de:"Ergibt 1 Kuchen (~1 kg) · 12–14 Portionen · S/22–26"},
+      ingredients:{
+        es:["250 g harina","250 g mantequilla","250 g azúcar","5 huevos","90 ml yogur natural","150 g arándanos","Ralladura de 4 limones","10 g polvo de hornear"],
+        en:["250 g flour","250 g butter","250 g sugar","5 eggs","90 ml plain yogurt","150 g blueberries","Zest of 4 lemons","10 g baking powder"],
+        de:["250 g Mehl","250 g Butter","250 g Zucker","5 Eier","90 ml Naturjoghurt","150 g Heidelbeeren","Abrieb von 4 Zitronen","10 g Backpulver"],
+      },
+      steps:{
+        es:["Precalentar a 175 °C.","Batir mantequilla con azúcar hasta obtener una mezcla cremosa.","Agregar los huevos uno por uno.","Incorporar ralladura de limón.","Añadir harina y polvo de hornear alternando con el yogur.","Pasar los arándanos por una pequeña cantidad de harina.","Incorporarlos suavemente.","Colocar en molde.","Hornear aproximadamente 45–55 minutos.","Enfriar antes de cortar."],
+        en:["Preheat to 175 °C (345 °F).","Beat the butter with the sugar until creamy.","Add the eggs one at a time.","Fold in the lemon zest.","Add the flour and baking powder alternating with the yogurt.","Toss the blueberries in a little flour.","Fold them in gently.","Pour into the pan.","Bake for about 45–55 minutes.","Cool before slicing."],
+        de:["Auf 175 °C vorheizen.","Butter mit Zucker cremig schlagen.","Die Eier einzeln unterrühren.","Zitronenabrieb unterheben.","Mehl und Backpulver abwechselnd mit dem Joghurt hinzufügen.","Die Heidelbeeren leicht in Mehl wenden.","Vorsichtig unterheben.","In die Form füllen.","Etwa 45–55 Minuten backen.","Vor dem Anschneiden abkühlen lassen."],
+      },
+      source:{es:"Fórmula publicada en junio de 2026 que utiliza mantequilla, azúcar, 5 huevos, limón, harina, polvo de hornear, yogur y arándanos.", en:"Formula published in June 2026 using butter, sugar, 5 eggs, lemon, flour, baking powder, yogurt, and blueberries.", de:"Im Juni 2026 veröffentlichte Rezeptur mit Butter, Zucker, 5 Eiern, Zitrone, Mehl, Backpulver, Joghurt und Heidelbeeren."},
+    },
+    {
+      title:{es:"🍫 Brownie clásico", en:"🍫 Classic brownies", de:"🍫 Klassische Brownies"},
+      meta:{es:"Molde 20×20 cm (~850–900 g) · 16 porciones · S/25–32 · ~S/1.60–2.00/unidad", en:"20×20 cm pan (~850–900 g) · 16 servings · S/25–32 · ~S/1.60–2.00/piece", de:"Form 20×20 cm (~850–900 g) · 16 Portionen · S/25–32 · ~S/1,60–2,00/Stück"},
+      ingredients:{
+        es:["200 g chocolate semiamargo","150 g mantequilla","180 g azúcar","3 huevos","90 g harina","25 g cacao","2 g sal","5 ml vainilla","100 g nueces opcionales"],
+        en:["200 g semisweet chocolate","150 g butter","180 g sugar","3 eggs","90 g flour","25 g cocoa powder","2 g salt","5 ml vanilla extract","100 g walnuts (optional)"],
+        de:["200 g Bitterschokolade","150 g Butter","180 g Zucker","3 Eier","90 g Mehl","25 g Kakaopulver","2 g Salz","5 ml Vanilleextrakt","100 g Walnüsse (optional)"],
+      },
+      steps:{
+        es:["Precalentar a 170 °C.","Derretir chocolate y mantequilla.","Añadir azúcar.","Incorporar los huevos uno por uno.","Agregar vainilla.","Tamizar harina, cacao y sal.","Incorporarlos con espátula.","Agregar nueces si se utilizan.","Colocar en molde con papel manteca.","Hornear 25–32 minutos.","Dejar enfriar completamente antes de cortar."],
+        en:["Preheat to 170 °C (340 °F).","Melt the chocolate and butter together.","Add the sugar.","Stir in the eggs one at a time.","Add the vanilla.","Sift together the flour, cocoa, and salt.","Fold them in with a spatula.","Add the walnuts if using.","Pour into a pan lined with parchment paper.","Bake for 25–32 minutes.","Let cool completely before cutting."],
+        de:["Auf 170 °C vorheizen.","Schokolade und Butter schmelzen.","Zucker hinzufügen.","Die Eier einzeln unterrühren.","Vanille hinzufügen.","Mehl, Kakao und Salz sieben.","Mit einem Spatel unterheben.","Bei Bedarf Walnüsse hinzufügen.","In eine mit Backpapier ausgelegte Form füllen.","25–32 Minuten backen.","Vor dem Schneiden vollständig abkühlen lassen."],
+      },
+    },
+    {
+      title:{es:"🍪 Cookies con chips de chocolate", en:"🍪 Chocolate chip cookies", de:"🍪 Schokoladen-Chip-Cookies"},
+      meta:{es:"Rinde 12–15 cookies (45–50 g c/u) · S/18–22", en:"Yields 12–15 cookies (45–50 g each) · S/18–22", de:"Ergibt 12–15 Cookies (45–50 g pro Stück) · S/18–22"},
+      ingredients:{
+        es:["120 g mantequilla","100 g azúcar rubia","50 g azúcar blanca","1 huevo","200 g harina","3 g bicarbonato","2 g sal","150 g chips de chocolate","5 ml vainilla"],
+        en:["120 g butter","100 g brown sugar","50 g granulated sugar","1 egg","200 g flour","3 g baking soda","2 g salt","150 g chocolate chips","5 ml vanilla extract"],
+        de:["120 g Butter","100 g brauner Zucker","50 g weißer Zucker","1 Ei","200 g Mehl","3 g Natron","2 g Salz","150 g Schokoladenstückchen","5 ml Vanilleextrakt"],
+      },
+      steps:{
+        es:["Batir mantequilla con ambos azúcares.","Agregar huevo y vainilla.","Incorporar harina, bicarbonato y sal.","Agregar los chips.","Refrigerar la masa 30 minutos.","Formar bolas de 45–50 g.","Colocar separadas en bandeja.","Hornear a 175 °C durante 10–13 minutos.","Dejar reposar 10 minutos antes de mover."],
+        en:["Beat the butter with both sugars.","Add the egg and vanilla.","Fold in the flour, baking soda, and salt.","Add the chocolate chips.","Chill the dough for 30 minutes.","Shape into 45–50 g balls.","Place spaced apart on a baking sheet.","Bake at 175 °C (345 °F) for 10–13 minutes.","Let rest 10 minutes before moving."],
+        de:["Butter mit beiden Zuckersorten verquirlen.","Ei und Vanille hinzufügen.","Mehl, Natron und Salz unterheben.","Die Schokostückchen hinzufügen.","Den Teig 30 Minuten kühlen.","Kugeln von 45–50 g formen.","Mit Abstand auf ein Backblech setzen.","Bei 175 °C 10–13 Minuten backen.","10 Minuten ruhen lassen, bevor du sie bewegst."],
+      },
+    },
+    {
+      title:{es:"🤍 Alfajores de maicena", en:"🤍 Cornstarch alfajores", de:"🤍 Alfajores aus Speisestärke"},
+      meta:{es:"Rinde 15 alfajores (~45–50 g c/u) · S/18–22", en:"Yields 15 alfajores (~45–50 g each) · S/18–22", de:"Ergibt 15 Alfajores (~45–50 g pro Stück) · S/18–22"},
+      ingredients:{
+        es:["200 g maicena","150 g harina","150 g mantequilla","100 g azúcar impalpable","3 yemas","5 ml vainilla","5 g polvo de hornear","350 g manjar","Coco rallado opcional"],
+        en:["200 g cornstarch","150 g flour","150 g butter","100 g powdered sugar","3 egg yolks","5 ml vanilla extract","5 g baking powder","350 g dulce de leche","Shredded coconut (optional)"],
+        de:["200 g Speisestärke","150 g Mehl","150 g Butter","100 g Puderzucker","3 Eigelb","5 ml Vanilleextrakt","5 g Backpulver","350 g Dulce de Leche","Kokosraspeln (optional)"],
+      },
+      steps:{
+        es:["Batir mantequilla con azúcar impalpable.","Agregar las yemas y vainilla.","Tamizar harina, maicena y polvo de hornear.","Incorporar a la mezcla sin amasar demasiado.","Refrigerar 30 minutos.","Estirar hasta aproximadamente 5 mm.","Cortar discos.","Hornear a 170 °C durante 8–12 minutos.","No deben dorarse demasiado.","Enfriar.","Rellenar con manjar.","Pasar los bordes por coco si se desea."],
+        en:["Beat the butter with the powdered sugar.","Add the egg yolks and vanilla.","Sift together the flour, cornstarch, and baking powder.","Fold into the mixture without overworking it.","Chill for 30 minutes.","Roll out to about 5 mm thick.","Cut into rounds.","Bake at 170 °C (340 °F) for 8–12 minutes.","They shouldn't brown too much.","Let cool.","Fill with dulce de leche.","Roll the edges in coconut if desired."],
+        de:["Butter mit Puderzucker verquirlen.","Eigelb und Vanille hinzufügen.","Mehl, Speisestärke und Backpulver sieben.","Ohne zu stark zu kneten unterheben.","30 Minuten kühlen.","Auf etwa 5 mm ausrollen.","Kreise ausstechen.","Bei 170 °C 8–12 Minuten backen.","Sie sollten nicht zu stark bräunen.","Abkühlen lassen.","Mit Dulce de Leche füllen.","Bei Bedarf die Ränder in Kokosraspeln wälzen."],
+      },
+    },
+    {
+      title:{es:"🧁 Cupcakes de vainilla", en:"🧁 Vanilla cupcakes", de:"🧁 Vanille-Cupcakes"},
+      meta:{es:"Rinde 12 unidades (~55–60 g c/u) · S/13–16", en:"Yields 12 (~55–60 g each) · S/13–16", de:"Ergibt 12 Stück (~55–60 g pro Stück) · S/13–16"},
+      ingredients:{
+        es:["120 g harina","120 g azúcar","100 g mantequilla","2 huevos","60 ml leche","5 ml vainilla","5 g polvo de hornear","1 g sal"],
+        en:["120 g flour","120 g sugar","100 g butter","2 eggs","60 ml milk","5 ml vanilla extract","5 g baking powder","1 g salt"],
+        de:["120 g Mehl","120 g Zucker","100 g Butter","2 Eier","60 ml Milch","5 ml Vanilleextrakt","5 g Backpulver","1 g Salz"],
+      },
+      steps:{
+        es:["Precalentar a 175 °C.","Batir mantequilla con azúcar.","Añadir huevos uno a uno.","Incorporar vainilla.","Tamizar harina, polvo de hornear y sal.","Añadir los secos alternando con leche.","Distribuir en 12 cápsulas.","Hornear 18–22 minutos.","Enfriar antes de decorar."],
+        en:["Preheat to 175 °C (345 °F).","Beat the butter with the sugar.","Add the eggs one at a time.","Add the vanilla.","Sift together the flour, baking powder, and salt.","Add the dry ingredients alternating with the milk.","Divide among 12 liners.","Bake for 18–22 minutes.","Cool before decorating."],
+        de:["Auf 175 °C vorheizen.","Butter mit Zucker verquirlen.","Die Eier einzeln hinzufügen.","Vanille unterrühren.","Mehl, Backpulver und Salz sieben.","Die trockenen Zutaten abwechselnd mit der Milch hinzufügen.","Auf 12 Papierförmchen verteilen.","18–22 Minuten backen.","Vor dem Dekorieren abkühlen lassen."],
+      },
+    },
+    {
+      title:{es:"🧁 Cupcakes de chocolate", en:"🧁 Chocolate cupcakes", de:"🧁 Schokoladen-Cupcakes"},
+      meta:{es:"Rinde 12 unidades · S/16–20", en:"Yields 12 · S/16–20", de:"Ergibt 12 Stück · S/16–20"},
+      ingredients:{
+        es:["110 g harina","30 g cacao","140 g azúcar","1 huevo","80 ml leche","60 ml aceite","80 ml agua caliente","5 g polvo de hornear","2 g bicarbonato","1 g sal","5 ml vainilla"],
+        en:["110 g flour","30 g cocoa powder","140 g sugar","1 egg","80 ml milk","60 ml oil","80 ml hot water","5 g baking powder","2 g baking soda","1 g salt","5 ml vanilla extract"],
+        de:["110 g Mehl","30 g Kakaopulver","140 g Zucker","1 Ei","80 ml Milch","60 ml Öl","80 ml heißes Wasser","5 g Backpulver","2 g Natron","1 g Salz","5 ml Vanilleextrakt"],
+      },
+      steps:{
+        es:["Precalentar a 175 °C.","Tamizar harina, cacao, polvo de hornear, bicarbonato y sal.","Batir huevo, azúcar, aceite y vainilla.","Incorporar los secos.","Añadir la leche.","Agregar el agua caliente.","Distribuir en cápsulas.","Hornear 18–22 minutos.","Enfriar antes de decorar."],
+        en:["Preheat to 175 °C (345 °F).","Sift together the flour, cocoa, baking powder, baking soda, and salt.","Beat the egg, sugar, oil, and vanilla.","Fold in the dry ingredients.","Add the milk.","Add the hot water.","Divide among liners.","Bake for 18–22 minutes.","Cool before decorating."],
+        de:["Auf 175 °C vorheizen.","Mehl, Kakao, Backpulver, Natron und Salz sieben.","Ei, Zucker, Öl und Vanille verquirlen.","Die trockenen Zutaten unterheben.","Die Milch hinzufügen.","Das heiße Wasser hinzufügen.","Auf Papierförmchen verteilen.","18–22 Minuten backen.","Vor dem Dekorieren abkühlen lassen."],
+      },
+    },
+    {
+      title:{es:"🍓 Cheesecake de frutos rojos", en:"🍓 Mixed berry cheesecake", de:"🍓 Beeren-Cheesecake"},
+      meta:{es:"Molde 20 cm · 10–12 porciones · S/35–45", en:"20 cm pan · 10–12 servings · S/35–45", de:"Form 20 cm · 10–12 Portionen · S/35–45"},
+      ingredients:{
+        es:["## Base","200 g galletas","90 g mantequilla","## Relleno","600 g queso crema","150 g azúcar","3 huevos","150 g crema de leche","15 g maicena","5 ml vainilla","## Cobertura","200 g frutos rojos","70 g azúcar","10 ml limón"],
+        en:["## Base","200 g cookies","90 g butter","## Filling","600 g cream cheese","150 g sugar","3 eggs","150 g heavy cream","15 g cornstarch","5 ml vanilla extract","## Topping","200 g mixed berries","70 g sugar","10 ml lemon juice"],
+        de:["## Boden","200 g Kekse","90 g Butter","## Füllung","600 g Frischkäse","150 g Zucker","3 Eier","150 g Sahne","15 g Speisestärke","5 ml Vanilleextrakt","## Belag","200 g gemischte Beeren","70 g Zucker","10 ml Zitronensaft"],
+      },
+      steps:{
+        es:["Triturar las galletas.","Mezclar con mantequilla derretida.","Presionar en la base del molde.","Refrigerar.","Batir queso crema con azúcar.","Añadir huevos uno a uno.","Agregar crema, vainilla y maicena.","Verter sobre la base.","Hornear a 155 °C durante 50–60 minutos.","Apagar el horno y dejar enfriar dentro con la puerta entreabierta.","Refrigerar mínimo 4 horas.","Cocinar frutos rojos, azúcar y limón durante unos minutos.","Enfriar y colocar sobre el cheesecake."],
+        en:["Crush the cookies.","Mix with the melted butter.","Press into the base of the pan.","Refrigerate.","Beat the cream cheese with the sugar.","Add the eggs one at a time.","Add the cream, vanilla, and cornstarch.","Pour over the base.","Bake at 155 °C (310 °F) for 50–60 minutes.","Turn off the oven and let it cool inside with the door slightly open.","Refrigerate for at least 4 hours.","Cook the berries, sugar, and lemon juice for a few minutes.","Cool and spread over the cheesecake."],
+        de:["Die Kekse zerkleinern.","Mit der geschmolzenen Butter vermischen.","In die Form drücken.","Kühlen.","Frischkäse mit Zucker verquirlen.","Die Eier einzeln hinzufügen.","Sahne, Vanille und Speisestärke unterrühren.","Über den Boden gießen.","Bei 155 °C 50–60 Minuten backen.","Den Ofen ausschalten und mit leicht geöffneter Tür darin abkühlen lassen.","Mindestens 4 Stunden kühlen.","Beeren, Zucker und Zitronensaft einige Minuten köcheln lassen.","Abkühlen lassen und über den Cheesecake geben."],
+      },
+    },
+    {
+      title:{es:"🍋 Pie de limón", en:"🍋 Lemon meringue pie", de:"🍋 Zitronen-Baiser-Kuchen"},
+      meta:{es:"Molde 22 cm · 8–10 porciones · S/20–25", en:"22 cm pan · 8–10 servings · S/20–25", de:"Form 22 cm · 8–10 Portionen · S/20–25"},
+      ingredients:{
+        es:["## Base","200 g galletas","90 g mantequilla","## Relleno","395 g leche condensada","120 ml jugo de limón","4 yemas","## Merengue","4 claras","200 g azúcar"],
+        en:["## Base","200 g cookies","90 g butter","## Filling","395 g sweetened condensed milk","120 ml lemon juice","4 egg yolks","## Meringue","4 egg whites","200 g sugar"],
+        de:["## Boden","200 g Kekse","90 g Butter","## Füllung","395 g gezuckerte Kondensmilch","120 ml Zitronensaft","4 Eigelb","## Baiser","4 Eiweiß","200 g Zucker"],
+      },
+      steps:{
+        es:["Triturar las galletas.","Mezclar con mantequilla.","Presionar en el molde.","Hornear la base a 170 °C durante 8–10 minutos.","Mezclar leche condensada, yemas y jugo de limón.","Verter sobre la base.","Hornear 12–15 minutos a 160 °C.","Enfriar.","Preparar el merengue batiendo claras hasta espumar.","Añadir azúcar gradualmente y batir hasta obtener picos firmes.","Cubrir el pie.","Dorar ligeramente con soplete u horno."],
+        en:["Crush the cookies.","Mix with the butter.","Press into the pan.","Bake the base at 170 °C (340 °F) for 8–10 minutes.","Mix the condensed milk, egg yolks, and lemon juice.","Pour over the base.","Bake for 12–15 minutes at 160 °C (320 °F).","Let cool.","Make the meringue by whipping the egg whites until foamy.","Gradually add the sugar and whip to stiff peaks.","Cover the pie.","Lightly torch or bake to brown."],
+        de:["Die Kekse zerkleinern.","Mit der Butter vermischen.","In die Form drücken.","Den Boden bei 170 °C 8–10 Minuten backen.","Kondensmilch, Eigelb und Zitronensaft verrühren.","Über den Boden gießen.","12–15 Minuten bei 160 °C backen.","Abkühlen lassen.","Für das Baiser das Eiweiß schaumig schlagen.","Nach und nach den Zucker einrieseln lassen und zu steifen Spitzen schlagen.","Den Kuchen damit bedecken.","Mit einem Brenner oder im Ofen leicht bräunen."],
+      },
+    },
+    {
+      title:{es:"🥛 Tres leches", en:"🥛 Tres leches cake", de:"🥛 Tres-Leches-Kuchen"},
+      meta:{es:"Molde 20×20 cm · 12 porciones · S/25–30", en:"20×20 cm pan · 12 servings · S/25–30", de:"Form 20×20 cm · 12 Portionen · S/25–30"},
+      ingredients:{
+        es:["## Bizcocho","4 huevos","120 g azúcar","120 g harina","5 ml vainilla","## Mezcla de leches","200 ml leche evaporada","200 g leche condensada","150 ml crema de leche","## Cobertura","250 ml crema para batir","40 g azúcar impalpable"],
+        en:["## Sponge cake","4 eggs","120 g sugar","120 g flour","5 ml vanilla extract","## Milk mixture","200 ml evaporated milk","200 g sweetened condensed milk","150 ml heavy cream","## Topping","250 ml whipping cream","40 g powdered sugar"],
+        de:["## Biskuit","4 Eier","120 g Zucker","120 g Mehl","5 ml Vanilleextrakt","## Milchmischung","200 ml Kondensmilch (ungesüßt)","200 g gezuckerte Kondensmilch","150 ml Sahne","## Belag","250 ml Schlagsahne","40 g Puderzucker"],
+      },
+      steps:{
+        es:["Precalentar a 175 °C.","Batir huevos y azúcar hasta triplicar aproximadamente su volumen.","Añadir vainilla.","Incorporar harina tamizada con movimientos envolventes.","Colocar en molde.","Hornear 25–30 minutos.","Enfriar ligeramente.","Pinchar toda la superficie.","Mezclar las tres leches.","Verter lentamente sobre el bizcocho.","Refrigerar mínimo 4 horas.","Batir la crema con azúcar impalpable.","Decorar."],
+        en:["Preheat to 175 °C (345 °F).","Beat the eggs and sugar until roughly tripled in volume.","Add the vanilla.","Fold in the sifted flour gently.","Pour into the pan.","Bake for 25–30 minutes.","Let cool slightly.","Prick the entire surface.","Mix the three milks together.","Pour slowly over the sponge.","Refrigerate for at least 4 hours.","Whip the cream with the powdered sugar.","Decorate."],
+        de:["Auf 175 °C vorheizen.","Eier und Zucker schlagen, bis sich das Volumen etwa verdreifacht hat.","Vanille hinzufügen.","Das gesiebte Mehl vorsichtig unterheben.","In die Form füllen.","25–30 Minuten backen.","Leicht abkühlen lassen.","Die gesamte Oberfläche einstechen.","Die drei Milchsorten vermischen.","Langsam über den Biskuit gießen.","Mindestens 4 Stunden kühlen.","Die Sahne mit dem Puderzucker steif schlagen.","Dekorieren."],
+      },
+    },
+    {
+      title:{es:"🥭 Mousse de maracuyá", en:"🥭 Passion fruit mousse", de:"🥭 Maracuja-Mousse"},
+      meta:{es:"Rinde 8 vasitos de 150 ml (~1.1 kg) · S/20–25", en:"Yields 8 × 150 ml cups (~1.1 kg) · S/20–25", de:"Ergibt 8 Gläser à 150 ml (~1,1 kg) · S/20–25"},
+      ingredients:{
+        es:["200 ml pulpa de maracuyá","395 g leche condensada","300 ml crema de leche","7 g gelatina sin sabor","35 ml agua"],
+        en:["200 ml passion fruit pulp","395 g sweetened condensed milk","300 ml heavy cream","7 g unflavored gelatin","35 ml water"],
+        de:["200 ml Maracujapüree","395 g gezuckerte Kondensmilch","300 ml Sahne","7 g geschmacksneutrale Gelatine","35 ml Wasser"],
+      },
+      steps:{
+        es:["Hidratar la gelatina con el agua.","Dejar reposar 5 minutos.","Disolver suavemente.","Mezclar pulpa de maracuyá con leche condensada.","Batir la crema hasta obtener una textura semimontada.","Incorporar la gelatina a la mezcla de maracuyá.","Añadir la crema mediante movimientos envolventes.","Distribuir en vasitos.","Refrigerar mínimo 4 horas.","Decorar con pulpa de maracuyá."],
+        en:["Hydrate the gelatin in the water.","Let it sit for 5 minutes.","Dissolve gently.","Mix the passion fruit pulp with the condensed milk.","Whip the cream to soft peaks.","Stir the gelatin into the passion fruit mixture.","Fold in the cream gently.","Divide among the cups.","Refrigerate for at least 4 hours.","Decorate with passion fruit pulp."],
+        de:["Die Gelatine in Wasser einweichen.","5 Minuten quellen lassen.","Vorsichtig auflösen.","Maracujapüree mit der Kondensmilch vermischen.","Die Sahne halbsteif schlagen.","Die Gelatine unter die Maracujamischung rühren.","Die Sahne vorsichtig unterheben.","Auf die Gläser verteilen.","Mindestens 4 Stunden kühlen.","Mit Maracujapüree dekorieren."],
+      },
+    },
+    {
+      title:{es:"🍫 Mousse de chocolate", en:"🍫 Chocolate mousse", de:"🍫 Schokoladenmousse"},
+      meta:{es:"Rinde 8 vasitos · S/25–30", en:"Yields 8 cups · S/25–30", de:"Ergibt 8 Gläser · S/25–30"},
+      ingredients:{
+        es:["200 g chocolate semiamargo","300 ml crema de leche","2 huevos","30 g azúcar","5 ml vainilla"],
+        en:["200 g semisweet chocolate","300 ml heavy cream","2 eggs","30 g sugar","5 ml vanilla extract"],
+        de:["200 g Bitterschokolade","300 ml Sahne","2 Eier","30 g Zucker","5 ml Vanilleextrakt"],
+      },
+      steps:{
+        es:["Derretir el chocolate a baño María.","Separar las claras de las yemas.","Incorporar las yemas al chocolate ligeramente tibio.","Batir las claras con el azúcar hasta obtener un merengue suave.","Batir la crema hasta que quede semimontada.","Incorporar primero la crema al chocolate.","Agregar las claras con movimientos envolventes.","Distribuir en vasos.","Refrigerar mínimo 4 horas."],
+        en:["Melt the chocolate over a double boiler.","Separate the egg whites from the yolks.","Stir the yolks into the slightly warm chocolate.","Whip the egg whites with the sugar into a soft meringue.","Whip the cream to soft peaks.","Fold the cream into the chocolate first.","Then fold in the egg whites gently.","Divide among glasses.","Refrigerate for at least 4 hours."],
+        de:["Die Schokolade im Wasserbad schmelzen.","Eiweiß vom Eigelb trennen.","Das Eigelb unter die leicht warme Schokolade rühren.","Das Eiweiß mit dem Zucker zu einem weichen Baiser schlagen.","Die Sahne halbsteif schlagen.","Zuerst die Sahne unter die Schokolade heben.","Dann das Eiweiß vorsichtig unterheben.","Auf Gläser verteilen.","Mindestens 4 Stunden kühlen."],
+      },
+    },
+    {
+      title:{es:"🍎 Pastel de manzana", en:"🍎 Apple cake", de:"🍎 Apfelkuchen"},
+      meta:{es:"Molde 22 cm · 10–12 porciones · S/20–25", en:"22 cm pan · 10–12 servings · S/20–25", de:"Form 22 cm · 10–12 Portionen · S/20–25"},
+      ingredients:{
+        es:["1 kg manzana","300 g harina","200 g azúcar","200 g mantequilla","6 huevos","10 g polvo de hornear","Canela","Azúcar impalpable"],
+        en:["1 kg apples","300 g flour","200 g sugar","200 g butter","6 eggs","10 g baking powder","Cinnamon","Powdered sugar"],
+        de:["1 kg Äpfel","300 g Mehl","200 g Zucker","200 g Butter","6 Eier","10 g Backpulver","Zimt","Puderzucker"],
+      },
+      steps:{
+        es:["Pelar y cortar las manzanas.","Cocinarlas con parte del azúcar y mantequilla hasta que estén tiernas.","Enfriar.","Batir huevos hasta aumentar su volumen.","Agregar azúcar.","Incorporar mantequilla derretida.","Tamizar harina y polvo de hornear.","Incorporar con movimientos envolventes.","Añadir canela.","Incorporar las manzanas frías.","Colocar en molde.","Hornear aproximadamente 40 minutos a fuego medio/bajo, según el tipo de horno.","Enfriar y espolvorear azúcar impalpable."],
+        en:["Peel and cut the apples.","Cook them with part of the sugar and butter until tender.","Let cool.","Beat the eggs until increased in volume.","Add the sugar.","Fold in the melted butter.","Sift together the flour and baking powder.","Fold in gently.","Add the cinnamon.","Fold in the cooled apples.","Pour into the pan.","Bake for about 40 minutes at medium-low heat, depending on your oven.","Cool and dust with powdered sugar."],
+        de:["Die Äpfel schälen und schneiden.","Mit einem Teil des Zuckers und der Butter weich dünsten.","Abkühlen lassen.","Die Eier schlagen, bis sie an Volumen zunehmen.","Zucker hinzufügen.","Die geschmolzene Butter unterrühren.","Mehl und Backpulver sieben.","Vorsichtig unterheben.","Zimt hinzufügen.","Die abgekühlten Äpfel unterheben.","In die Form füllen.","Je nach Ofentyp bei mittlerer bis niedriger Hitze etwa 40 Minuten backen.","Abkühlen lassen und mit Puderzucker bestäuben."],
+      },
+      source:{es:"Fórmula publicada por Record Perú con 1 kg de manzana, 6 huevos, 300 g de harina, 200 g de azúcar y 200 g de mantequilla, entre otros ingredientes.", en:"Formula published by Record Peru using 1 kg apples, 6 eggs, 300 g flour, 200 g sugar, and 200 g butter, among other ingredients.", de:"Von Record Peru veröffentlichte Rezeptur mit unter anderem 1 kg Äpfeln, 6 Eiern, 300 g Mehl, 200 g Zucker und 200 g Butter."},
+    },
+    {
+      title:{es:"🍌 Banana bread", en:"🍌 Banana bread", de:"🍌 Banana Bread"},
+      meta:{es:"Molde 22×10 cm (~750–800 g) · S/12–16", en:"22×10 cm pan (~750–800 g) · S/12–16", de:"Form 22×10 cm (~750–800 g) · S/12–16"},
+      ingredients:{
+        es:["300 g plátano maduro sin cáscara","200 g harina","120 g azúcar rubia","2 huevos","80 g mantequilla","5 g polvo de hornear","2 g bicarbonato","2 g canela","2 g sal","5 ml vainilla","80 g nueces opcionales"],
+        en:["300 g ripe banana, peeled","200 g flour","120 g brown sugar","2 eggs","80 g butter","5 g baking powder","2 g baking soda","2 g cinnamon","2 g salt","5 ml vanilla extract","80 g walnuts (optional)"],
+        de:["300 g reife Bananen, geschält","200 g Mehl","120 g brauner Zucker","2 Eier","80 g Butter","5 g Backpulver","2 g Natron","2 g Zimt","2 g Salz","5 ml Vanilleextrakt","80 g Walnüsse (optional)"],
+      },
+      steps:{
+        es:["Precalentar a 175 °C.","Triturar los plátanos.","Mezclar con mantequilla derretida.","Añadir azúcar y huevos.","Agregar vainilla.","Tamizar harina, polvo de hornear, bicarbonato, canela y sal.","Incorporar sin sobrebatir.","Añadir nueces.","Colocar en molde.","Hornear 45–55 minutos.","Enfriar antes de cortar."],
+        en:["Preheat to 175 °C (345 °F).","Mash the bananas.","Mix with the melted butter.","Add the sugar and eggs.","Add the vanilla.","Sift together the flour, baking powder, baking soda, cinnamon, and salt.","Fold in without overmixing.","Add the walnuts.","Pour into the pan.","Bake for 45–55 minutes.","Cool before slicing."],
+        de:["Auf 175 °C vorheizen.","Die Bananen zerdrücken.","Mit der geschmolzenen Butter vermischen.","Zucker und Eier hinzufügen.","Vanille hinzufügen.","Mehl, Backpulver, Natron, Zimt und Salz sieben.","Unterheben, ohne zu stark zu rühren.","Walnüsse hinzufügen.","In die Form füllen.","45–55 Minuten backen.","Vor dem Anschneiden abkühlen lassen."],
+      },
+    },
+    {
+      title:{es:"🥥 Torta de coco", en:"🥥 Coconut cake", de:"🥥 Kokoskuchen"},
+      meta:{es:"Molde 20 cm · 10–12 porciones · S/18–23", en:"20 cm pan · 10–12 servings · S/18–23", de:"Form 20 cm · 10–12 Portionen · S/18–23"},
+      ingredients:{
+        es:["200 g harina","150 g azúcar","100 g mantequilla","3 huevos","120 ml leche","100 g coco rallado","8 g polvo de hornear","5 ml vainilla"],
+        en:["200 g flour","150 g sugar","100 g butter","3 eggs","120 ml milk","100 g shredded coconut","8 g baking powder","5 ml vanilla extract"],
+        de:["200 g Mehl","150 g Zucker","100 g Butter","3 Eier","120 ml Milch","100 g Kokosraspeln","8 g Backpulver","5 ml Vanilleextrakt"],
+      },
+      steps:{
+        es:["Precalentar a 175 °C.","Batir mantequilla y azúcar.","Incorporar huevos uno a uno.","Añadir vainilla.","Tamizar harina y polvo de hornear.","Incorporar alternando con leche.","Agregar coco rallado.","Colocar en molde.","Hornear 35–45 minutos.","Enfriar completamente."],
+        en:["Preheat to 175 °C (345 °F).","Beat the butter and sugar.","Add the eggs one at a time.","Add the vanilla.","Sift together the flour and baking powder.","Fold in alternating with the milk.","Add the shredded coconut.","Pour into the pan.","Bake for 35–45 minutes.","Cool completely."],
+        de:["Auf 175 °C vorheizen.","Butter und Zucker verquirlen.","Die Eier einzeln hinzufügen.","Vanille hinzufügen.","Mehl und Backpulver sieben.","Abwechselnd mit der Milch unterheben.","Kokosraspeln hinzufügen.","In die Form füllen.","35–45 Minuten backen.","Vollständig abkühlen lassen."],
+      },
+    },
+    {
+      title:{es:"🍥 Rollos de canela", en:"🍥 Cinnamon rolls", de:"🍥 Zimtschnecken"},
+      meta:{es:"Rinde 10–12 unidades (~80–90 g c/u antes de hornear) · S/20–25", en:"Yields 10–12 (~80–90 g each before baking) · S/20–25", de:"Ergibt 10–12 Stück (~80–90 g pro Stück vor dem Backen) · S/20–25"},
+      ingredients:{
+        es:["## Masa","500 g harina","250 ml leche","60 g azúcar","60 g mantequilla","1 huevo","7 g levadura seca","5 g sal","## Relleno","80 g mantequilla","120 g azúcar rubia","10 g canela","## Glaseado","100 g azúcar impalpable","20–30 ml leche"],
+        en:["## Dough","500 g flour","250 ml milk","60 g sugar","60 g butter","1 egg","7 g dry yeast","5 g salt","## Filling","80 g butter","120 g brown sugar","10 g cinnamon","## Glaze","100 g powdered sugar","20–30 ml milk"],
+        de:["## Teig","500 g Mehl","250 ml Milch","60 g Zucker","60 g Butter","1 Ei","7 g Trockenhefe","5 g Salz","## Füllung","80 g Butter","120 g brauner Zucker","10 g Zimt","## Glasur","100 g Puderzucker","20–30 ml Milch"],
+      },
+      steps:{
+        es:["Mezclar leche tibia, levadura y una pequeña cantidad del azúcar.","Reposar 5–10 minutos.","Añadir harina, azúcar, huevo y sal.","Amasar.","Incorporar la mantequilla.","Amasar hasta obtener una masa suave.","Dejar levar aproximadamente 1 hora, hasta que aumente notablemente de volumen.","Estirar formando un rectángulo.","Untar mantequilla.","Distribuir azúcar rubia y canela.","Enrollar firmemente.","Cortar 10–12 piezas.","Colocar en bandeja.","Dejar levar nuevamente 30–45 minutos.","Hornear a 180 °C durante 18–25 minutos.","Mezclar azúcar impalpable con leche.","Decorar cuando estén tibios."],
+        en:["Mix the warm milk, yeast, and a small amount of the sugar.","Let rest for 5–10 minutes.","Add the flour, sugar, egg, and salt.","Knead.","Work in the butter.","Knead until you get a smooth dough.","Let rise for about 1 hour, until noticeably larger.","Roll out into a rectangle.","Spread with butter.","Sprinkle with the brown sugar and cinnamon.","Roll up tightly.","Cut into 10–12 pieces.","Place on a baking sheet.","Let rise again for 30–45 minutes.","Bake at 180 °C (350 °F) for 18–25 minutes.","Mix the powdered sugar with the milk.","Decorate while still warm."],
+        de:["Warme Milch, Hefe und etwas vom Zucker vermischen.","5–10 Minuten ruhen lassen.","Mehl, Zucker, Ei und Salz hinzufügen.","Kneten.","Die Butter einarbeiten.","Kneten, bis ein glatter Teig entsteht.","Etwa 1 Stunde gehen lassen, bis er sich deutlich vergrößert hat.","Zu einem Rechteck ausrollen.","Mit Butter bestreichen.","Braunen Zucker und Zimt verteilen.","Fest aufrollen.","In 10–12 Stücke schneiden.","Auf ein Blech legen.","Nochmals 30–45 Minuten gehen lassen.","Bei 180 °C 18–25 Minuten backen.","Puderzucker mit Milch verrühren.","Noch warm dekorieren."],
+      },
+    },
+    {
+      title:{es:"🍮 Cheesecake de maracuyá sin horno", en:"🍮 No-bake passion fruit cheesecake", de:"🍮 Ofenfreier Maracuja-Cheesecake"},
+      meta:{es:"Molde 20 cm · 10–12 porciones · S/30–38", en:"20 cm pan · 10–12 servings · S/30–38", de:"Form 20 cm · 10–12 Portionen · S/30–38"},
+      ingredients:{
+        es:["## Base","200 g galletas","90 g mantequilla","## Relleno","500 g queso crema","395 g leche condensada","200 ml crema de leche","120 ml pulpa de maracuyá","10 g gelatina sin sabor","50 ml agua","## Cobertura","100 ml pulpa de maracuyá","50 g azúcar","3 g gelatina sin sabor"],
+        en:["## Base","200 g cookies","90 g butter","## Filling","500 g cream cheese","395 g sweetened condensed milk","200 ml heavy cream","120 ml passion fruit pulp","10 g unflavored gelatin","50 ml water","## Topping","100 ml passion fruit pulp","50 g sugar","3 g unflavored gelatin"],
+        de:["## Boden","200 g Kekse","90 g Butter","## Füllung","500 g Frischkäse","395 g gezuckerte Kondensmilch","200 ml Sahne","120 ml Maracujapüree","10 g geschmacksneutrale Gelatine","50 ml Wasser","## Belag","100 ml Maracujapüree","50 g Zucker","3 g geschmacksneutrale Gelatine"],
+      },
+      steps:{
+        es:["Triturar las galletas.","Mezclar con mantequilla derretida.","Presionar sobre la base del molde.","Refrigerar.","Hidratar la gelatina con el agua.","Batir queso crema hasta suavizar.","Añadir leche condensada.","Incorporar pulpa de maracuyá.","Batir la crema hasta semimontar.","Incorporarla a la mezcla.","Disolver la gelatina y añadirla.","Verter sobre la base.","Refrigerar mínimo 6 horas.","Para la cobertura, calentar pulpa y azúcar.","Añadir gelatina hidratada.","Dejar enfriar ligeramente.","Verter sobre el cheesecake.","Refrigerar hasta que cuaje."],
+        en:["Crush the cookies.","Mix with the melted butter.","Press into the base of the pan.","Refrigerate.","Hydrate the gelatin in the water.","Beat the cream cheese until smooth.","Add the condensed milk.","Stir in the passion fruit pulp.","Whip the cream to soft peaks.","Fold it into the mixture.","Dissolve the gelatin and add it in.","Pour over the base.","Refrigerate for at least 6 hours.","For the topping, heat the pulp and sugar.","Add the hydrated gelatin.","Let cool slightly.","Pour over the cheesecake.","Refrigerate until set."],
+        de:["Die Kekse zerkleinern.","Mit der geschmolzenen Butter vermischen.","In die Form drücken.","Kühlen.","Die Gelatine in Wasser einweichen.","Den Frischkäse glatt rühren.","Die Kondensmilch hinzufügen.","Das Maracujapüree unterrühren.","Die Sahne halbsteif schlagen.","Unter die Mischung heben.","Die Gelatine auflösen und einrühren.","Über den Boden gießen.","Mindestens 6 Stunden kühlen.","Für den Belag Püree und Zucker erhitzen.","Die eingeweichte Gelatine hinzufügen.","Leicht abkühlen lassen.","Über den Cheesecake gießen.","Kühlen, bis es fest ist."],
       },
     },
   ],
   velas: [
     {
-      title:{es:"Vela de soja aromática (1 unidad, 200 ml)", en:"Scented soy candle (1 unit, 200 ml)", de:"Duftende Sojakerze (1 Stück, 200 ml)"},
+      title:{es:"🕯️ Vela de soya aromática de vainilla", en:"🕯️ Aromatic vanilla soy candle", de:"🕯️ Duftende Vanille-Sojakerze"},
+      meta:{es:"Peso final ~200 g · 1 unidad · ⭐⭐ · 30 min + curado · S/13–17 (venta orientativa S/28–38)", en:"Final weight ~200 g · 1 unit · ⭐⭐ · 30 min + curing · S/13–17 (suggested resale S/28–38)", de:"Endgewicht ~200 g · 1 Stück · ⭐⭐ · 30 Min. + Aushärten · S/13–17 (Richtverkaufspreis S/28–38)"},
       ingredients:{
-        es:["170 g de cera de soja","8 ml de fragancia (aprox. 5% del peso de cera)","1 pabilo de madera o algodón","1 envase de vidrio de 200 ml"],
-        en:["170 g soy wax","8 ml fragrance oil (approx. 5% of wax weight)","1 wood or cotton wick","1 glass container, 200 ml"],
-        de:["170 g Sojawachs","8 ml Duftöl (ca. 5 % des Wachsgewichts)","1 Holz- oder Baumwolldocht","1 Glasgefäß, 200 ml"],
+        es:["180 g de cera de soya","18 g de fragancia de vainilla (según el % máximo recomendado por el fabricante)","1 mecha adecuada para el diámetro del recipiente","1 vaso de vidrio de 200–220 ml","1 etiqueta","Colorante para velas, opcional"],
+        en:["180 g soy wax","18 g vanilla fragrance oil (per the max % recommended by the manufacturer)","1 wick sized for the container's diameter","1 glass jar, 200–220 ml","1 label","Candle dye, optional"],
+        de:["180 g Sojawachs","18 g Vanille-Duftöl (gemäß dem vom Hersteller empfohlenen Höchstprozentsatz)","1 zum Gefäßdurchmesser passender Docht","1 Glasgefäß, 200–220 ml","1 Etikett","Kerzenfarbe, optional"],
       },
       steps:{
-        es:["Derrite la cera a baño maría hasta 70-75°C.","Retira del calor y deja enfriar a 55-60°C.","Agrega la fragancia y mezcla bien 2 minutos.","Fija el pabilo al centro del envase y vierte la cera.","Deja curar sin mover por 24-48 horas antes de encender."],
-        en:["Melt the wax in a double boiler to 70-75°C (158-167°F).","Remove from heat and cool to 55-60°C (131-140°F).","Add the fragrance and mix well for 2 minutes.","Secure the wick at the center of the container and pour the wax.","Let it cure undisturbed for 24-48 hours before lighting."],
-        de:["Das Wachs im Wasserbad auf 70–75°C schmelzen.","Von der Hitze nehmen und auf 55–60°C abkühlen lassen.","Das Duftöl hinzufügen und 2 Minuten gut vermischen.","Den Docht in der Mitte des Gefäßes befestigen und das Wachs eingießen.","24–48 Stunden ungestört aushärten lassen, bevor du sie anzündest."],
+        es:["Limpiar y secar completamente el recipiente.","Fijar la mecha en el centro.","Preparar la cera siguiendo las instrucciones específicas del fabricante.","Incorporar la fragancia en la proporción recomendada.","Mezclar suavemente para distribuirla de manera uniforme.","Agregar colorante si se desea.","Verter cuidadosamente la mezcla en el recipiente.","Mantener la mecha centrada mientras la vela se solidifica.","Dejar enfriar completamente sin mover.","Recortar la mecha a la longitud recomendada por el fabricante.","Dejar curar durante el período recomendado para ese tipo de cera antes de realizar la prueba de quemado.","Colocar etiqueta y empaque."],
+        en:["Clean and fully dry the container.","Secure the wick at the center.","Prepare the wax following the manufacturer's specific instructions.","Add the fragrance at the recommended ratio.","Stir gently to distribute it evenly.","Add dye if desired.","Carefully pour the mixture into the container.","Keep the wick centered while the candle sets.","Let it cool completely without moving it.","Trim the wick to the length recommended by the manufacturer.","Let it cure for the period recommended for that type of wax before doing a burn test.","Add label and packaging."],
+        de:["Das Gefäß reinigen und vollständig trocknen.","Den Docht in der Mitte befestigen.","Das Wachs gemäß den spezifischen Herstelleranweisungen vorbereiten.","Das Duftöl im empfohlenen Verhältnis hinzufügen.","Vorsichtig verrühren, um es gleichmäßig zu verteilen.","Bei Bedarf Farbe hinzufügen.","Die Mischung vorsichtig in das Gefäß gießen.","Den Docht mittig halten, während die Kerze fest wird.","Vollständig abkühlen lassen, ohne sie zu bewegen.","Den Docht auf die vom Hersteller empfohlene Länge kürzen.","Für den für diese Wachsart empfohlenen Zeitraum aushärten lassen, bevor ein Brenntest durchgeführt wird.","Etikett und Verpackung anbringen."],
+      },
+    },
+    {
+      title:{es:"💜 Vela de soya de lavanda", en:"💜 Lavender soy candle", de:"💜 Lavendel-Sojakerze"},
+      meta:{es:"Peso 200 g · 1 unidad · S/14–18", en:"Weight 200 g · 1 unit · S/14–18", de:"Gewicht 200 g · 1 Stück · S/14–18"},
+      ingredients:{
+        es:["180 g cera de soya","18 g fragancia de lavanda (según % recomendado por el fabricante)","1 mecha","1 recipiente de 200–220 ml","Colorante violeta, opcional","Etiqueta"],
+        en:["180 g soy wax","18 g lavender fragrance oil (per the % recommended by the manufacturer)","1 wick","1 container, 200–220 ml","Violet dye, optional","Label"],
+        de:["180 g Sojawachs","18 g Lavendel-Duftöl (gemäß dem vom Hersteller empfohlenen Prozentsatz)","1 Docht","1 Gefäß, 200–220 ml","Violette Farbe, optional","Etikett"],
+      },
+      steps:{
+        es:["Preparar el recipiente y fijar la mecha.","Fundir la cera siguiendo las indicaciones del proveedor.","Incorporar la fragancia de lavanda respetando el porcentaje recomendado.","Mezclar suavemente.","Añadir colorante si corresponde.","Verter en el recipiente.","Centrar la mecha.","Dejar solidificar sin mover.","Recortar la mecha.","Dejar curar según las indicaciones de la cera.","Realizar una prueba de combustión antes de comercializar."],
+        en:["Prepare the container and secure the wick.","Melt the wax following the supplier's instructions.","Add the lavender fragrance respecting the recommended percentage.","Mix gently.","Add dye if using.","Pour into the container.","Center the wick.","Let it set without moving it.","Trim the wick.","Let it cure per the wax's instructions.","Do a burn test before selling."],
+        de:["Das Gefäß vorbereiten und den Docht befestigen.","Das Wachs gemäß den Herstellerangaben schmelzen.","Das Lavendel-Duftöl unter Einhaltung des empfohlenen Prozentsatzes hinzufügen.","Vorsichtig mischen.","Bei Bedarf Farbe hinzufügen.","In das Gefäß gießen.","Den Docht zentrieren.","Fest werden lassen, ohne sie zu bewegen.","Den Docht kürzen.","Gemäß den Wachsangaben aushärten lassen.","Vor dem Verkauf einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"☕ Vela aromática de café", en:"☕ Aromatic coffee candle", de:"☕ Duftende Kaffeekerze"},
+      meta:{es:"Peso 220 g · 1 unidad · S/16–21", en:"Weight 220 g · 1 unit · S/16–21", de:"Gewicht 220 g · 1 Stück · S/16–21"},
+      ingredients:{
+        es:["198 g cera de soya","Fragancia de café según especificación del fabricante","1 mecha","1 vaso de 220–250 ml","Colorante marrón, opcional","Etiqueta"],
+        en:["198 g soy wax","Coffee fragrance oil per manufacturer's specification","1 wick","1 jar, 220–250 ml","Brown dye, optional","Label"],
+        de:["198 g Sojawachs","Kaffee-Duftöl gemäß Herstellerangabe","1 Docht","1 Glas, 220–250 ml","Braune Farbe, optional","Etikett"],
+      },
+      steps:{
+        es:["Preparar y asegurar la mecha.","Preparar la cera siguiendo las instrucciones del fabricante.","Incorporar la fragancia.","Mezclar suavemente.","Añadir colorante si se desea.","Verter en el recipiente.","Mantener la mecha centrada.","Dejar enfriar completamente.","Recortar la mecha.","Dejar curar.","Probar la combustión antes de vender."],
+        en:["Prepare and secure the wick.","Prepare the wax following the manufacturer's instructions.","Add the fragrance.","Mix gently.","Add dye if desired.","Pour into the container.","Keep the wick centered.","Let it cool completely.","Trim the wick.","Let it cure.","Test-burn before selling."],
+        de:["Den Docht vorbereiten und befestigen.","Das Wachs gemäß den Herstelleranweisungen vorbereiten.","Das Duftöl hinzufügen.","Vorsichtig mischen.","Bei Bedarf Farbe hinzufügen.","In das Gefäß gießen.","Den Docht zentriert halten.","Vollständig abkühlen lassen.","Den Docht kürzen.","Aushärten lassen.","Vor dem Verkauf einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🥥 Vela de coco", en:"🥥 Coconut candle", de:"🥥 Kokoskerze"},
+      meta:{es:"Peso 200 g · 1 unidad · S/15–19", en:"Weight 200 g · 1 unit · S/15–19", de:"Gewicht 200 g · 1 Stück · S/15–19"},
+      ingredients:{
+        es:["Cera de coco o mezcla de cera de coco: cantidad necesaria para 200 g","Fragancia de coco según especificación","1 mecha","1 recipiente","Colorante blanco, opcional","Etiqueta"],
+        en:["Coconut wax or coconut wax blend: enough for 200 g","Coconut fragrance oil per specification","1 wick","1 container","White dye, optional","Label"],
+        de:["Kokoswachs oder Kokoswachsmischung: Menge für 200 g","Kokos-Duftöl gemäß Spezifikation","1 Docht","1 Gefäß","Weiße Farbe, optional","Etikett"],
+      },
+      steps:{
+        es:["Preparar el recipiente.","Centrar y fijar la mecha.","Preparar la cera según las indicaciones del fabricante.","Incorporar la fragancia.","Mezclar.","Verter en el recipiente.","Dejar solidificar.","Recortar la mecha.","Dejar curar.","Realizar prueba de combustión."],
+        en:["Prepare the container.","Center and secure the wick.","Prepare the wax following the manufacturer's instructions.","Add the fragrance.","Mix.","Pour into the container.","Let it set.","Trim the wick.","Let it cure.","Do a burn test."],
+        de:["Das Gefäß vorbereiten.","Den Docht zentrieren und befestigen.","Das Wachs gemäß den Herstellerangaben vorbereiten.","Das Duftöl hinzufügen.","Mischen.","In das Gefäß gießen.","Fest werden lassen.","Den Docht kürzen.","Aushärten lassen.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🍓 Vela de frutos rojos", en:"🍓 Mixed berry candle", de:"🍓 Beeren-Kerze"},
+      meta:{es:"Peso 200 g · 1 unidad · S/15–20", en:"Weight 200 g · 1 unit · S/15–20", de:"Gewicht 200 g · 1 Stück · S/15–20"},
+      ingredients:{
+        es:["Cera de soya: cantidad necesaria para 200 g","Fragancia de frutos rojos","1 mecha","1 recipiente","Colorante rojo, opcional","Etiqueta"],
+        en:["Soy wax: enough for 200 g","Mixed berry fragrance oil","1 wick","1 container","Red dye, optional","Label"],
+        de:["Sojawachs: Menge für 200 g","Beeren-Duftöl","1 Docht","1 Gefäß","Rote Farbe, optional","Etikett"],
+      },
+      steps:{
+        es:["Preparar recipiente y mecha, preparar la cera según las instrucciones del fabricante, incorporar la fragancia, mezclar, añadir colorante, verter, centrar la mecha, dejar solidificar, recortar la mecha y realizar el período de curado recomendado."],
+        en:["Prepare the container and wick, prepare the wax per the manufacturer's instructions, add the fragrance, mix, add dye, pour, center the wick, let it set, trim the wick, and let it cure for the recommended period."],
+        de:["Gefäß und Docht vorbereiten, das Wachs gemäß den Herstelleranweisungen vorbereiten, das Duftöl hinzufügen, mischen, Farbe hinzufügen, eingießen, den Docht zentrieren, fest werden lassen, den Docht kürzen und die empfohlene Aushärtezeit einhalten."],
+      },
+    },
+    {
+      title:{es:"🍊 Vela de naranja y canela", en:"🍊 Orange and cinnamon candle", de:"🍊 Orangen-Zimt-Kerze"},
+      meta:{es:"Peso 220 g · 1 unidad · S/15–20", en:"Weight 220 g · 1 unit · S/15–20", de:"Gewicht 220 g · 1 Stück · S/15–20"},
+      ingredients:{
+        es:["Cera de soya: cantidad necesaria","Fragancia de naranja","Fragancia de canela, si la formulación lo permite","1 mecha","1 recipiente","Colorante naranja, opcional"],
+        en:["Soy wax: as needed","Orange fragrance oil","Cinnamon fragrance oil, if the blend allows it","1 wick","1 container","Orange dye, optional"],
+        de:["Sojawachs: nach Bedarf","Orangen-Duftöl","Zimt-Duftöl, sofern die Mischung dies zulässt","1 Docht","1 Gefäß","Orange Farbe, optional"],
+      },
+      steps:{
+        es:["Preparar recipiente y mecha.","Preparar la cera según el fabricante.","Incorporar las fragancias compatibles.","Mezclar.","Añadir colorante.","Verter.","Centrar la mecha.","Dejar enfriar.","Dejar curar.","Realizar prueba de combustión."],
+        en:["Prepare the container and wick.","Prepare the wax per the manufacturer.","Add the compatible fragrances.","Mix.","Add dye.","Pour.","Center the wick.","Let it cool.","Let it cure.","Do a burn test."],
+        de:["Gefäß und Docht vorbereiten.","Das Wachs gemäß Hersteller vorbereiten.","Die kompatiblen Duftstoffe hinzufügen.","Mischen.","Farbe hinzufügen.","Eingießen.","Den Docht zentrieren.","Abkühlen lassen.","Aushärten lassen.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🌸 Vela de soya con pétalos decorativos", en:"🌸 Soy candle with decorative petals", de:"🌸 Sojakerze mit dekorativen Blütenblättern"},
+      meta:{es:"Peso 200 g · 1 unidad · S/16–22", en:"Weight 200 g · 1 unit · S/16–22", de:"Gewicht 200 g · 1 Stück · S/16–22"},
+      ingredients:{
+        es:["Cera de soya","Fragancia floral","1 mecha","1 recipiente","Decoración floral apta para velas y utilizada únicamente según las recomendaciones de seguridad del fabricante","Etiqueta"],
+        en:["Soy wax","Floral fragrance oil","1 wick","1 container","Candle-safe floral decoration, used only per the manufacturer's safety recommendations","Label"],
+        de:["Sojawachs","Blumen-Duftöl","1 Docht","1 Gefäß","Für Kerzen geeignete Blütendekoration, nur gemäß den Sicherheitsempfehlungen des Herstellers verwendet","Etikett"],
+      },
+      steps:{
+        es:["Preparar recipiente y mecha.","Preparar la cera según las indicaciones del proveedor.","Incorporar la fragancia.","Verter la cera.","Colocar únicamente decoraciones compatibles y seguras para este tipo de vela.","Dejar solidificar.","Recortar la mecha.","Curar.","Realizar prueba de combustión."],
+        en:["Prepare the container and wick.","Prepare the wax following the supplier's instructions.","Add the fragrance.","Pour the wax.","Only place decorations that are compatible and safe for this type of candle.","Let it set.","Trim the wick.","Cure.","Do a burn test."],
+        de:["Gefäß und Docht vorbereiten.","Das Wachs gemäß den Angaben des Anbieters vorbereiten.","Das Duftöl hinzufügen.","Das Wachs eingießen.","Nur für diese Kerzenart kompatible und sichere Dekorationen anbringen.","Fest werden lassen.","Den Docht kürzen.","Aushärten.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🌊 Vela en gel transparente", en:"🌊 Clear gel candle", de:"🌊 Transparente Gelkerze"},
+      meta:{es:"Peso 250 g · 1 unidad · S/15–22", en:"Weight 250 g · 1 unit · S/15–22", de:"Gewicht 250 g · 1 Stück · S/15–22"},
+      ingredients:{
+        es:["225 g de gel para velas","Fragancia compatible con gel, según especificación del fabricante","Colorante compatible, opcional","1 mecha compatible","1 recipiente de vidrio apto para velas","Decoración compatible, si corresponde"],
+        en:["225 g candle gel","Gel-compatible fragrance oil, per manufacturer's specification","Compatible dye, optional","1 compatible wick","1 candle-safe glass container","Compatible decoration, if applicable"],
+        de:["225 g Gelkerzenmasse","Für Gel geeignetes Duftöl gemäß Herstellerangabe","Kompatible Farbe, optional","1 kompatibler Docht","1 für Kerzen geeignetes Glasgefäß","Kompatible Dekoration, falls zutreffend"],
+      },
+      steps:{
+        es:["Preparar el recipiente y fijar la mecha.","Preparar el gel siguiendo estrictamente las instrucciones del fabricante.","Incorporar fragancia compatible.","Añadir colorante si se desea.","Verter cuidadosamente.","Mantener la mecha centrada.","Dejar enfriar completamente.","Revisar que no existan problemas visibles de adherencia o acabado.","Recortar la mecha.","Realizar la prueba de combustión correspondiente."],
+        en:["Prepare the container and secure the wick.","Prepare the gel strictly following the manufacturer's instructions.","Add compatible fragrance.","Add dye if desired.","Pour carefully.","Keep the wick centered.","Let it cool completely.","Check for any visible adhesion or finish issues.","Trim the wick.","Do the corresponding burn test."],
+        de:["Das Gefäß vorbereiten und den Docht befestigen.","Das Gel streng nach den Herstelleranweisungen vorbereiten.","Kompatibles Duftöl hinzufügen.","Bei Bedarf Farbe hinzufügen.","Vorsichtig eingießen.","Den Docht zentriert halten.","Vollständig abkühlen lassen.","Auf sichtbare Haftungs- oder Oberflächenprobleme prüfen.","Den Docht kürzen.","Den entsprechenden Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🌊 Vela en gel estilo océano", en:"🌊 Ocean-style gel candle", de:"🌊 Gelkerze im Ozean-Stil"},
+      meta:{es:"Peso 300 g · 1 unidad · S/18–25", en:"Weight 300 g · 1 unit · S/18–25", de:"Gewicht 300 g · 1 Stück · S/18–25"},
+      ingredients:{
+        es:["Gel para velas: cantidad necesaria","Fragancia marina compatible","Colorante azul compatible","1 mecha","Recipiente de vidrio","Decoraciones compatibles para velas"],
+        en:["Candle gel: as needed","Compatible ocean-scent fragrance oil","Compatible blue dye","1 wick","Glass container","Candle-compatible decorations"],
+        de:["Gelkerzenmasse: nach Bedarf","Kompatibles Meeresduft-Öl","Kompatible blaue Farbe","1 Docht","Glasgefäß","Für Kerzen geeignete Dekorationen"],
+      },
+      steps:{
+        es:["Preparar recipiente y mecha.","Preparar el gel siguiendo al fabricante.","Incorporar la fragancia.","Dividir visualmente el gel en tonos si se desea crear un efecto degradado.","Añadir colorante compatible.","Verter cuidadosamente.","Incorporar las decoraciones compatibles.","Dejar solidificar.","Recortar la mecha.","Curar y probar antes de comercializar."],
+        en:["Prepare the container and wick.","Prepare the gel following the manufacturer.","Add the fragrance.","Visually split the gel into shades if you want a gradient effect.","Add compatible dye.","Pour carefully.","Add the compatible decorations.","Let it set.","Trim the wick.","Cure and test before selling."],
+        de:["Gefäß und Docht vorbereiten.","Das Gel gemäß Hersteller vorbereiten.","Das Duftöl hinzufügen.","Für einen Verlaufseffekt das Gel optisch in verschiedene Töne aufteilen.","Kompatible Farbe hinzufügen.","Vorsichtig eingießen.","Die kompatiblen Dekorationen hinzufügen.","Fest werden lassen.","Den Docht kürzen.","Aushärten und vor dem Verkauf testen."],
+      },
+    },
+    {
+      title:{es:"🍓 Vela en gel con efecto frutal", en:"🍓 Fruit-effect gel candle", de:"🍓 Gelkerze mit Frucht-Effekt"},
+      meta:{es:"Peso 250 g · 1 unidad · S/17–24", en:"Weight 250 g · 1 unit · S/17–24", de:"Gewicht 250 g · 1 Stück · S/17–24"},
+      ingredients:{
+        es:["Gel para velas","Fragancia frutal compatible","Colorante","1 mecha","Recipiente","Decoraciones fabricadas específicamente para velas"],
+        en:["Candle gel","Compatible fruity fragrance oil","Dye","1 wick","Container","Decorations made specifically for candles"],
+        de:["Gelkerzenmasse","Kompatibles Frucht-Duftöl","Farbe","1 Docht","Gefäß","Speziell für Kerzen hergestellte Dekorationen"],
+      },
+      steps:{
+        es:["Preparar el recipiente.","Fijar la mecha.","Preparar el gel según el fabricante.","Incorporar fragancia.","Añadir colorante.","Verter una primera capa.","Colocar decoración compatible.","Completar con el gel.","Dejar enfriar.","Recortar la mecha.","Realizar prueba de combustión."],
+        en:["Prepare the container.","Secure the wick.","Prepare the gel per the manufacturer.","Add fragrance.","Add dye.","Pour a first layer.","Place compatible decoration.","Fill with the rest of the gel.","Let it cool.","Trim the wick.","Do a burn test."],
+        de:["Das Gefäß vorbereiten.","Den Docht befestigen.","Das Gel gemäß Hersteller vorbereiten.","Duftöl hinzufügen.","Farbe hinzufügen.","Eine erste Schicht eingießen.","Kompatible Dekoration platzieren.","Mit dem restlichen Gel auffüllen.","Abkühlen lassen.","Den Docht kürzen.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🍰 Vela decorativa tipo cupcake", en:"🍰 Cupcake-style decorative candle", de:"🍰 Dekorative Kerze im Cupcake-Stil"},
+      meta:{es:"Peso 180 g · 1 unidad · S/12–18", en:"Weight 180 g · 1 unit · S/12–18", de:"Gewicht 180 g · 1 Stück · S/12–18"},
+      ingredients:{
+        es:["Cera adecuada para molde","Fragancia compatible","Colorantes para velas","1 mecha","Molde de silicona apto para velas","Material adicional para efecto decorativo"],
+        en:["Wax suited to the mold","Compatible fragrance oil","Candle dyes","1 wick","Candle-safe silicone mold","Extra material for the decorative effect"],
+        de:["Für die Form geeignetes Wachs","Kompatibles Duftöl","Kerzenfarben","1 Docht","Für Kerzen geeignete Silikonform","Zusätzliches Material für den Dekoeffekt"],
+      },
+      steps:{
+        es:["Preparar el molde.","Preparar la cera según las indicaciones del fabricante.","Incorporar fragancia y colorante.","Verter la primera parte en el molde.","Dejar que adquiera la consistencia necesaria para continuar con la decoración.","Preparar la parte superior decorativa utilizando cera compatible.","Unir las partes.","Colocar la mecha.","Dejar solidificar completamente.","Desmoldar.","Revisar acabado y realizar prueba de combustión."],
+        en:["Prepare the mold.","Prepare the wax following the manufacturer's instructions.","Add fragrance and dye.","Pour the first part into the mold.","Let it reach the consistency needed to continue with the decoration.","Prepare the decorative top using compatible wax.","Join the parts.","Place the wick.","Let it set completely.","Unmold.","Check the finish and do a burn test."],
+        de:["Die Form vorbereiten.","Das Wachs gemäß den Herstelleranweisungen vorbereiten.","Duftöl und Farbe hinzufügen.","Den ersten Teil in die Form gießen.","Warten, bis die für die Dekoration nötige Konsistenz erreicht ist.","Den dekorativen oberen Teil mit kompatiblem Wachs vorbereiten.","Die Teile zusammenfügen.","Den Docht platzieren.","Vollständig fest werden lassen.","Aus der Form lösen.","Das Finish prüfen und einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🧊 Vela Bubble Cube", en:"🧊 Bubble cube candle", de:"🧊 Bubble-Cube-Kerze"},
+      meta:{es:"Peso 180 g · 1 unidad · S/10–15", en:"Weight 180 g · 1 unit · S/10–15", de:"Gewicht 180 g · 1 Stück · S/10–15"},
+      ingredients:{
+        es:["180 g de cera adecuada para moldes","Fragancia compatible","Colorante","1 mecha","Molde Bubble Cube","Adhesivo para mecha"],
+        en:["180 g mold-suited wax","Compatible fragrance oil","Dye","1 wick","Bubble cube mold","Wick adhesive"],
+        de:["180 g formgeeignetes Wachs","Kompatibles Duftöl","Farbe","1 Docht","Bubble-Cube-Form","Dochtkleber"],
+      },
+      steps:{
+        es:["Preparar el molde.","Fijar la mecha.","Preparar la cera siguiendo las especificaciones del producto.","Añadir colorante.","Incorporar fragancia.","Verter cuidadosamente en el molde.","Dejar solidificar completamente.","Desmoldar.","Revisar que la mecha esté correctamente posicionada.","Dejar estabilizar.","Realizar prueba de combustión."],
+        en:["Prepare the mold.","Secure the wick.","Prepare the wax following the product's specifications.","Add dye.","Add fragrance.","Pour carefully into the mold.","Let it set completely.","Unmold.","Check that the wick is correctly positioned.","Let it stabilize.","Do a burn test."],
+        de:["Die Form vorbereiten.","Den Docht befestigen.","Das Wachs gemäß den Produktangaben vorbereiten.","Farbe hinzufügen.","Duftöl hinzufügen.","Vorsichtig in die Form gießen.","Vollständig fest werden lassen.","Aus der Form lösen.","Prüfen, ob der Docht richtig positioniert ist.","Stabilisieren lassen.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"❤️ Vela en forma de corazón", en:"❤️ Heart-shaped candle", de:"❤️ Herzförmige Kerze"},
+      meta:{es:"Peso 150 g · 1 unidad · S/8–13", en:"Weight 150 g · 1 unit · S/8–13", de:"Gewicht 150 g · 1 Stück · S/8–13"},
+      ingredients:{
+        es:["150 g de cera para moldes","Fragancia compatible","Colorante","1 mecha","Molde de corazón","Adhesivo para mecha"],
+        en:["150 g mold wax","Compatible fragrance oil","Dye","1 wick","Heart mold","Wick adhesive"],
+        de:["150 g Formkerzenwachs","Kompatibles Duftöl","Farbe","1 Docht","Herzform","Dochtkleber"],
+      },
+      steps:{
+        es:["Preparar el molde.","Preparar y fijar la mecha.","Preparar la cera según las instrucciones del fabricante.","Incorporar colorante y fragancia.","Verter en el molde.","Dejar solidificar completamente.","Desmoldar.","Revisar el acabado.","Recortar la mecha.","Realizar prueba de combustión."],
+        en:["Prepare the mold.","Prepare and secure the wick.","Prepare the wax following the manufacturer's instructions.","Add dye and fragrance.","Pour into the mold.","Let it set completely.","Unmold.","Check the finish.","Trim the wick.","Do a burn test."],
+        de:["Die Form vorbereiten.","Den Docht vorbereiten und befestigen.","Das Wachs gemäß den Herstelleranweisungen vorbereiten.","Farbe und Duftöl hinzufügen.","In die Form gießen.","Vollständig fest werden lassen.","Aus der Form lösen.","Das Finish prüfen.","Den Docht kürzen.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🌹 Vela en forma de rosa", en:"🌹 Rose-shaped candle", de:"🌹 Rosenförmige Kerze"},
+      meta:{es:"Peso 120 g · 1 unidad · S/8–12", en:"Weight 120 g · 1 unit · S/8–12", de:"Gewicht 120 g · 1 Stück · S/8–12"},
+      ingredients:{
+        es:["120 g de cera para moldes","Fragancia floral","Colorante","1 mecha","Molde de rosa"],
+        en:["120 g mold wax","Floral fragrance oil","Dye","1 wick","Rose mold"],
+        de:["120 g Formkerzenwachs","Blumen-Duftöl","Farbe","1 Docht","Rosenform"],
+      },
+      steps:{
+        es:["Preparar el molde.","Colocar la mecha.","Preparar la cera según el fabricante.","Añadir colorante.","Incorporar fragancia.","Verter cuidadosamente.","Dejar solidificar.","Desmoldar.","Revisar los pétalos.","Recortar la mecha.","Realizar prueba de combustión."],
+        en:["Prepare the mold.","Place the wick.","Prepare the wax per the manufacturer.","Add dye.","Add fragrance.","Pour carefully.","Let it set.","Unmold.","Check the petals.","Trim the wick.","Do a burn test."],
+        de:["Die Form vorbereiten.","Den Docht platzieren.","Das Wachs gemäß Hersteller vorbereiten.","Farbe hinzufügen.","Duftöl hinzufügen.","Vorsichtig eingießen.","Fest werden lassen.","Aus der Form lösen.","Die Blütenblätter prüfen.","Den Docht kürzen.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🧸 Vela de osito", en:"🧸 Teddy bear candle", de:"🧸 Teddybär-Kerze"},
+      meta:{es:"Peso 150 g · 1 unidad · S/9–13", en:"Weight 150 g · 1 unit · S/9–13", de:"Gewicht 150 g · 1 Stück · S/9–13"},
+      ingredients:{
+        es:["150 g cera para moldes","Fragancia","Colorante","1 mecha","Molde de osito"],
+        en:["150 g mold wax","Fragrance oil","Dye","1 wick","Teddy bear mold"],
+        de:["150 g Formkerzenwachs","Duftöl","Farbe","1 Docht","Teddybär-Form"],
+      },
+      steps:{
+        es:["Preparar molde y mecha.","Preparar la cera.","Añadir fragancia y colorante.","Verter en el molde.","Dejar solidificar.","Desmoldar cuidadosamente.","Revisar detalles.","Recortar la mecha.","Realizar prueba de combustión."],
+        en:["Prepare the mold and wick.","Prepare the wax.","Add fragrance and dye.","Pour into the mold.","Let it set.","Unmold carefully.","Check the details.","Trim the wick.","Do a burn test."],
+        de:["Form und Docht vorbereiten.","Das Wachs vorbereiten.","Duftöl und Farbe hinzufügen.","In die Form gießen.","Fest werden lassen.","Vorsichtig aus der Form lösen.","Details prüfen.","Den Docht kürzen.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🍦 Vela tipo postre de vainilla", en:"🍦 Vanilla dessert-style candle", de:"🍦 Kerze im Vanille-Dessert-Stil"},
+      meta:{es:"Peso 250 g · 1 unidad · S/16–22", en:"Weight 250 g · 1 unit · S/16–22", de:"Gewicht 250 g · 1 Stück · S/16–22"},
+      ingredients:{
+        es:["Cera para recipientes","Cera adecuada para decoración","Fragancia de vainilla","Colorantes","1 mecha","Recipiente","Decoración de cera"],
+        en:["Container wax","Wax suited for decoration","Vanilla fragrance oil","Dyes","1 wick","Container","Wax decoration"],
+        de:["Behälterkerzenwachs","Für Dekoration geeignetes Wachs","Vanille-Duftöl","Farben","1 Docht","Gefäß","Wachsdekoration"],
+      },
+      steps:{
+        es:["Preparar el recipiente y la mecha.","Preparar la base de la vela.","Incorporar fragancia.","Verter la base.","Preparar la cera decorativa.","Crear la apariencia de crema utilizando únicamente cera destinada a este uso.","Añadir decoraciones fabricadas en cera.","Dejar solidificar.","Recortar la mecha.","Curar y probar antes de vender."],
+        en:["Prepare the container and wick.","Prepare the candle base.","Add fragrance.","Pour the base.","Prepare the decorative wax.","Create the cream-like appearance using only wax intended for this purpose.","Add wax-made decorations.","Let it set.","Trim the wick.","Cure and test before selling."],
+        de:["Gefäß und Docht vorbereiten.","Die Kerzenbasis vorbereiten.","Duftöl hinzufügen.","Die Basis eingießen.","Das Dekorwachs vorbereiten.","Die cremeartige Optik nur mit dafür vorgesehenem Wachs erzeugen.","Aus Wachs hergestellte Dekorationen hinzufügen.","Fest werden lassen.","Den Docht kürzen.","Aushärten und vor dem Verkauf testen."],
+      },
+    },
+    {
+      title:{es:"☁️ Vela Whipped", en:"☁️ Whipped wax candle", de:"☁️ Whipped-Wachs-Kerze"},
+      meta:{es:"Peso 220 g · 1 unidad · S/15–21", en:"Weight 220 g · 1 unit · S/15–21", de:"Gewicht 220 g · 1 Stück · S/15–21"},
+      ingredients:{
+        es:["Cera adecuada para decoración","Cera para recipiente","Fragancia","Colorantes","1 mecha","Recipiente","Accesorios decorativos de cera"],
+        en:["Wax suited for decoration","Container wax","Fragrance oil","Dyes","1 wick","Container","Wax decorative accessories"],
+        de:["Für Dekoration geeignetes Wachs","Behälterkerzenwachs","Duftöl","Farben","1 Docht","Gefäß","Dekorative Wachsaccessoires"],
+      },
+      steps:{
+        es:["Preparar el recipiente.","Colocar la mecha.","Preparar la base.","Preparar la cera destinada al efecto decorativo siguiendo las indicaciones del fabricante.","Incorporar fragancia.","Trabajar la textura hasta obtener la consistencia apropiada para decoración.","Aplicar la decoración sobre la base.","Añadir adornos de cera.","Dejar estabilizar.","Recortar la mecha.","Realizar prueba de combustión."],
+        en:["Prepare the container.","Place the wick.","Prepare the base.","Prepare the decorative wax following the manufacturer's instructions.","Add fragrance.","Work the texture until it reaches the right consistency for decorating.","Apply the decoration over the base.","Add wax ornaments.","Let it stabilize.","Trim the wick.","Do a burn test."],
+        de:["Das Gefäß vorbereiten.","Den Docht platzieren.","Die Basis vorbereiten.","Das Dekorwachs gemäß den Herstelleranweisungen vorbereiten.","Duftöl hinzufügen.","Die Textur bearbeiten, bis die für die Dekoration passende Konsistenz erreicht ist.","Die Dekoration auf die Basis auftragen.","Wachsverzierungen hinzufügen.","Stabilisieren lassen.","Den Docht kürzen.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🍊 Vela aromática de naranja", en:"🍊 Aromatic orange candle", de:"🍊 Duftende Orangenkerze"},
+      meta:{es:"Peso 200 g · 1 unidad · S/14–18", en:"Weight 200 g · 1 unit · S/14–18", de:"Gewicht 200 g · 1 Stück · S/14–18"},
+      ingredients:{
+        es:["Cera de soya: cantidad necesaria","Fragancia de naranja","Colorante naranja, opcional","1 mecha","Recipiente","Etiqueta"],
+        en:["Soy wax: as needed","Orange fragrance oil","Orange dye, optional","1 wick","Container","Label"],
+        de:["Sojawachs: nach Bedarf","Orangen-Duftöl","Orange Farbe, optional","1 Docht","Gefäß","Etikett"],
+      },
+      steps:{
+        es:["Preparar recipiente y mecha.","Preparar la cera según las instrucciones del fabricante.","Incorporar la fragancia en el porcentaje permitido.","Añadir colorante.","Mezclar suavemente.","Verter.","Centrar la mecha.","Dejar solidificar.","Recortar la mecha.","Dejar curar.","Realizar prueba de combustión."],
+        en:["Prepare the container and wick.","Prepare the wax following the manufacturer's instructions.","Add the fragrance at the allowed percentage.","Add dye.","Mix gently.","Pour.","Center the wick.","Let it set.","Trim the wick.","Let it cure.","Do a burn test."],
+        de:["Gefäß und Docht vorbereiten.","Das Wachs gemäß den Herstelleranweisungen vorbereiten.","Das Duftöl im zulässigen Prozentsatz hinzufügen.","Farbe hinzufügen.","Vorsichtig mischen.","Eingießen.","Den Docht zentrieren.","Fest werden lassen.","Den Docht kürzen.","Aushärten lassen.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"🪵 Vela de madera aromática", en:"🪵 Aromatic wood-wick candle", de:"🪵 Duftende Holzdocht-Kerze"},
+      meta:{es:"Peso 220 g · 1 unidad · S/17–23", en:"Weight 220 g · 1 unit · S/17–23", de:"Gewicht 220 g · 1 Stück · S/17–23"},
+      ingredients:{
+        es:["Cera de soya o mezcla compatible","Fragancia","1 mecha de madera adecuada para el recipiente","1 recipiente","Colorante opcional"],
+        en:["Soy wax or compatible blend","Fragrance oil","1 wood wick sized for the container","1 container","Dye, optional"],
+        de:["Sojawachs oder kompatible Mischung","Duftöl","1 zum Gefäß passender Holzdocht","1 Gefäß","Farbe, optional"],
+      },
+      steps:{
+        es:["Seleccionar una mecha de madera compatible con el diámetro del recipiente.","Fijarla y centrarla.","Preparar la cera siguiendo las especificaciones del fabricante.","Incorporar la fragancia.","Mezclar.","Verter en el recipiente.","Mantener la mecha centrada.","Dejar solidificar.","Recortar la mecha siguiendo las indicaciones del proveedor.","Dejar curar.","Realizar prueba de combustión."],
+        en:["Choose a wood wick that matches the container's diameter.","Secure and center it.","Prepare the wax following the manufacturer's specifications.","Add the fragrance.","Mix.","Pour into the container.","Keep the wick centered.","Let it set.","Trim the wick following the supplier's instructions.","Let it cure.","Do a burn test."],
+        de:["Einen zum Gefäßdurchmesser passenden Holzdocht auswählen.","Ihn befestigen und zentrieren.","Das Wachs gemäß den Herstellerangaben vorbereiten.","Das Duftöl hinzufügen.","Mischen.","In das Gefäß gießen.","Den Docht zentriert halten.","Fest werden lassen.","Den Docht gemäß den Angaben des Anbieters kürzen.","Aushärten lassen.","Einen Brenntest durchführen."],
+      },
+    },
+    {
+      title:{es:"✨ Vela premium de vainilla y ámbar", en:"✨ Premium vanilla and amber candle", de:"✨ Premium-Kerze Vanille & Amber"},
+      meta:{es:"Peso 250 g · 1 unidad · S/20–28", en:"Weight 250 g · 1 unit · S/20–28", de:"Gewicht 250 g · 1 Stück · S/20–28"},
+      ingredients:{
+        es:["Cera premium para recipientes","Fragancia de vainilla","Fragancia de ámbar compatible","1 mecha adecuada","Recipiente premium de 250–300 ml","Colorante opcional","Tapa","Etiqueta"],
+        en:["Premium container wax","Vanilla fragrance oil","Compatible amber fragrance oil","1 suitable wick","Premium container, 250–300 ml","Dye, optional","Lid","Label"],
+        de:["Premium-Behälterkerzenwachs","Vanille-Duftöl","Kompatibles Amber-Duftöl","1 passender Docht","Premium-Gefäß, 250–300 ml","Farbe, optional","Deckel","Etikett"],
+      },
+      steps:{
+        es:["Preparar y limpiar el recipiente.","Fijar la mecha.","Preparar la cera de acuerdo con las especificaciones del fabricante.","Incorporar la mezcla aromática respetando la carga máxima recomendada.","Mezclar cuidadosamente.","Añadir colorante si se desea.","Verter en el recipiente.","Centrar la mecha.","Dejar solidificar completamente.","Dejar curar según las características de la cera.","Realizar prueba de combustión.","Colocar tapa, etiqueta y empaque."],
+        en:["Prepare and clean the container.","Secure the wick.","Prepare the wax according to the manufacturer's specifications.","Add the fragrance blend respecting the maximum recommended load.","Mix carefully.","Add dye if desired.","Pour into the container.","Center the wick.","Let it set completely.","Let it cure according to the wax's characteristics.","Do a burn test.","Add the lid, label, and packaging."],
+        de:["Das Gefäß vorbereiten und reinigen.","Den Docht befestigen.","Das Wachs gemäß den Herstellerangaben vorbereiten.","Die Duftmischung unter Einhaltung der empfohlenen Höchstmenge hinzufügen.","Sorgfältig mischen.","Bei Bedarf Farbe hinzufügen.","In das Gefäß gießen.","Den Docht zentrieren.","Vollständig fest werden lassen.","Je nach Wachseigenschaften aushärten lassen.","Einen Brenntest durchführen.","Deckel, Etikett und Verpackung anbringen."],
       },
     },
   ],
   jabon: [
     {
-      title:{es:"Jabón artesanal básico (proceso en frío)", en:"Basic handmade soap (cold process)", de:"Einfache handgemachte Seife (Kaltverfahren)"},
+      title:{es:"🥣 Jabón artesanal básico (proceso en frío)", en:"🥣 Basic handmade soap (cold process)", de:"🥣 Einfache handgemachte Seife (Kaltverfahren)"},
+      meta:{es:"Peso 500 g · 5 barras aprox. · S/15–20", en:"Weight 500 g · ~5 bars · S/15–20", de:"Gewicht 500 g · ~5 Stück · S/15–20"},
       ingredients:{
         es:["500 g de aceite de oliva/coco (mezcla)","70 g de sosa cáustica (NaOH)","180 ml de agua fría","Aceite esencial al gusto (opcional)"],
         en:["500 g olive/coconut oil blend","70 g lye (NaOH)","180 ml cold water","Essential oil to taste (optional)"],
@@ -887,10 +1429,291 @@ const RECIPES = {
       },
       safety:{es:"La sosa cáustica es corrosiva: usa guantes, lentes de protección, ropa de manga larga, y trabaja en un espacio ventilado. Nunca la inhales directamente ni la manipules cerca de niños.", en:"Lye is corrosive: use gloves, eye protection, long sleeves, and work in a ventilated space. Never inhale it directly or handle it near children.", de:"Natronlauge ist ätzend: Trage Handschuhe, Augenschutz und langärmelige Kleidung und arbeite in einem gut belüfteten Raum. Atme sie niemals direkt ein und halte sie von Kindern fern."},
     },
+    {
+      title:{es:"🥛 Jabón de glicerina y avena", en:"🥛 Glycerin and oatmeal soap", de:"🥛 Glycerin-Hafer-Seife"},
+      meta:{es:"Peso 500 g · Rinde 5 jabones de 100 g · 30 min + enfriamiento · ⭐ · S/18–25", en:"Weight 500 g · Yields 5 × 100 g bars · 30 min + cooling · ⭐ · S/18–25", de:"Gewicht 500 g · Ergibt 5 Stück à 100 g · 30 Min. + Abkühlen · ⭐ · S/18–25"},
+      ingredients:{
+        es:["500 g base de jabón de glicerina","10 g avena coloidal","5–10 ml fragancia de avena o vainilla, compatible con jabón","Colorante para jabón, opcional","Molde para 5 unidades","Alcohol en spray para eliminar burbujas, opcional"],
+        en:["500 g glycerin soap base","10 g colloidal oatmeal","5–10 ml oatmeal or vanilla fragrance, soap-compatible","Soap dye, optional","Mold for 5 units","Rubbing alcohol spray to remove bubbles, optional"],
+        de:["500 g Glycerin-Seifenbasis","10 g kolloidaler Hafer","5–10 ml seifengeeignetes Hafer- oder Vanille-Duftöl","Seifenfarbe, optional","Form für 5 Stück","Alkoholspray zum Entfernen von Blasen, optional"],
+      },
+      steps:{
+        es:["Cortar la base de glicerina en cubos pequeños.","Fundirla siguiendo las indicaciones del fabricante, evitando sobrecalentarla.","Añadir la avena coloidal.","Incorporar la fragancia en la cantidad recomendada por el proveedor.","Añadir colorante si se desea.","Mezclar suavemente.","Verter en los moldes.","Rociar ligeramente con alcohol para eliminar burbujas, si el producto lo permite.","Dejar enfriar completamente.","Desmoldar.","Envolver inmediatamente para evitar que la glicerina absorba humedad ambiental."],
+        en:["Cut the glycerin base into small cubes.","Melt it following the manufacturer's instructions, avoiding overheating.","Add the colloidal oatmeal.","Add the fragrance at the amount recommended by the supplier.","Add dye if desired.","Mix gently.","Pour into the molds.","Lightly spray with alcohol to remove bubbles, if the product allows it.","Let it cool completely.","Unmold.","Wrap immediately to prevent the glycerin from absorbing ambient moisture."],
+        de:["Die Glycerinbasis in kleine Würfel schneiden.","Gemäß den Herstelleranweisungen schmelzen, ohne sie zu überhitzen.","Den kolloidalen Hafer hinzufügen.","Das Duftöl in der vom Anbieter empfohlenen Menge hinzufügen.","Bei Bedarf Farbe hinzufügen.","Vorsichtig mischen.","In die Formen gießen.","Bei Bedarf leicht mit Alkohol besprühen, um Blasen zu entfernen.","Vollständig abkühlen lassen.","Aus der Form lösen.","Sofort einwickeln, damit das Glycerin keine Feuchtigkeit aus der Luft aufnimmt."],
+      },
+    },
+    {
+      title:{es:"🍯 Jabón de miel", en:"🍯 Honey soap", de:"🍯 Honigseife"},
+      meta:{es:"Peso 500 g · 5×100 g · S/18–25", en:"Weight 500 g · 5×100 g · S/18–25", de:"Gewicht 500 g · 5×100 g · S/18–25"},
+      ingredients:{
+        es:["500 g base de glicerina","10 g miel cosmética","5–10 ml fragancia de miel","Colorante amarillo, opcional","Molde"],
+        en:["500 g glycerin base","10 g cosmetic-grade honey","5–10 ml honey fragrance","Yellow dye, optional","Mold"],
+        de:["500 g Glycerinbasis","10 g kosmetischer Honig","5–10 ml Honig-Duftöl","Gelbe Farbe, optional","Form"],
+      },
+      steps:{
+        es:["Cortar y fundir la base.","Retirar del calor cuando esté completamente líquida.","Incorporar la miel.","Añadir la fragancia.","Agregar colorante.","Mezclar suavemente.","Verter en los moldes.","Eliminar burbujas.","Dejar solidificar.","Desmoldar y envolver."],
+        en:["Cut and melt the base.","Remove from heat once fully liquid.","Add the honey.","Add the fragrance.","Add dye.","Mix gently.","Pour into the molds.","Remove bubbles.","Let it set.","Unmold and wrap."],
+        de:["Die Basis schneiden und schmelzen.","Vom Herd nehmen, sobald sie vollständig flüssig ist.","Den Honig hinzufügen.","Das Duftöl hinzufügen.","Farbe hinzufügen.","Vorsichtig mischen.","In die Formen gießen.","Blasen entfernen.","Fest werden lassen.","Aus der Form lösen und einwickeln."],
+      },
+    },
+    {
+      title:{es:"🌿 Jabón de aloe vera", en:"🌿 Aloe vera soap", de:"🌿 Aloe-Vera-Seife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–27", en:"Weight 500 g · 5 units · S/20–27", de:"Gewicht 500 g · 5 Stück · S/20–27"},
+      ingredients:{
+        es:["500 g base de glicerina","Extracto cosmético de aloe vera según especificación del proveedor","5–10 ml fragancia compatible","Colorante verde, opcional","Molde"],
+        en:["500 g glycerin base","Cosmetic-grade aloe vera extract per the supplier's specification","5–10 ml compatible fragrance","Green dye, optional","Mold"],
+        de:["500 g Glycerinbasis","Kosmetischer Aloe-Vera-Extrakt gemäß Angabe des Anbieters","5–10 ml kompatibles Duftöl","Grüne Farbe, optional","Form"],
+      },
+      steps:{
+        es:["Cortar la base.","Fundir siguiendo las instrucciones del fabricante.","Incorporar el extracto de aloe en la cantidad recomendada.","Añadir fragancia.","Agregar colorante.","Mezclar.","Verter.","Eliminar burbujas.","Dejar enfriar.","Desmoldar y empacar."],
+        en:["Cut the base.","Melt following the manufacturer's instructions.","Add the aloe extract at the recommended amount.","Add fragrance.","Add dye.","Mix.","Pour.","Remove bubbles.","Let it cool.","Unmold and pack."],
+        de:["Die Basis schneiden.","Gemäß den Herstelleranweisungen schmelzen.","Den Aloe-Extrakt in der empfohlenen Menge hinzufügen.","Duftöl hinzufügen.","Farbe hinzufügen.","Mischen.","Eingießen.","Blasen entfernen.","Abkühlen lassen.","Aus der Form lösen und verpacken."],
+      },
+    },
+    {
+      title:{es:"🌹 Jabón de rosas", en:"🌹 Rose soap", de:"🌹 Rosenseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–28", en:"Weight 500 g · 5 units · S/20–28", de:"Gewicht 500 g · 5 Stück · S/20–28"},
+      ingredients:{
+        es:["500 g base de glicerina","Fragancia de rosa compatible","Colorante rosado","Pétalos secos aptos para uso cosmético, opcionales","Molde"],
+        en:["500 g glycerin base","Compatible rose fragrance","Pink dye","Cosmetic-grade dried petals, optional","Mold"],
+        de:["500 g Glycerinbasis","Kompatibles Rosen-Duftöl","Rosa Farbe","Kosmetisch geeignete getrocknete Blütenblätter, optional","Form"],
+      },
+      steps:{
+        es:["Fundir la base.","Incorporar fragancia.","Añadir colorante.","Mezclar.","Verter una pequeña cantidad en el molde.","Añadir una pequeña cantidad de pétalos cosméticos si se utilizan.","Completar con jabón.","Eliminar burbujas.","Dejar solidificar.","Desmoldar y empacar."],
+        en:["Melt the base.","Add fragrance.","Add dye.","Mix.","Pour a small amount into the mold.","Add a small amount of cosmetic petals if using.","Fill the rest with soap.","Remove bubbles.","Let it set.","Unmold and pack."],
+        de:["Die Basis schmelzen.","Duftöl hinzufügen.","Farbe hinzufügen.","Mischen.","Eine kleine Menge in die Form gießen.","Bei Bedarf etwas kosmetische Blütenblätter hinzufügen.","Mit Seife auffüllen.","Blasen entfernen.","Fest werden lassen.","Aus der Form lösen und verpacken."],
+      },
+    },
+    {
+      title:{es:"💜 Jabón de lavanda", en:"💜 Lavender soap", de:"💜 Lavendelseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–27", en:"Weight 500 g · 5 units · S/20–27", de:"Gewicht 500 g · 5 Stück · S/20–27"},
+      ingredients:{
+        es:["500 g base de glicerina","Fragancia de lavanda","Colorante violeta","Flores secas de lavanda cosméticas, opcionales","Molde"],
+        en:["500 g glycerin base","Lavender fragrance","Violet dye","Cosmetic-grade dried lavender flowers, optional","Mold"],
+        de:["500 g Glycerinbasis","Lavendel-Duftöl","Violette Farbe","Kosmetisch geeignete getrocknete Lavendelblüten, optional","Form"],
+      },
+      steps:{
+        es:["Fundir la base.","Incorporar fragancia.","Añadir colorante.","Mezclar.","Incorporar las flores cosméticas si se utilizan.","Verter en los moldes.","Eliminar burbujas.","Dejar solidificar.","Desmoldar.","Envolver."],
+        en:["Melt the base.","Add fragrance.","Add dye.","Mix.","Add the cosmetic flowers if using.","Pour into the molds.","Remove bubbles.","Let it set.","Unmold.","Wrap."],
+        de:["Die Basis schmelzen.","Duftöl hinzufügen.","Farbe hinzufügen.","Mischen.","Bei Bedarf die kosmetischen Blüten hinzufügen.","In die Formen gießen.","Blasen entfernen.","Fest werden lassen.","Aus der Form lösen.","Einwickeln."],
+      },
+    },
+    {
+      title:{es:"☕ Jabón de café", en:"☕ Coffee soap", de:"☕ Kaffeeseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/18–25", en:"Weight 500 g · 5 units · S/18–25", de:"Gewicht 500 g · 5 Stück · S/18–25"},
+      ingredients:{
+        es:["500 g base de glicerina","10–15 g café molido fino","Fragancia de café compatible","Colorante marrón, opcional","Molde"],
+        en:["500 g glycerin base","10–15 g finely ground coffee","Compatible coffee fragrance","Brown dye, optional","Mold"],
+        de:["500 g Glycerinbasis","10–15 g fein gemahlener Kaffee","Kompatibles Kaffee-Duftöl","Braune Farbe, optional","Form"],
+      },
+      steps:{
+        es:["Fundir la base.","Incorporar el café molido.","Añadir fragancia.","Agregar colorante.","Mezclar.","Verter inmediatamente en los moldes.","Dejar enfriar.","Desmoldar.","Empacar."],
+        en:["Melt the base.","Add the ground coffee.","Add fragrance.","Add dye.","Mix.","Pour into the molds immediately.","Let it cool.","Unmold.","Pack."],
+        de:["Die Basis schmelzen.","Den gemahlenen Kaffee hinzufügen.","Duftöl hinzufügen.","Farbe hinzufügen.","Mischen.","Sofort in die Formen gießen.","Abkühlen lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🥥 Jabón de coco", en:"🥥 Coconut soap", de:"🥥 Kokosseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–27", en:"Weight 500 g · 5 units · S/20–27", de:"Gewicht 500 g · 5 Stück · S/20–27"},
+      ingredients:{
+        es:["500 g base de glicerina","Fragancia de coco","Extracto cosmético de coco, opcional","Colorante blanco","Coco cosmético finamente procesado, opcional"],
+        en:["500 g glycerin base","Coconut fragrance","Cosmetic coconut extract, optional","White dye","Finely processed cosmetic coconut, optional"],
+        de:["500 g Glycerinbasis","Kokos-Duftöl","Kosmetischer Kokosextrakt, optional","Weiße Farbe","Fein verarbeitete kosmetische Kokosraspeln, optional"],
+      },
+      steps:{
+        es:["Fundir la base.","Añadir el extracto.","Incorporar fragancia.","Añadir colorante.","Incorporar el ingrediente exfoliante si corresponde.","Mezclar.","Verter.","Dejar solidificar.","Desmoldar.","Empacar."],
+        en:["Melt the base.","Add the extract.","Add fragrance.","Add dye.","Add the exfoliating ingredient if applicable.","Mix.","Pour.","Let it set.","Unmold.","Pack."],
+        de:["Die Basis schmelzen.","Den Extrakt hinzufügen.","Duftöl hinzufügen.","Farbe hinzufügen.","Bei Bedarf die Peeling-Zutat hinzufügen.","Mischen.","Eingießen.","Fest werden lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🍊 Jabón de naranja", en:"🍊 Orange soap", de:"🍊 Orangenseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–27", en:"Weight 500 g · 5 units · S/20–27", de:"Gewicht 500 g · 5 Stück · S/20–27"},
+      ingredients:{
+        es:["500 g base de glicerina","Fragancia de naranja para uso cosmético","Colorante naranja","Ralladura cosmética seca y preparada, opcional"],
+        en:["500 g glycerin base","Cosmetic-grade orange fragrance","Orange dye","Dried, cosmetic-prepared zest, optional"],
+        de:["500 g Glycerinbasis","Kosmetisches Orangen-Duftöl","Orange Farbe","Getrockneter, kosmetisch aufbereiteter Abrieb, optional"],
+      },
+      steps:{
+        es:["Fundir la base.","Añadir colorante.","Incorporar fragancia.","Añadir la decoración cosmética si se utiliza.","Mezclar.","Verter en moldes.","Dejar solidificar.","Desmoldar.","Empacar."],
+        en:["Melt the base.","Add dye.","Add fragrance.","Add the cosmetic decoration if using.","Mix.","Pour into molds.","Let it set.","Unmold.","Pack."],
+        de:["Die Basis schmelzen.","Farbe hinzufügen.","Duftöl hinzufügen.","Bei Bedarf die kosmetische Dekoration hinzufügen.","Mischen.","In Formen gießen.","Fest werden lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🍓 Jabón de frutos rojos", en:"🍓 Mixed berry soap", de:"🍓 Beerenseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–28", en:"Weight 500 g · 5 units · S/20–28", de:"Gewicht 500 g · 5 Stück · S/20–28"},
+      ingredients:{
+        es:["500 g base de glicerina","Fragancia de frutos rojos","Colorante rojo","Decoración cosmética opcional"],
+        en:["500 g glycerin base","Mixed berry fragrance","Red dye","Cosmetic decoration, optional"],
+        de:["500 g Glycerinbasis","Beeren-Duftöl","Rote Farbe","Kosmetische Dekoration, optional"],
+      },
+      steps:{
+        es:["Cortar y fundir la base.","Añadir colorante.","Incorporar fragancia.","Mezclar suavemente.","Verter en moldes.","Eliminar burbujas.","Dejar solidificar.","Desmoldar.","Empacar."],
+        en:["Cut and melt the base.","Add dye.","Add fragrance.","Mix gently.","Pour into molds.","Remove bubbles.","Let it set.","Unmold.","Pack."],
+        de:["Die Basis schneiden und schmelzen.","Farbe hinzufügen.","Duftöl hinzufügen.","Vorsichtig mischen.","In Formen gießen.","Blasen entfernen.","Fest werden lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🥒 Jabón de pepino", en:"🥒 Cucumber soap", de:"🥒 Gurkenseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–27", en:"Weight 500 g · 5 units · S/20–27", de:"Gewicht 500 g · 5 Stück · S/20–27"},
+      ingredients:{
+        es:["500 g base de glicerina","Extracto cosmético de pepino","Fragancia compatible","Colorante verde"],
+        en:["500 g glycerin base","Cosmetic cucumber extract","Compatible fragrance","Green dye"],
+        de:["500 g Glycerinbasis","Kosmetischer Gurkenextrakt","Kompatibles Duftöl","Grüne Farbe"],
+      },
+      steps:{
+        es:["Fundir la base.","Incorporar el extracto cosmético según las instrucciones del proveedor.","Añadir fragancia.","Agregar colorante.","Mezclar.","Verter.","Dejar enfriar.","Desmoldar.","Empacar."],
+        en:["Melt the base.","Add the cosmetic extract following the supplier's instructions.","Add fragrance.","Add dye.","Mix.","Pour.","Let it cool.","Unmold.","Pack."],
+        de:["Die Basis schmelzen.","Den kosmetischen Extrakt gemäß den Angaben des Anbieters hinzufügen.","Duftöl hinzufügen.","Farbe hinzufügen.","Mischen.","Eingießen.","Abkühlen lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🌸 Jabón de manzanilla", en:"🌸 Chamomile soap", de:"🌸 Kamillenseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–27", en:"Weight 500 g · 5 units · S/20–27", de:"Gewicht 500 g · 5 Stück · S/20–27"},
+      ingredients:{
+        es:["500 g base de glicerina","Extracto cosmético de manzanilla","Fragancia compatible","Colorante amarillo suave"],
+        en:["500 g glycerin base","Cosmetic chamomile extract","Compatible fragrance","Soft yellow dye"],
+        de:["500 g Glycerinbasis","Kosmetischer Kamillenextrakt","Kompatibles Duftöl","Zartgelbe Farbe"],
+      },
+      steps:{
+        es:["Fundir la base, incorporar el extracto, añadir fragancia y colorante, mezclar, verter en moldes, eliminar burbujas, dejar solidificar, desmoldar y empacar."],
+        en:["Melt the base, add the extract, add fragrance and dye, mix, pour into molds, remove bubbles, let it set, unmold, and pack."],
+        de:["Die Basis schmelzen, den Extrakt hinzufügen, Duftöl und Farbe hinzufügen, mischen, in Formen gießen, Blasen entfernen, fest werden lassen, aus der Form lösen und verpacken."],
+      },
+    },
+    {
+      title:{es:"🥛 Jabón de leche de cabra", en:"🥛 Goat's milk soap", de:"🥛 Ziegenmilchseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/22–30", en:"Weight 500 g · 5 units · S/22–30", de:"Gewicht 500 g · 5 Stück · S/22–30"},
+      ingredients:{
+        es:["500 g base de jabón de leche de cabra","Fragancia de vainilla o leche","Colorante opcional","Molde"],
+        en:["500 g goat's milk soap base","Vanilla or milk fragrance","Dye, optional","Mold"],
+        de:["500 g Ziegenmilch-Seifenbasis","Vanille- oder Milch-Duftöl","Farbe, optional","Form"],
+      },
+      steps:{
+        es:["Cortar la base.","Fundir según las indicaciones del fabricante.","Incorporar fragancia.","Añadir colorante.","Mezclar.","Verter.","Dejar solidificar.","Desmoldar.","Empacar."],
+        en:["Cut the base.","Melt following the manufacturer's instructions.","Add fragrance.","Add dye.","Mix.","Pour.","Let it set.","Unmold.","Pack."],
+        de:["Die Basis schneiden.","Gemäß den Herstelleranweisungen schmelzen.","Duftöl hinzufügen.","Farbe hinzufügen.","Mischen.","Eingießen.","Fest werden lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🌾 Jabón de avena y miel", en:"🌾 Oatmeal and honey soap", de:"🌾 Hafer-Honig-Seife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–28", en:"Weight 500 g · 5 units · S/20–28", de:"Gewicht 500 g · 5 Stück · S/20–28"},
+      ingredients:{
+        es:["500 g base de glicerina","10 g avena coloidal","10 g miel cosmética","Fragancia compatible","Colorante beige"],
+        en:["500 g glycerin base","10 g colloidal oatmeal","10 g cosmetic-grade honey","Compatible fragrance","Beige dye"],
+        de:["500 g Glycerinbasis","10 g kolloidaler Hafer","10 g kosmetischer Honig","Kompatibles Duftöl","Beige Farbe"],
+      },
+      steps:{
+        es:["Fundir la base.","Incorporar la avena.","Añadir miel.","Incorporar fragancia.","Añadir colorante.","Mezclar.","Verter.","Dejar solidificar.","Desmoldar.","Empacar."],
+        en:["Melt the base.","Add the oatmeal.","Add the honey.","Add fragrance.","Add dye.","Mix.","Pour.","Let it set.","Unmold.","Pack."],
+        de:["Die Basis schmelzen.","Den Hafer hinzufügen.","Honig hinzufügen.","Duftöl hinzufügen.","Farbe hinzufügen.","Mischen.","Eingießen.","Fest werden lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🖤 Jabón de carbón activado", en:"🖤 Activated charcoal soap", de:"🖤 Aktivkohleseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–28", en:"Weight 500 g · 5 units · S/20–28", de:"Gewicht 500 g · 5 Stück · S/20–28"},
+      ingredients:{
+        es:["500 g base de glicerina","Carbón activado cosmético, según recomendación del proveedor","Fragancia compatible","Molde"],
+        en:["500 g glycerin base","Cosmetic-grade activated charcoal, per the supplier's recommendation","Compatible fragrance","Mold"],
+        de:["500 g Glycerinbasis","Kosmetische Aktivkohle gemäß Empfehlung des Anbieters","Kompatibles Duftöl","Form"],
+      },
+      steps:{
+        es:["Fundir la base.","Incorporar el carbón activado poco a poco.","Mezclar hasta distribuir uniformemente.","Añadir fragancia.","Verter en moldes.","Eliminar burbujas.","Dejar solidificar.","Desmoldar.","Empacar."],
+        en:["Melt the base.","Add the activated charcoal gradually.","Mix until evenly distributed.","Add fragrance.","Pour into molds.","Remove bubbles.","Let it set.","Unmold.","Pack."],
+        de:["Die Basis schmelzen.","Die Aktivkohle nach und nach hinzufügen.","Mischen, bis sie gleichmäßig verteilt ist.","Duftöl hinzufügen.","In Formen gießen.","Blasen entfernen.","Fest werden lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🧡 Jabón de canela y naranja", en:"🧡 Cinnamon and orange soap", de:"🧡 Zimt-Orangen-Seife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/21–28", en:"Weight 500 g · 5 units · S/21–28", de:"Gewicht 500 g · 5 Stück · S/21–28"},
+      ingredients:{
+        es:["500 g base de glicerina","Fragancia cosmética de naranja","Fragancia cosmética de canela compatible","Colorante naranja","Molde"],
+        en:["500 g glycerin base","Cosmetic-grade orange fragrance","Compatible cosmetic-grade cinnamon fragrance","Orange dye","Mold"],
+        de:["500 g Glycerinbasis","Kosmetisches Orangen-Duftöl","Kompatibles kosmetisches Zimt-Duftöl","Orange Farbe","Form"],
+      },
+      steps:{
+        es:["Fundir la base.","Añadir los colorantes.","Incorporar las fragancias compatibles.","Mezclar suavemente.","Verter.","Dejar solidificar.","Desmoldar.","Empacar."],
+        en:["Melt the base.","Add the dyes.","Add the compatible fragrances.","Mix gently.","Pour.","Let it set.","Unmold.","Pack."],
+        de:["Die Basis schmelzen.","Die Farben hinzufügen.","Die kompatiblen Duftstoffe hinzufügen.","Vorsichtig mischen.","Eingießen.","Fest werden lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🌿 Jabón exfoliante de avena", en:"🌿 Oatmeal exfoliating soap", de:"🌿 Hafer-Peeling-Seife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/18–25", en:"Weight 500 g · 5 units · S/18–25", de:"Gewicht 500 g · 5 Stück · S/18–25"},
+      ingredients:{
+        es:["500 g base de glicerina","15 g avena cosmética finamente molida","Fragancia compatible","Colorante opcional"],
+        en:["500 g glycerin base","15 g finely ground cosmetic-grade oatmeal","Compatible fragrance","Dye, optional"],
+        de:["500 g Glycerinbasis","15 g fein gemahlener kosmetischer Hafer","Kompatibles Duftöl","Farbe, optional"],
+      },
+      steps:{
+        es:["Fundir la base.","Añadir la avena.","Incorporar fragancia.","Mezclar.","Verter en moldes.","Dejar solidificar.","Desmoldar.","Empacar."],
+        en:["Melt the base.","Add the oatmeal.","Add fragrance.","Mix.","Pour into molds.","Let it set.","Unmold.","Pack."],
+        de:["Die Basis schmelzen.","Den Hafer hinzufügen.","Duftöl hinzufügen.","Mischen.","In Formen gießen.","Fest werden lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🍯 Jabón de miel y vainilla", en:"🍯 Honey and vanilla soap", de:"🍯 Honig-Vanille-Seife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–28", en:"Weight 500 g · 5 units · S/20–28", de:"Gewicht 500 g · 5 Stück · S/20–28"},
+      ingredients:{
+        es:["500 g base de glicerina","10 g miel cosmética","Fragancia de vainilla","Colorante beige"],
+        en:["500 g glycerin base","10 g cosmetic-grade honey","Vanilla fragrance","Beige dye"],
+        de:["500 g Glycerinbasis","10 g kosmetischer Honig","Vanille-Duftöl","Beige Farbe"],
+      },
+      steps:{
+        es:["Fundir la base.","Añadir miel.","Incorporar fragancia.","Agregar colorante.","Mezclar.","Verter.","Dejar solidificar.","Desmoldar y empacar."],
+        en:["Melt the base.","Add honey.","Add fragrance.","Add dye.","Mix.","Pour.","Let it set.","Unmold and pack."],
+        de:["Die Basis schmelzen.","Honig hinzufügen.","Duftöl hinzufügen.","Farbe hinzufügen.","Mischen.","Eingießen.","Fest werden lassen.","Aus der Form lösen und verpacken."],
+      },
+    },
+    {
+      title:{es:"💙 Jabón de menta", en:"💙 Mint soap", de:"💙 Minzseife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/20–28", en:"Weight 500 g · 5 units · S/20–28", de:"Gewicht 500 g · 5 Stück · S/20–28"},
+      ingredients:{
+        es:["500 g base de glicerina","Fragancia de menta para uso cosmético","Colorante verde o azul","Molde"],
+        en:["500 g glycerin base","Cosmetic-grade mint fragrance","Green or blue dye","Mold"],
+        de:["500 g Glycerinbasis","Kosmetisches Minz-Duftöl","Grüne oder blaue Farbe","Form"],
+      },
+      steps:{
+        es:["Fundir la base.","Añadir colorante.","Incorporar fragancia.","Mezclar.","Verter en los moldes.","Dejar enfriar.","Desmoldar.","Empacar."],
+        en:["Melt the base.","Add dye.","Add fragrance.","Mix.","Pour into the molds.","Let it cool.","Unmold.","Pack."],
+        de:["Die Basis schmelzen.","Farbe hinzufügen.","Duftöl hinzufügen.","Mischen.","In die Formen gießen.","Abkühlen lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🌺 Jabón de rosas y arcilla rosa", en:"🌺 Rose and pink clay soap", de:"🌺 Rosen-Rosa-Ton-Seife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/22–30", en:"Weight 500 g · 5 units · S/22–30", de:"Gewicht 500 g · 5 Stück · S/22–30"},
+      ingredients:{
+        es:["500 g base de glicerina","Arcilla rosa cosmética, según recomendación del proveedor","Fragancia de rosa","Colorante opcional","Pétalos cosméticos opcionales"],
+        en:["500 g glycerin base","Cosmetic-grade pink clay, per the supplier's recommendation","Rose fragrance","Dye, optional","Cosmetic petals, optional"],
+        de:["500 g Glycerinbasis","Kosmetischer rosa Ton gemäß Empfehlung des Anbieters","Rosen-Duftöl","Farbe, optional","Kosmetische Blütenblätter, optional"],
+      },
+      steps:{
+        es:["Fundir la base.","Añadir la arcilla poco a poco.","Mezclar hasta eliminar grumos.","Incorporar la fragancia.","Añadir pétalos cosméticos si se utilizan.","Verter.","Dejar solidificar.","Desmoldar.","Empacar."],
+        en:["Melt the base.","Add the clay gradually.","Mix until lump-free.","Add the fragrance.","Add cosmetic petals if using.","Pour.","Let it set.","Unmold.","Pack."],
+        de:["Die Basis schmelzen.","Den Ton nach und nach hinzufügen.","Mischen, bis keine Klümpchen mehr vorhanden sind.","Das Duftöl hinzufügen.","Bei Bedarf kosmetische Blütenblätter hinzufügen.","Eingießen.","Fest werden lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
+    {
+      title:{es:"🍫 Jabón de chocolate y vainilla", en:"🍫 Chocolate and vanilla soap", de:"🍫 Schokoladen-Vanille-Seife"},
+      meta:{es:"Peso 500 g · 5 unidades · S/22–30", en:"Weight 500 g · 5 units · S/22–30", de:"Gewicht 500 g · 5 Stück · S/22–30"},
+      ingredients:{
+        es:["500 g base de glicerina","Fragancia de chocolate","Fragancia de vainilla","Cacao cosmético, si la formulación del proveedor lo permite","Colorante marrón"],
+        en:["500 g glycerin base","Chocolate fragrance","Vanilla fragrance","Cosmetic-grade cocoa, if the supplier's formulation allows it","Brown dye"],
+        de:["500 g Glycerinbasis","Schokoladen-Duftöl","Vanille-Duftöl","Kosmetischer Kakao, sofern die Formulierung des Anbieters dies zulässt","Braune Farbe"],
+      },
+      steps:{
+        es:["Cortar y fundir la base.","Incorporar el cacao cosmético, si corresponde.","Añadir las fragancias compatibles.","Agregar colorante.","Mezclar.","Verter en moldes.","Eliminar burbujas.","Dejar solidificar.","Desmoldar.","Empacar."],
+        en:["Cut and melt the base.","Add the cosmetic cocoa, if applicable.","Add the compatible fragrances.","Add dye.","Mix.","Pour into molds.","Remove bubbles.","Let it set.","Unmold.","Pack."],
+        de:["Die Basis schneiden und schmelzen.","Bei Bedarf den kosmetischen Kakao hinzufügen.","Die kompatiblen Duftstoffe hinzufügen.","Farbe hinzufügen.","Mischen.","In Formen gießen.","Blasen entfernen.","Fest werden lassen.","Aus der Form lösen.","Verpacken."],
+      },
+    },
   ],
   resina: [
     {
-      title:{es:"Posavasos de resina epóxica (set de 4)", en:"Epoxy resin coasters (set of 4)", de:"Untersetzer aus Epoxidharz (4er-Set)"},
+      title:{es:"🧊 Posavasos de resina epóxica (set de 4)", en:"🧊 Epoxy resin coasters (set of 4)", de:"🧊 Untersetzer aus Epoxidharz (4er-Set)"},
+      meta:{es:"Rinde 4 posavasos · Resina 200 ml · S/15–20", en:"Yields 4 coasters · 200 ml resin · S/15–20", de:"Ergibt 4 Untersetzer · 200 ml Harz · S/15–20"},
       ingredients:{
         es:["200 ml de resina epóxica + endurecedor (proporción según tu marca)","Pigmento líquido al gusto","4 moldes de silicona para posavasos"],
         en:["200 ml epoxy resin + hardener (ratio per your brand)","Liquid pigment to taste","4 silicone coaster molds"],
@@ -902,6 +1725,286 @@ const RECIPES = {
         de:["Harz und Härter exakt im Verhältnis deiner Marke abmessen.","3 Minuten lang langsam rühren, um Blasen zu vermeiden.","Auf Becher verteilen und jedem Pigment hinzufügen.","In die Formen gießen.","Mit einem Brenner leicht über die Oberfläche fahren, um Blasen zu entfernen.","Je nach technischem Datenblatt 24–72 Stunden aushärten lassen, bevor du entformst."],
       },
       safety:{es:"Trabaja en un espacio ventilado y usa guantes — los vapores de la resina sin curar pueden irritar. Revisa siempre la ficha de seguridad (MSDS) de tu marca específica.", en:"Work in a ventilated space and wear gloves — uncured resin fumes can irritate. Always check your specific brand's safety data sheet (MSDS).", de:"Arbeite in einem gut belüfteten Raum und trage Handschuhe — die Dämpfe von unausgehärtetem Harz können reizen. Prüfe immer das Sicherheitsdatenblatt (MSDS) deiner spezifischen Marke."},
+    },
+    {
+      title:{es:"✨ Llavero de resina con flores", en:"✨ Resin keychain with flowers", de:"✨ Harz-Schlüsselanhänger mit Blumen"},
+      meta:{es:"Tamaño 5–6 cm · Resina ~15–20 g · 20 min + curado · ⭐ · S/3–5", en:"Size 5–6 cm · ~15–20 g resin · 20 min + curing · ⭐ · S/3–5", de:"Größe 5–6 cm · ~15–20 g Harz · 20 Min. + Aushärten · ⭐ · S/3–5"},
+      ingredients:{
+        es:["15–20 g de resina epóxica","Endurecedor según proporción del fabricante","1 flor seca pequeña","Colorante o mica, opcional","Molde para llavero","Argolla metálica","Cadena para llavero","Vasito y palito de mezcla","Guantes"],
+        en:["15–20 g epoxy resin","Hardener per the manufacturer's ratio","1 small dried flower","Dye or mica, optional","Keychain mold","Metal ring","Keychain chain","Mixing cup and stick","Gloves"],
+        de:["15–20 g Epoxidharz","Härter im Verhältnis des Herstellers","1 kleine getrocknete Blume","Farbe oder Mica, optional","Schlüsselanhänger-Form","Metallring","Schlüsselanhänger-Kette","Mischbecher und -stäbchen","Handschuhe"],
+      },
+      steps:{
+        es:["Preparar el área de trabajo y colocarse protección adecuada.","Preparar la resina y el endurecedor respetando exactamente la proporción indicada por el fabricante.","Mezclar lentamente para reducir la incorporación de burbujas.","Añadir una pequeña cantidad de pigmento si se desea.","Verter una primera capa fina en el molde.","Colocar la flor seca.","Completar con resina.","Eliminar las burbujas siguiendo las instrucciones del fabricante.","Dejar curar completamente.","Desmoldar.","Colocar la argolla y cadena."],
+        en:["Set up your work area and wear appropriate protection.","Prepare the resin and hardener respecting exactly the ratio indicated by the manufacturer.","Mix slowly to reduce bubble formation.","Add a small amount of pigment if desired.","Pour a thin first layer into the mold.","Place the dried flower.","Fill the rest with resin.","Remove bubbles following the manufacturer's instructions.","Let it cure completely.","Unmold.","Attach the ring and chain."],
+        de:["Den Arbeitsbereich vorbereiten und geeigneten Schutz tragen.","Harz und Härter exakt im vom Hersteller angegebenen Verhältnis vorbereiten.","Langsam mischen, um Blasenbildung zu reduzieren.","Bei Bedarf etwas Pigment hinzufügen.","Eine dünne erste Schicht in die Form gießen.","Die getrocknete Blume platzieren.","Mit Harz auffüllen.","Blasen gemäß den Herstelleranweisungen entfernen.","Vollständig aushärten lassen.","Aus der Form lösen.","Ring und Kette anbringen."],
+      },
+    },
+    {
+      title:{es:"🌸 Posavasos con flores secas", en:"🌸 Coaster with dried flowers", de:"🌸 Untersetzer mit getrockneten Blumen"},
+      meta:{es:"Tamaño 10 cm · Resina 50–70 g · S/8–12", en:"Size 10 cm · 50–70 g resin · S/8–12", de:"Größe 10 cm · 50–70 g Harz · S/8–12"},
+      ingredients:{
+        es:["50–70 g de resina preparada","Flores secas","Pigmento transparente o mica","Molde circular","Fieltro para la base"],
+        en:["50–70 g prepared resin","Dried flowers","Clear pigment or mica","Round mold","Felt for the base"],
+        de:["50–70 g angerührtes Harz","Getrocknete Blumen","Transparentes Pigment oder Mica","Runde Form","Filz für die Unterseite"],
+      },
+      steps:{
+        es:["Preparar la resina.","Verter una capa fina en el molde.","Distribuir las flores.","Completar con resina.","Eliminar burbujas.","Dejar curar.","Desmoldar.","Revisar los bordes.","Colocar fieltro en la parte inferior."],
+        en:["Prepare the resin.","Pour a thin layer into the mold.","Arrange the flowers.","Fill the rest with resin.","Remove bubbles.","Let it cure.","Unmold.","Check the edges.","Attach felt to the bottom."],
+        de:["Das Harz vorbereiten.","Eine dünne Schicht in die Form gießen.","Die Blumen verteilen.","Mit Harz auffüllen.","Blasen entfernen.","Aushärten lassen.","Aus der Form lösen.","Die Ränder prüfen.","Filz auf der Unterseite anbringen."],
+      },
+    },
+    {
+      title:{es:"🌈 Posavasos efecto geoda", en:"🌈 Geode-effect coaster", de:"🌈 Untersetzer im Geoden-Effekt"},
+      meta:{es:"Tamaño 10 cm · Resina 60–80 g · S/9–14", en:"Size 10 cm · 60–80 g resin · S/9–14", de:"Größe 10 cm · 60–80 g Harz · S/9–14"},
+      ingredients:{
+        es:["Resina epóxica","Pigmentos mica","Glitter","Piedras decorativas compatibles","Molde circular","Fieltro"],
+        en:["Epoxy resin","Mica pigments","Glitter","Compatible decorative stones","Round mold","Felt"],
+        de:["Epoxidharz","Mica-Pigmente","Glitzer","Kompatible dekorative Steine","Runde Form","Filz"],
+      },
+      steps:{
+        es:["Preparar la resina.","Separar pequeñas cantidades en vasos.","Pigmentar cada porción con diferentes tonos.","Verter creando capas.","Añadir mica y glitter.","Colocar las piedras decorativas.","Crear el efecto geoda.","Eliminar burbujas.","Dejar curar.","Desmoldar.","Colocar fieltro."],
+        en:["Prepare the resin.","Divide small amounts into cups.","Pigment each portion with different shades.","Pour to create layers.","Add mica and glitter.","Place the decorative stones.","Create the geode effect.","Remove bubbles.","Let it cure.","Unmold.","Attach felt."],
+        de:["Das Harz vorbereiten.","Kleine Mengen auf Becher verteilen.","Jede Portion mit unterschiedlichen Tönen einfärben.","Schichtweise eingießen.","Mica und Glitzer hinzufügen.","Die dekorativen Steine platzieren.","Den Geoden-Effekt erzeugen.","Blasen entfernen.","Aushärten lassen.","Aus der Form lösen.","Filz anbringen."],
+      },
+    },
+    {
+      title:{es:"🌊 Posavasos efecto océano", en:"🌊 Ocean-effect coaster", de:"🌊 Untersetzer im Ozean-Effekt"},
+      meta:{es:"Tamaño 10 cm · Resina 60–80 g · S/9–14", en:"Size 10 cm · 60–80 g resin · S/9–14", de:"Größe 10 cm · 60–80 g Harz · S/9–14"},
+      ingredients:{
+        es:["Resina","Pigmento azul","Pigmento blanco","Mica","Molde","Fieltro"],
+        en:["Resin","Blue pigment","White pigment","Mica","Mold","Felt"],
+        de:["Harz","Blaues Pigment","Weißes Pigment","Mica","Form","Filz"],
+      },
+      steps:{
+        es:["Preparar la resina.","Dividir en diferentes vasos.","Pigmentar una parte azul y otra blanca.","Verter el azul como base.","Incorporar pequeñas cantidades de blanco.","Crear el efecto de espuma siguiendo la técnica apropiada para la resina utilizada.","Añadir mica si se desea.","Dejar curar.","Desmoldar.","Colocar fieltro."],
+        en:["Prepare the resin.","Divide into different cups.","Pigment one part blue and another white.","Pour the blue as the base.","Add small amounts of white.","Create the foam effect following the technique appropriate for the resin used.","Add mica if desired.","Let it cure.","Unmold.","Attach felt."],
+        de:["Das Harz vorbereiten.","Auf verschiedene Becher verteilen.","Einen Teil blau, einen weiß einfärben.","Das Blau als Basis eingießen.","Kleine Mengen Weiß hinzufügen.","Den Schaumeffekt mit der für das verwendete Harz passenden Technik erzeugen.","Bei Bedarf Mica hinzufügen.","Aushärten lassen.","Aus der Form lösen.","Filz anbringen."],
+      },
+    },
+    {
+      title:{es:"🧿 Llavero personalizado con nombre", en:"🧿 Personalized name keychain", de:"🧿 Personalisierter Namens-Schlüsselanhänger"},
+      meta:{es:"Tamaño 5–7 cm · Resina 15–25 g · S/4–7", en:"Size 5–7 cm · 15–25 g resin · S/4–7", de:"Größe 5–7 cm · 15–25 g Harz · S/4–7"},
+      ingredients:{
+        es:["Resina epóxica","Pigmento","Letras o nombre","Glitter opcional","Molde","Argolla","Cadena"],
+        en:["Epoxy resin","Pigment","Letters or name","Glitter, optional","Mold","Ring","Chain"],
+        de:["Epoxidharz","Pigment","Buchstaben oder Name","Glitzer, optional","Form","Ring","Kette"],
+      },
+      steps:{
+        es:["Preparar la resina.","Pigmentar.","Verter una primera capa.","Colocar las letras.","Añadir glitter si se desea.","Completar con resina.","Eliminar burbujas.","Dejar curar.","Desmoldar.","Colocar accesorios."],
+        en:["Prepare the resin.","Pigment it.","Pour a first layer.","Place the letters.","Add glitter if desired.","Fill the rest with resin.","Remove bubbles.","Let it cure.","Unmold.","Attach the accessories."],
+        de:["Das Harz vorbereiten.","Einfärben.","Eine erste Schicht eingießen.","Die Buchstaben platzieren.","Bei Bedarf Glitzer hinzufügen.","Mit Harz auffüllen.","Blasen entfernen.","Aushärten lassen.","Aus der Form lösen.","Zubehör anbringen."],
+      },
+    },
+    {
+      title:{es:"💍 Bandeja para joyas", en:"💍 Jewelry tray", de:"💍 Schmucktablett"},
+      meta:{es:"Tamaño 15×10 cm · Resina 100–150 g · S/15–22", en:"Size 15×10 cm · 100–150 g resin · S/15–22", de:"Größe 15×10 cm · 100–150 g Harz · S/15–22"},
+      ingredients:{
+        es:["Resina epóxica","Pigmentos","Glitter opcional","Molde de bandeja","Patitas de silicona"],
+        en:["Epoxy resin","Pigments","Glitter, optional","Tray mold","Silicone feet"],
+        de:["Epoxidharz","Pigmente","Glitzer, optional","Tablett-Form","Silikonfüße"],
+      },
+      steps:{
+        es:["Preparar el molde.","Preparar la resina.","Dividir y pigmentar.","Crear el diseño.","Verter en el molde.","Eliminar burbujas.","Dejar curar completamente.","Desmoldar.","Revisar bordes.","Colocar las patitas."],
+        en:["Prepare the mold.","Prepare the resin.","Divide and pigment it.","Create the design.","Pour into the mold.","Remove bubbles.","Let it cure completely.","Unmold.","Check the edges.","Attach the feet."],
+        de:["Die Form vorbereiten.","Das Harz vorbereiten.","Aufteilen und einfärben.","Das Design gestalten.","In die Form gießen.","Blasen entfernen.","Vollständig aushärten lassen.","Aus der Form lösen.","Die Ränder prüfen.","Die Füße anbringen."],
+      },
+    },
+    {
+      title:{es:"🌺 Bandeja con flores encapsuladas", en:"🌺 Tray with encapsulated flowers", de:"🌺 Tablett mit eingegossenen Blumen"},
+      meta:{es:"Tamaño 15×10 cm · Resina 120–160 g · S/18–25", en:"Size 15×10 cm · 120–160 g resin · S/18–25", de:"Größe 15×10 cm · 120–160 g Harz · S/18–25"},
+      ingredients:{
+        es:["Resina","Flores secas","Pigmento transparente","Molde","Patitas"],
+        en:["Resin","Dried flowers","Clear pigment","Mold","Feet"],
+        de:["Harz","Getrocknete Blumen","Transparentes Pigment","Form","Füße"],
+      },
+      steps:{
+        es:["Preparar el molde.","Verter una capa inicial.","Distribuir las flores secas.","Cubrir con resina.","Eliminar burbujas.","Dejar curar.","Desmoldar.","Colocar patitas."],
+        en:["Prepare the mold.","Pour an initial layer.","Arrange the dried flowers.","Cover with resin.","Remove bubbles.","Let it cure.","Unmold.","Attach the feet."],
+        de:["Die Form vorbereiten.","Eine erste Schicht eingießen.","Die getrockneten Blumen verteilen.","Mit Harz bedecken.","Blasen entfernen.","Aushärten lassen.","Aus der Form lösen.","Die Füße anbringen."],
+      },
+    },
+    {
+      title:{es:"🖼️ Cuadro decorativo de resina", en:"🖼️ Decorative resin art panel", de:"🖼️ Dekoratives Harzbild"},
+      meta:{es:"Tamaño 20×20 cm · Resina 250–350 g · S/25–40", en:"Size 20×20 cm · 250–350 g resin · S/25–40", de:"Größe 20×20 cm · 250–350 g Harz · S/25–40"},
+      ingredients:{
+        es:["Resina","Pigmentos","Mica","Glitter","Base rígida","Elementos decorativos"],
+        en:["Resin","Pigments","Mica","Glitter","Rigid base","Decorative elements"],
+        de:["Harz","Pigmente","Mica","Glitzer","Feste Unterlage","Dekorative Elemente"],
+      },
+      steps:{
+        es:["Preparar la superficie.","Preparar diferentes colores de resina.","Verter el color base.","Añadir los colores secundarios.","Crear el diseño.","Incorporar mica y elementos decorativos.","Eliminar burbujas.","Dejar curar.","Revisar la superficie.","Colocar sistema de montaje."],
+        en:["Prepare the surface.","Prepare different colors of resin.","Pour the base color.","Add the secondary colors.","Create the design.","Add mica and decorative elements.","Remove bubbles.","Let it cure.","Check the surface.","Attach the mounting system."],
+        de:["Die Oberfläche vorbereiten.","Verschiedene Harzfarben vorbereiten.","Die Grundfarbe eingießen.","Die Sekundärfarben hinzufügen.","Das Design gestalten.","Mica und dekorative Elemente hinzufügen.","Blasen entfernen.","Aushärten lassen.","Die Oberfläche prüfen.","Die Aufhängung anbringen."],
+      },
+    },
+    {
+      title:{es:"🪵 Tabla decorativa con resina", en:"🪵 Decorative resin wood board", de:"🪵 Dekoratives Holzbrett mit Harz"},
+      meta:{es:"Tamaño 30 cm · Resina 300–500 g aprox. · S/30–50", en:"Size 30 cm · ~300–500 g resin · S/30–50", de:"Größe 30 cm · ~300–500 g Harz · S/30–50"},
+      ingredients:{
+        es:["Tabla de madera adecuada","Resina epóxica","Pigmentos","Cinta de enmascarar","Guantes","Elementos decorativos"],
+        en:["Suitable wood board","Epoxy resin","Pigments","Masking tape","Gloves","Decorative elements"],
+        de:["Geeignetes Holzbrett","Epoxidharz","Pigmente","Kreppband","Handschuhe","Dekorative Elemente"],
+      },
+      steps:{
+        es:["Preparar y sellar la madera según corresponda.","Proteger los bordes.","Preparar la resina.","Pigmentar.","Verter sobre la zona seleccionada.","Distribuir cuidadosamente.","Eliminar burbujas según las instrucciones del producto.","Dejar curar.","Retirar protecciones.","Lijar/pulir si el sistema lo requiere."],
+        en:["Prepare and seal the wood as needed.","Protect the edges.","Prepare the resin.","Pigment it.","Pour over the selected area.","Spread it carefully.","Remove bubbles per the product's instructions.","Let it cure.","Remove the protective tape.","Sand/polish if the system requires it."],
+        de:["Das Holz nach Bedarf vorbereiten und versiegeln.","Die Ränder schützen.","Das Harz vorbereiten.","Einfärben.","Über den ausgewählten Bereich gießen.","Vorsichtig verteilen.","Blasen gemäß den Produktanweisungen entfernen.","Aushärten lassen.","Die Schutzabdeckungen entfernen.","Bei Bedarf schleifen/polieren."],
+      },
+    },
+    {
+      title:{es:"☕ Posavasos personalizado con inicial", en:"☕ Personalized initial coaster", de:"☕ Personalisierter Untersetzer mit Initiale"},
+      meta:{es:"Tamaño 10 cm · Resina 60–80 g · S/8–13", en:"Size 10 cm · 60–80 g resin · S/8–13", de:"Größe 10 cm · 60–80 g Harz · S/8–13"},
+      ingredients:{
+        es:["Resina","Pigmento","Inicial decorativa","Glitter opcional","Molde","Fieltro"],
+        en:["Resin","Pigment","Decorative initial","Glitter, optional","Mold","Felt"],
+        de:["Harz","Pigment","Dekorative Initiale","Glitzer, optional","Form","Filz"],
+      },
+      steps:{
+        es:["Preparar la resina → pigmentar → colocar una primera capa → ubicar la inicial → completar con resina → eliminar burbujas → curar → desmoldar → colocar fieltro."],
+        en:["Prepare the resin → pigment it → pour a first layer → place the initial → fill the rest with resin → remove bubbles → cure → unmold → attach felt."],
+        de:["Harz vorbereiten → einfärben → eine erste Schicht eingießen → die Initiale platzieren → mit Harz auffüllen → Blasen entfernen → aushärten → aus der Form lösen → Filz anbringen."],
+      },
+    },
+    {
+      title:{es:"🦋 Prendedor de mariposa", en:"🦋 Butterfly brooch", de:"🦋 Schmetterlings-Brosche"},
+      meta:{es:"Tamaño 4–5 cm · Resina 10–15 g · S/3–5", en:"Size 4–5 cm · 10–15 g resin · S/3–5", de:"Größe 4–5 cm · 10–15 g Harz · S/3–5"},
+      ingredients:{
+        es:["Resina","Pigmentos","Glitter","Molde de mariposa","Broche metálico"],
+        en:["Resin","Pigments","Glitter","Butterfly mold","Metal brooch pin"],
+        de:["Harz","Pigmente","Glitzer","Schmetterlingsform","Metall-Brosche"],
+      },
+      steps:{
+        es:["Preparar la resina.","Pigmentar.","Añadir glitter.","Verter en el molde.","Eliminar burbujas.","Curar.","Desmoldar.","Pegar el broche."],
+        en:["Prepare the resin.","Pigment it.","Add glitter.","Pour into the mold.","Remove bubbles.","Cure.","Unmold.","Glue on the brooch pin."],
+        de:["Das Harz vorbereiten.","Einfärben.","Glitzer hinzufügen.","In die Form gießen.","Blasen entfernen.","Aushärten.","Aus der Form lösen.","Die Brosche ankleben."],
+      },
+    },
+    {
+      title:{es:"🌙 Aretes de resina", en:"🌙 Resin earrings", de:"🌙 Harz-Ohrringe"},
+      meta:{es:"Rinde 1 par · Resina 8–12 g · S/3–6", en:"Yields 1 pair · 8–12 g resin · S/3–6", de:"Ergibt 1 Paar · 8–12 g Harz · S/3–6"},
+      ingredients:{
+        es:["Resina","Pigmentos","Molde","2 ganchos para aretes","2 argollas","Glitter opcional"],
+        en:["Resin","Pigments","Mold","2 earring hooks","2 jump rings","Glitter, optional"],
+        de:["Harz","Pigmente","Form","2 Ohrringhaken","2 Biegeringe","Glitzer, optional"],
+      },
+      steps:{
+        es:["Preparar la resina.","Pigmentar.","Verter en el molde.","Eliminar burbujas.","Curar.","Desmoldar.","Realizar los orificios necesarios.","Colocar argollas y ganchos."],
+        en:["Prepare the resin.","Pigment it.","Pour into the mold.","Remove bubbles.","Cure.","Unmold.","Make the necessary holes.","Attach the jump rings and hooks."],
+        de:["Das Harz vorbereiten.","Einfärben.","In die Form gießen.","Blasen entfernen.","Aushärten.","Aus der Form lösen.","Die nötigen Löcher bohren.","Biegeringe und Haken anbringen."],
+      },
+    },
+    {
+      title:{es:"💎 Pulsera con piezas de resina", en:"💎 Bracelet with resin pieces", de:"💎 Armband mit Harzstücken"},
+      meta:{es:"Rinde 1 pulsera · Resina 10–20 g · S/6–10", en:"Yields 1 bracelet · 10–20 g resin · S/6–10", de:"Ergibt 1 Armband · 10–20 g Harz · S/6–10"},
+      ingredients:{
+        es:["Resina","Molde para cuentas","Pigmento","Glitter","Elástico o hilo para joyería"],
+        en:["Resin","Bead mold","Pigment","Glitter","Elastic cord or jewelry wire"],
+        de:["Harz","Perlenform","Pigment","Glitzer","Gummiband oder Schmuckdraht"],
+      },
+      steps:{
+        es:["Preparar las piezas de resina.","Pigmentar.","Verter en moldes pequeños.","Curar.","Desmoldar.","Revisar las piezas.","Ensamblar sobre el hilo o elástico."],
+        en:["Prepare the resin pieces.","Pigment them.","Pour into small molds.","Cure.","Unmold.","Check the pieces.","Assemble onto the cord or elastic."],
+        de:["Die Harzstücke vorbereiten.","Einfärben.","In kleine Formen gießen.","Aushärten.","Aus der Form lösen.","Die Stücke prüfen.","Auf den Draht oder das Gummiband auffädeln."],
+      },
+    },
+    {
+      title:{es:"🧲 Imanes personalizados", en:"🧲 Personalized magnets", de:"🧲 Personalisierte Magnete"},
+      meta:{es:"Rinde 5 unidades · Resina 30–50 g · S/7–12", en:"Yields 5 units · 30–50 g resin · S/7–12", de:"Ergibt 5 Stück · 30–50 g Harz · S/7–12"},
+      ingredients:{
+        es:["Resina","Pigmentos","Moldes pequeños","5 imanes","Decoraciones"],
+        en:["Resin","Pigments","Small molds","5 magnets","Decorations"],
+        de:["Harz","Pigmente","Kleine Formen","5 Magnete","Dekorationen"],
+      },
+      steps:{
+        es:["Preparar la resina.","Pigmentar.","Verter en moldes.","Añadir decoración.","Curar.","Desmoldar.","Pegar los imanes en la parte posterior."],
+        en:["Prepare the resin.","Pigment it.","Pour into molds.","Add decoration.","Cure.","Unmold.","Glue the magnets on the back."],
+        de:["Das Harz vorbereiten.","Einfärben.","In Formen gießen.","Dekoration hinzufügen.","Aushärten.","Aus der Form lösen.","Die Magnete auf der Rückseite ankleben."],
+      },
+    },
+    {
+      title:{es:"🔑 Llavero de inicial con glitter", en:"🔑 Glitter initial keychain", de:"🔑 Initial-Schlüsselanhänger mit Glitzer"},
+      meta:{es:"Tamaño 5–7 cm · Resina 15–20 g · S/4–7", en:"Size 5–7 cm · 15–20 g resin · S/4–7", de:"Größe 5–7 cm · 15–20 g Harz · S/4–7"},
+      ingredients:{
+        es:["Resina","Glitter","Pigmento","Molde de letra","Argolla","Cadena"],
+        en:["Resin","Glitter","Pigment","Letter mold","Ring","Chain"],
+        de:["Harz","Glitzer","Pigment","Buchstabenform","Ring","Kette"],
+      },
+      steps:{
+        es:["Preparar la resina.","Incorporar pigmento.","Añadir glitter.","Verter en el molde.","Curar.","Desmoldar.","Colocar argolla y cadena."],
+        en:["Prepare the resin.","Add pigment.","Add glitter.","Pour into the mold.","Cure.","Unmold.","Attach the ring and chain."],
+        de:["Das Harz vorbereiten.","Pigment hinzufügen.","Glitzer hinzufügen.","In die Form gießen.","Aushärten.","Aus der Form lösen.","Ring und Kette anbringen."],
+      },
+    },
+    {
+      title:{es:"🌸 Marcapáginas de resina", en:"🌸 Resin bookmark", de:"🌸 Harz-Lesezeichen"},
+      meta:{es:"Tamaño 12–15 cm · Resina 20–30 g · S/5–8", en:"Size 12–15 cm · 20–30 g resin · S/5–8", de:"Größe 12–15 cm · 20–30 g Harz · S/5–8"},
+      ingredients:{
+        es:["Resina","Flores secas","Pigmento","Molde de marcapáginas","Cinta decorativa"],
+        en:["Resin","Dried flowers","Pigment","Bookmark mold","Decorative ribbon"],
+        de:["Harz","Getrocknete Blumen","Pigment","Lesezeichenform","Dekoratives Band"],
+      },
+      steps:{
+        es:["Preparar el molde.","Verter una pequeña cantidad de resina.","Colocar las flores.","Completar con resina.","Eliminar burbujas.","Curar completamente.","Desmoldar.","Colocar cinta."],
+        en:["Prepare the mold.","Pour a small amount of resin.","Place the flowers.","Fill the rest with resin.","Remove bubbles.","Cure completely.","Unmold.","Attach the ribbon."],
+        de:["Die Form vorbereiten.","Etwas Harz eingießen.","Die Blumen platzieren.","Mit Harz auffüllen.","Blasen entfernen.","Vollständig aushärten.","Aus der Form lösen.","Das Band anbringen."],
+      },
+    },
+    {
+      title:{es:"🧴 Bandeja para perfumes", en:"🧴 Perfume tray", de:"🧴 Parfümtablett"},
+      meta:{es:"Tamaño 20×10 cm · Resina 150–220 g · S/20–30", en:"Size 20×10 cm · 150–220 g resin · S/20–30", de:"Größe 20×10 cm · 150–220 g Harz · S/20–30"},
+      ingredients:{
+        es:["Resina","Pigmentos","Mica","Molde","Patitas de silicona"],
+        en:["Resin","Pigments","Mica","Mold","Silicone feet"],
+        de:["Harz","Pigmente","Mica","Form","Silikonfüße"],
+      },
+      steps:{
+        es:["Preparar el molde.","Preparar la resina.","Crear el diseño.","Verter.","Eliminar burbujas.","Curar.","Desmoldar.","Revisar y terminar bordes.","Colocar patitas."],
+        en:["Prepare the mold.","Prepare the resin.","Create the design.","Pour.","Remove bubbles.","Cure.","Unmold.","Check and finish the edges.","Attach the feet."],
+        de:["Die Form vorbereiten.","Das Harz vorbereiten.","Das Design gestalten.","Eingießen.","Blasen entfernen.","Aushärten.","Aus der Form lösen.","Die Ränder prüfen und nachbearbeiten.","Die Füße anbringen."],
+      },
+    },
+    {
+      title:{es:"🪞 Espejo decorado con resina", en:"🪞 Resin-decorated mirror", de:"🪞 Mit Harz dekorierter Spiegel"},
+      meta:{es:"Tamaño 15–20 cm · Resina 100–200 g · S/20–35", en:"Size 15–20 cm · 100–200 g resin · S/20–35", de:"Größe 15–20 cm · 100–200 g Harz · S/20–35"},
+      ingredients:{
+        es:["Espejo","Resina","Pigmentos","Flores o elementos decorativos compatibles","Base/protección"],
+        en:["Mirror","Resin","Pigments","Compatible flowers or decorative elements","Base/protective covering"],
+        de:["Spiegel","Harz","Pigmente","Kompatible Blumen oder dekorative Elemente","Unterlage/Schutz"],
+      },
+      steps:{
+        es:["Proteger la superficie del espejo.","Preparar la resina.","Pigmentar.","Crear el diseño alrededor del espejo.","Incorporar decoraciones.","Dejar curar completamente.","Revisar bordes.","Retirar las protecciones."],
+        en:["Protect the mirror surface.","Prepare the resin.","Pigment it.","Create the design around the mirror.","Add decorations.","Let it cure completely.","Check the edges.","Remove the protective covering."],
+        de:["Die Spiegeloberfläche schützen.","Das Harz vorbereiten.","Einfärben.","Das Design um den Spiegel gestalten.","Dekorationen hinzufügen.","Vollständig aushärten lassen.","Die Ränder prüfen.","Die Schutzabdeckung entfernen."],
+      },
+    },
+    {
+      title:{es:"🌊 Bandeja efecto océano", en:"🌊 Ocean-effect tray", de:"🌊 Tablett im Ozean-Effekt"},
+      meta:{es:"Tamaño 25×15 cm · Resina 200–300 g · S/25–38", en:"Size 25×15 cm · 200–300 g resin · S/25–38", de:"Größe 25×15 cm · 200–300 g Harz · S/25–38"},
+      ingredients:{
+        es:["Resina","Pigmento azul","Pigmento blanco","Mica","Elementos decorativos","Molde"],
+        en:["Resin","Blue pigment","White pigment","Mica","Decorative elements","Mold"],
+        de:["Harz","Blaues Pigment","Weißes Pigment","Mica","Dekorative Elemente","Form"],
+      },
+      steps:{
+        es:["Preparar el molde.","Preparar la resina.","Separar pequeñas cantidades.","Pigmentar azul y blanco.","Crear capas.","Añadir mica.","Crear el efecto de movimiento.","Eliminar burbujas.","Dejar curar.","Desmoldar.","Terminar los bordes."],
+        en:["Prepare the mold.","Prepare the resin.","Divide into small amounts.","Pigment blue and white.","Create layers.","Add mica.","Create the movement effect.","Remove bubbles.","Let it cure.","Unmold.","Finish the edges."],
+        de:["Die Form vorbereiten.","Das Harz vorbereiten.","In kleine Mengen aufteilen.","Blau und Weiß einfärben.","Schichten erzeugen.","Mica hinzufügen.","Den Bewegungseffekt erzeugen.","Blasen entfernen.","Aushärten lassen.","Aus der Form lösen.","Die Ränder fertigstellen."],
+      },
+    },
+    {
+      title:{es:"🌌 Bandeja efecto galaxia", en:"🌌 Galaxy-effect tray", de:"🌌 Tablett im Galaxie-Effekt"},
+      meta:{es:"Tamaño 20×15 cm · Resina 180–250 g · S/22–35", en:"Size 20×15 cm · 180–250 g resin · S/22–35", de:"Größe 20×15 cm · 180–250 g Harz · S/22–35"},
+      ingredients:{
+        es:["Resina epóxica","Pigmento azul oscuro","Pigmento violeta","Mica","Glitter fino","Molde","Patitas"],
+        en:["Epoxy resin","Dark blue pigment","Violet pigment","Mica","Fine glitter","Mold","Feet"],
+        de:["Epoxidharz","Dunkelblaues Pigment","Violettes Pigment","Mica","Feiner Glitzer","Form","Füße"],
+      },
+      steps:{
+        es:["Preparar el molde.","Preparar la resina.","Crear diferentes tonos.","Verter el color base.","Añadir violeta y azul.","Incorporar mica para crear profundidad.","Añadir pequeñas cantidades de glitter.","Crear el efecto visual.","Eliminar burbujas.","Dejar curar completamente.","Desmoldar.","Colocar patitas."],
+        en:["Prepare the mold.","Prepare the resin.","Create different shades.","Pour the base color.","Add violet and blue.","Add mica to create depth.","Add small amounts of glitter.","Create the visual effect.","Remove bubbles.","Let it cure completely.","Unmold.","Attach the feet."],
+        de:["Die Form vorbereiten.","Das Harz vorbereiten.","Verschiedene Töne herstellen.","Die Grundfarbe eingießen.","Violett und Blau hinzufügen.","Mica für Tiefe hinzufügen.","Kleine Mengen Glitzer hinzufügen.","Den visuellen Effekt erzeugen.","Blasen entfernen.","Vollständig aushärten lassen.","Aus der Form lösen.","Die Füße anbringen."],
+      },
     },
   ],
 };
@@ -929,11 +2032,16 @@ function renderRecetas(){
     <div class="content-card">
       <div class="kicker">${L.kicker}</div>
       <h3>${r.title[LANG]}</h3>
+      ${r.meta ? `<div class="recipe-meta">${r.meta[LANG]}</div>` : ''}
       <p><b>${L.ingredients}</b></p>
-      <ul>${r.ingredients[LANG].map(i=>`<li>${i}</li>`).join('')}</ul>
+      <ul>${r.ingredients[LANG].map(i=> i.startsWith('## ')
+        ? `<li class="ingredient-group">${i.slice(3)}</li>`
+        : `<li>${i}</li>`
+      ).join('')}</ul>
       <p><b>${L.steps}</b></p>
       <ul>${r.steps[LANG].map(s=>`<li>${s}</li>`).join('')}</ul>
       ${r.safety ? `<div class="safety-note"><b>⚠️ ${L.safety}</b>${r.safety[LANG]}</div>` : ''}
+      ${r.source ? `<div class="recipe-source">${r.source[LANG]}</div>` : ''}
     </div>
   `).join('');
   container.innerHTML = `<div class="recipe-subtabs">${tabs}</div>${recipes}`;
