@@ -32,7 +32,7 @@
     background:rgba(255,251,253,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
   .nav-inner{ display:flex; align-items:center; justify-content:space-between; gap:18px; }
   .logo{ font-family:'Cormorant Garamond', serif; font-weight:700; font-style:italic; font-size:24px; color:var(--brown); text-decoration:none; white-space:nowrap; }
-  .logo span{ color:var(--clay); }
+  .logo #brand-suffix{ color:var(--clay); }
   .nav-toggle{ display:none; flex-direction:column; justify-content:center; gap:4px; width:38px; height:34px; border:1.3px solid var(--line); border-radius:10px; background:#fff; cursor:pointer; }
   .nav-toggle span{ display:block; width:18px; height:2px; background:var(--brown); margin-inline:auto; border-radius:2px; }
   .nav-panel{ display:flex; align-items:center; gap:22px; flex:1; justify-content:flex-end; }
@@ -196,6 +196,7 @@
   .site-footer{ background:linear-gradient(160deg, var(--plum-900), var(--plum-800)); color:var(--pink-50); padding-block:44px 28px; }
   .footer-inner{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px; }
   .footer-logo{ font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:700; font-size:20px; }
+  .footer-logo #footer-brand-suffix{ color:var(--gold); }
   .footer-tag{ font-size:12.5px; color:#e6c8d8; margin-top:4px; }
   .footer-rights{ font-size:11px; color:#c9a3bb; }
 
@@ -249,7 +250,7 @@
 
 <header class="site-header">
   <div class="container nav-inner">
-    <a class="logo" href="#top">✨ Coste<span>álo</span></a>
+    <a class="logo" href="#top">✨ <span id="brand-base"></span><span id="brand-suffix"></span></a>
     <button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Menú">
       <span></span><span></span><span></span>
     </button>
@@ -417,7 +418,7 @@
 <footer class="site-footer">
   <div class="container footer-inner">
     <div>
-      <div class="footer-logo">✨ Costéalo</div>
+      <div class="footer-logo">✨ <span id="footer-brand-base"></span><span id="footer-brand-suffix"></span></div>
       <div class="footer-tag" data-t="footerTagline"></div>
     </div>
     <div class="footer-rights" data-t="footerRights"></div>
@@ -467,7 +468,9 @@ const GLOBAL_T = {
   askSubmit:{es:"Publicar pregunta", en:"Post question", de:"Frage veröffentlichen"},
   footerTagline:{es:"Hecho con cariño para makers que cobran lo justo.", en:"Made with love for makers who charge what's fair.", de:"Mit Liebe gemacht für Maker, die faire Preise verlangen."},
   footerRights:{es:"Todos los derechos reservados.", en:"All rights reserved.", de:"Alle Rechte vorbehalten."},
-  pageTitle:{es:"¿Cuánto cobro? — Costéalo", en:"How much should I charge? — Costéalo", de:"Wie viel soll ich verlangen? — Costéalo"},
+  pageTitle:{es:"¿Cuánto cobro? — Costéalo", en:"How much should I charge? — Priceify", de:"Wie viel soll ich verlangen? — Preisify"},
+  brandBase:{es:"Coste", en:"Price", de:"Preis"},
+  brandSuffix:{es:"álo", en:"ify", de:"ify"},
   heroPreviewTitle:{es:"Vela de soja 🕯️", en:"Soy candle 🕯️", de:"Sojakerze 🕯️"},
   heroPreviewIngredients:{es:"Insumos", en:"Ingredients", de:"Zutaten"},
   heroPreviewLabor:{es:"Mano de obra", en:"Labor", de:"Arbeitszeit"},
@@ -2333,12 +2336,20 @@ document.getElementById('currency-select').addEventListener('change', (e) => {
   CURRENCY = CURRENCIES[e.target.value];
   refreshAllCalculatorPanels();
 });
+function updateBrandName(){
+  document.getElementById('brand-base').textContent = GLOBAL_T.brandBase[LANG];
+  document.getElementById('brand-suffix').textContent = GLOBAL_T.brandSuffix[LANG];
+  document.getElementById('footer-brand-base').textContent = GLOBAL_T.brandBase[LANG];
+  document.getElementById('footer-brand-suffix').textContent = GLOBAL_T.brandSuffix[LANG];
+}
+
 function setLang(lang){
   LANG = lang;
   LANGS.forEach(l => {
     document.getElementById(`lang-${l}`).classList.toggle('active', l===lang);
   });
   document.title = GLOBAL_T.pageTitle[LANG];
+  updateBrandName();
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
     if(GLOBAL_T[key]) el.textContent = GLOBAL_T[key][LANG];
@@ -2356,6 +2367,7 @@ function setLang(lang){
 
 /* Init */
 document.title = GLOBAL_T.pageTitle[LANG];
+updateBrandName();
 document.querySelectorAll('[data-i18n]').forEach(el => {
   const key = el.dataset.i18n;
   if(GLOBAL_T[key]) el.textContent = GLOBAL_T[key][LANG];
