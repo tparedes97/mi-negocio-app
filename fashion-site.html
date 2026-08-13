@@ -999,7 +999,6 @@ function dollSVG1(){
   return '' +
   '<svg viewBox="0 0 220 380" role="img" aria-label="Paper doll">' +
     '<ellipse cx="110" cy="368" rx="66" ry="9" fill="rgba(180,140,160,0.20)"/>' +
-    '<path id="d1-hair-back" d="M62 70 Q56 150 66 190 Q80 200 92 190 L92 70 Z M158 70 Q164 150 154 190 Q140 200 128 190 L128 70 Z" fill="#8a5a3b"/>' +
     '<g id="d1-bottom-long">' +
       '<path d="M78 190 L142 190 L150 330 Q110 344 70 330 Z" fill="#cccccc" id="d1-bottom-fill"/>' +
     '</g>' +
@@ -1011,6 +1010,7 @@ function dollSVG1(){
     '<ellipse cx="132" cy="336" rx="17" ry="9" fill="#cccccc" id="d1-shoe-r"/>' +
     '<path d="M72 116 Q110 100 148 116 L152 192 Q110 206 68 192 Z" fill="#cccccc" id="d1-top-fill"/>' +
     '<rect id="d1-crop-gap" x="86" y="186" width="48" height="14" rx="6" fill="#f6c9a0" style="display:none"/>' +
+    '<path id="d1-hair-back" d="M66 48 C36 62,30 120,40 165 C46 195,58 212,78 210 C70 175,70 100,78 55 Z M154 48 C184 62,190 120,180 165 C174 195,162 212,142 210 C150 175,150 100,142 55 Z" fill="#8a5a3b"/>' +
     '<circle cx="110" cy="64" r="30" fill="#f6c9a0"/>' +
     '<circle cx="99" cy="64" r="2.6" fill="#4a3b52"/>' +
     '<circle cx="121" cy="64" r="2.6" fill="#4a3b52"/>' +
@@ -1018,7 +1018,11 @@ function dollSVG1(){
     '<circle cx="90" cy="72" r="4" fill="#ffb6c1" opacity=".55"/>' +
     '<circle cx="130" cy="72" r="4" fill="#ffb6c1" opacity=".55"/>' +
     '<path id="d1-hair-front" d="M80 46 Q110 24 140 46 Q140 58 132 62 Q124 40 110 40 Q96 40 88 62 Q80 58 80 46 Z" fill="#8a5a3b"/>' +
-    '<circle id="d1-accessory" cx="110" cy="108" r="9" fill="#cccccc" opacity="0"/>' +
+    '<g id="d1-accessory" opacity="0" fill="#cccccc">' +
+      '<path d="M108 128 L98 121 L98 135 Z"/>' +
+      '<path d="M112 128 L122 121 L122 135 Z"/>' +
+      '<circle cx="110" cy="128" r="3.2"/>' +
+    '</g>' +
   '</svg>';
 }
 function updateDoll1(sel){
