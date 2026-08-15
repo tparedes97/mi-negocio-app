@@ -16,7 +16,7 @@ export interface UserDoc {
   createdAt: FirestoreTimestamp;
   plan: PlanId;
   subscriptionStatus: 'active' | 'past_due' | 'canceled';
-  stripeCustomerId: string | null;
+  culqiCustomerId: string | null; // reservado para cuando se implementen suscripciones recurrentes
   browserInstanceId: string; // las estadísticas son por navegador, no hay cuenta central de uso
   countryCode: string | null; // para tipo de cambio / precios regionales a futuro
   timezone: string | null;
@@ -133,7 +133,7 @@ export interface DonationDoc {
   companionId: string;       // a quién se le atribuye, para el ranking de donaciones
   amountCents: number;
   currency: 'usd';
-  stripePaymentIntentId: string;
+  culqiChargeId: string;
   createdAt: FirestoreTimestamp;
 }
 
@@ -149,7 +149,7 @@ export interface CancellationDoc {
 export type FirestoreTimestamp = { seconds: number; nanoseconds: number };
 
 /**
- * Escrito ÚNICAMENTE por el webhook de Stripe al confirmar el pago de una
+ * Escrito ÚNICAMENTE por confirmCulqiCharge al confirmar el pago de una
  * tarifa de desbloqueo — nunca por el cliente. El service worker de la
  * extensión escucha esta colección (filtrada a su propio usuario) para
  * saber qué dominios levantar del bloqueo, y por cuánto tiempo.

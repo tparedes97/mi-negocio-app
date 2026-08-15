@@ -10,7 +10,8 @@ exports.computeWeeklyRecurrence = require('./unlock/computeWeeklyRecurrence').co
 exports.launchShiftCalendar = require('./shifts/launchShiftCalendar').launchShiftCalendar;
 exports.toggleMyShift = require('./shifts/toggleMyShift').toggleMyShift;
 
-exports.stripeWebhook = require('./payments/stripeWebhook').stripeWebhook;
 exports.createCheckoutSession = require('./payments/createCheckoutSession').createCheckoutSession;
+exports.getCheckoutInfo = require('./payments/getCheckoutInfo').getCheckoutInfo;
+exports.confirmCulqiCharge = require('./payments/confirmCulqiCharge').confirmCulqiCharge;
 
 exports.createCompanion = require('./companions/createCompanion').createCompanion;

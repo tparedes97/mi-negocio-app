@@ -321,7 +321,7 @@ function renderDonationPrompt() {
       amountCents: selectedAmount * 100,
       metadata: { chatId: attempt.chatId || null, companionId: attempt.companionId || null },
     });
-    window.open(data.url, '_blank'); // Stripe Checkout SIEMPRE en pestaña externa, nunca dentro de la extensión
+    window.open(data.url, '_blank'); // El checkout SIEMPRE en pestaña externa, nunca dentro de la extensión
     await goToFinalConfirmation();
   });
 
@@ -416,11 +416,11 @@ function renderWaitingForPayment() {
     '<div class="center-block">' +
       '<div class="wait-dots"><span></span><span></span><span></span></div>' +
       '<div class="title" style="margin-top:16px;">Esperando la confirmaci\u00f3n del pago</div>' +
-      '<div class="sub">Se abri\u00f3 en otra pesta\u00f1a. En cuanto Stripe confirme el cobro, este sitio se desbloquea solo.</div>' +
+      '<div class="sub">Se abri\u00f3 en otra pesta\u00f1a. En cuanto se confirme el cobro, este sitio se desbloquea solo.</div>' +
     '</div>';
 
-  // El webhook de Stripe es quien realmente marca el attempt como
-  // 'unlocked' (ver stripeWebhook.js) — esta pantalla solo escucha.
+  // confirmCulqiCharge es quien realmente marca el attempt como
+  // 'unlocked' (ver firebase/functions/src/payments/confirmCulqiCharge.js).
   unsubscribeAttempt = onSnapshot(attemptDocRef(), (snap) => {
     const data = snap.data();
     if (data.state === 'unlocked') {

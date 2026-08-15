@@ -10,6 +10,7 @@
   "scripts": {
     "dev:admin": "npm run dev --workspace=packages/admin",
     "dev:companion": "npm run dev --workspace=packages/companion-portal",
+    "dev:checkout": "npm run dev --workspace=packages/checkout",
     "build:extension": "npm run build --workspace=packages/extension",
     "emulators": "firebase emulators:start --project limen-dev",
     "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes",

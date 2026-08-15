@@ -7,8 +7,8 @@
  *
  * Importante: este archivo NUNCA decide por su cuenta que un pago fue
  * exitoso. Solo lee `activeUnlocks` desde Firestore, colección que
- * exclusivamente escribe el webhook de Stripe (ver
- * firebase/functions/src/payments/stripeWebhook.js). Si alguien edita
+ * exclusivamente escribe confirmCulqiCharge (ver
+ * firebase/functions/src/payments/confirmCulqiCharge.js). Si alguien edita
  * chrome.storage.local a mano para intentar desbloquearse gratis, el
  * siguiente ciclo del listener de Firestore lo revierte.
  */

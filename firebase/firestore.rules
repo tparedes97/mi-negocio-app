@@ -82,11 +82,19 @@ service cloud.firestore {
     // ---- Donaciones y cancelaciones (analítica del negocio) ----
     match /donations/{docId} {
       allow read: if isFounder();
-      allow write: if false; // las crea el webhook de Stripe, nunca el cliente
+      allow write: if false; // las crea confirmCulqiCharge, nunca el cliente
     }
     match /cancellations/{docId} {
       allow read: if isFounder();
-      allow write: if false; // las crea el webhook de Stripe
+      allow write: if false; // reservado para cuando se implementen suscripciones recurrentes
+    }
+
+    // ---- Pagos pendientes (puente entre createCheckoutSession y confirmCulqiCharge) ----
+    // Contiene el monto real a cobrar — nunca debe ser legible ni escribible
+    // desde el cliente. Solo lo tocan las Cloud Functions vía Admin SDK,
+    // que ignora estas reglas.
+    match /pendingPayments/{docId} {
+      allow read, write: if false;
     }
 
     // ---- Desbloqueos activos ----

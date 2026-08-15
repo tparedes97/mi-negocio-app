@@ -19,7 +19,8 @@ shiftArchive/{archiveId}              → ShiftArchiveDoc      (snapshots inmuta
 
 donations/{donationId}                → DonationDoc
 cancellations/{cancellationId}        → CancellationDoc
-activeUnlocks/{userId_domain}         → ActiveUnlockDoc  (solo la escribe el webhook de Stripe)
+activeUnlocks/{userId_domain}         → ActiveUnlockDoc  (solo la escribe confirmCulqiCharge)
+pendingPayments/{paymentId}           → puente interno entre createCheckoutSession y confirmCulqiCharge (solo Cloud Functions)
 ```
 
 ## Notas de diseño importantes
@@ -42,7 +43,7 @@ activeUnlocks/{userId_domain}         → ActiveUnlockDoc  (solo la escribe el w
 
 - **`activeUnlocks`**: el service worker de la extensión NUNCA decide por su
   cuenta que un pago fue exitoso — solo lee esta colección, que exclusivamente
-  escribe el webhook de Stripe tras confirmar el `checkout.session.completed`.
+  escribe `confirmCulqiCharge` tras confirmar el cargo con Culqi (`v2/charges`).
   Esto evita que alguien manipule el cliente (ej. editando `chrome.storage`
   a mano) para desbloquearse sin pagar.
 

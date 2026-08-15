@@ -20,6 +20,10 @@
       "target": "companion-portal",
       "public": "../packages/companion-portal/dist",
       "rewrites": [{ "source": "**", "destination": "/index.html" }]
+    },
+    {
+      "target": "checkout",
+      "public": "../packages/checkout"
     }
   ],
   "emulators": {

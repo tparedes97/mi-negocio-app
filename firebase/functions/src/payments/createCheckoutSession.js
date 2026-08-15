@@ -1,57 +1,51 @@
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
-const { defineSecret } = require('firebase-functions/params');
-const Stripe = require('stripe');
-const { SUBSCRIPTION_PLANS } = require('@limen/shared/src/constants');
-
-const stripeSecretKey = defineSecret('STRIPE_SECRET_KEY');
+const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 
 /**
  * Se abre en una pestaña externa, nunca dentro de la extensión —
  * Chrome Web Store no permite cobrar directamente dentro de una extensión.
- * El descriptor de facturación se configura en el dashboard de Stripe como
+ * El monto real lo decide el backend y queda guardado en pendingPayments;
+ * el id de ese documento actúa como capability token de la URL devuelta —
+ * quien lo tiene puede pagar esa orden puntual, nada más. Es el mismo
+ * patrón de confianza que usaba la Checkout Session de Stripe, solo que
+ * ahora la página de cobro la hosteamos nosotros (packages/checkout) en
+ * vez de que la hostee el proveedor de pagos.
+ * El descriptor de facturación se configura en el dashboard de Culqi como
  * "LIMEN", nunca con el nombre legal de la fundadora.
  */
-exports.createCheckoutSession = onCall({ secrets: [stripeSecretKey] }, async (request) => {
+exports.createCheckoutSession = onCall(async (request) => {
   const uid = request.auth?.uid;
   if (!uid) throw new HttpsError('unauthenticated', 'Debes iniciar sesión.');
 
-  const stripe = new Stripe(stripeSecretKey.value());
   const { kind } = request.data; // 'subscription' | 'unlock_fee' | 'donation'
 
   if (kind === 'subscription') {
-    const { planId } = request.data; // 'basic' | 'premium'
-    const plan = SUBSCRIPTION_PLANS[planId];
-    if (!plan) throw new HttpsError('invalid-argument', 'Plan inválido.');
-
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      line_items: [{ price: plan.stripePriceId /* configurar en Stripe Dashboard */, quantity: 1 }],
-      client_reference_id: uid,
-      success_url: `${process.env.APP_URL}/checkout/success`,
-      cancel_url: `${process.env.APP_URL}/checkout/cancel`,
-    });
-    return { url: session.url };
+    // La recurrencia de Culqi (Planes) es una API aparte de las Órdenes/
+    // Cargos usados acá — no implementado todavía porque el modelo real
+    // del negocio hoy es donaciones + tarifas de desbloqueo puntuales.
+    throw new HttpsError('unimplemented', 'Las suscripciones todavía no están implementadas.');
   }
 
-  if (kind === 'unlock_fee' || kind === 'donation') {
-    const { amountCents, metadata } = request.data;
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      line_items: [{
-        price_data: {
-          currency: 'usd',
-          product_data: { name: kind === 'donation' ? 'Donación a Limen' : 'Tarifa de desbloqueo' },
-          unit_amount: amountCents,
-        },
-        quantity: 1,
-      }],
-      client_reference_id: uid,
-      metadata: { kind, ...metadata },
-      success_url: `${process.env.APP_URL}/checkout/success`,
-      cancel_url: `${process.env.APP_URL}/checkout/cancel`,
-    });
-    return { url: session.url };
+  if (kind !== 'unlock_fee' && kind !== 'donation') {
+    throw new HttpsError('invalid-argument', 'kind debe ser unlock_fee o donation.');
   }
 
-  throw new HttpsError('invalid-argument', 'kind debe ser subscription, unlock_fee o donation.');
+  const { amountCents, metadata } = request.data;
+  if (!Number.isInteger(amountCents) || amountCents <= 0) {
+    throw new HttpsError('invalid-argument', 'amountCents inválido.');
+  }
+
+  const db = getFirestore();
+  const paymentRef = db.collection('pendingPayments').doc();
+  await paymentRef.set({
+    uid,
+    kind,
+    amountCents,
+    metadata: metadata || {},
+    status: 'pending',
+    createdAt: FieldValue.serverTimestamp(),
+  });
+
+  const baseUrl = process.env.CHECKOUT_BASE_URL || `https://${process.env.GCLOUD_PROJECT}.web.app`;
+  return { url: `${baseUrl}/pay.html?paymentId=${paymentRef.id}` };
 });

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Limen — Pago</title>
+<script src="https://checkout.culqi.com/js/v4"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --page-bg:#F6EFE2;
+    --surface:#FFFCF5;
+    --surface-2:#F2E7D3;
+    --amber:#BE7A42;
+    --amber-dim:#F1E1C7;
+    --sage:#6E8768;
+    --danger:#B0503F;
+    --danger-dim:#F3DDD6;
+    --text:#3B2E22;
+    --text-muted:#8C7A63;
+    --line:#E6D9C0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--page-bg); min-height:100vh; font-family:'Inter', sans-serif; color:var(--text);
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .card{
+    width:380px; max-width:100%; background:var(--surface); border:1px solid var(--line);
+    border-radius:20px; box-shadow:0 30px 60px -20px rgba(59,46,34,0.25); padding:28px;
+  }
+  .brand{ font-family:'Source Serif 4', serif; font-weight:500; font-size:22px; margin-bottom:18px; }
+  .brand span{ color:var(--amber); }
+  .eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); margin-bottom:6px; }
+  .amount{ font-family:'Source Serif 4', serif; font-size:34px; font-weight:500; margin-bottom:4px; }
+  .desc{ font-size:13px; color:var(--text-muted); margin-bottom:22px; }
+  label{ font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px; }
+  input[type=email]{
+    width:100%; background:var(--page-bg); border:1px solid var(--line); border-radius:12px;
+    padding:11px 13px; font-family:'Inter', sans-serif; font-size:13px; color:var(--text); outline:none;
+    margin-bottom:18px;
+  }
+  .btn{
+    width:100%; border:none; border-radius:999px; padding:13px 18px; font-family:'Inter', sans-serif;
+    font-weight:600; font-size:14px; cursor:pointer; background:var(--sage); color:#FBF9F1;
+  }
+  .btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  .status{ font-size:13px; margin-top:14px; text-align:center; line-height:1.5; }
+  .status.error{ color:var(--danger); }
+  .status.ok{ color:var(--sage); }
+  .center{ text-align:center; padding:20px 0; color:var(--text-muted); font-size:13px; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="brand">Limen<span>.</span></div>
+  <div id="loading" class="center">Cargando…</div>
+
+  <div id="content" style="display:none;">
+    <div class="eyebrow" id="desc-label">Pago</div>
+    <div class="amount" id="amount-label">$0.00</div>
+    <div class="desc">Pago seguro procesado por Culqi. Tu tarjeta nunca pasa por nuestros servidores.</div>
+
+    <label for="email">Correo (para tu comprobante)</label>
+    <input type="email" id="email" placeholder="tu@correo.com">
+
+    <button class="btn" id="btn-pay">Pagar</button>
+    <div class="status" id="status"></div>
+  </div>
+</div>
+
+<script type="module" src="pay.js"></script>
+</body>
+</html>
