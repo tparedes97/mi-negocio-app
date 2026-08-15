@@ -4,10 +4,10 @@
  * cambia los tres archivos.
  */
 export const firebaseConfig = {
-  apiKey: 'TODO_REEMPLAZAR',
-  authDomain: 'limen-app.firebaseapp.com',
-  projectId: 'limen-app',
-  storageBucket: 'limen-app.appspot.com',
-  messagingSenderId: 'TODO_REEMPLAZAR',
-  appId: 'TODO_REEMPLAZAR',
+  apiKey: 'AIzaSyAsaEjpkZRdL9SPQHtcYv3LRAAO6FQzXzU',
+  authDomain: 'limen-3b8cf.firebaseapp.com',
+  projectId: 'limen-3b8cf',
+  storageBucket: 'limen-3b8cf.firebasestorage.app',
+  messagingSenderId: '886284444237',
+  appId: '1:886284444237:web:d1e6b811299e25f102f204',
 };
