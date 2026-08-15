@@ -37,7 +37,7 @@
   ],
 
   "oauth2": {
-    "client_id": "TODO_REEMPLAZAR.apps.googleusercontent.com",
+    "client_id": "257054458502-0bbf3j990luh4h91h9cj2a8lmm8rp9es.apps.googleusercontent.com",
     "scopes": ["openid", "email", "profile"]
   },
 
