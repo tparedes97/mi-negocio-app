@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Limen — Portal del compañero</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --page-bg:#F6EFE2;
+    --frame-dark:#4A3826;
+    --surface:#FFFCF5;
+    --surface-2:#F2E7D3;
+    --amber:#BE7A42;
+    --amber-dim:#F1E1C7;
+    --sage:#6E8768;
+    --sage-dim:#E4EBDA;
+    --danger:#B0503F;
+    --danger-dim:#F3DDD6;
+    --text:#3B2E22;
+    --text-muted:#8C7A63;
+    --line:#E6D9C0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--page-bg);
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(190,122,66,0.10), transparent 42%),
+      radial-gradient(circle at 88% 92%, rgba(110,135,104,0.10), transparent 42%);
+    min-height:100vh; font-family:'Inter', sans-serif; color:var(--text);
+    display:flex; flex-direction:column; align-items:center; padding:40px 16px 80px;
+  }
+  .top-label{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;
+  }
+  h1.brand{ font-family:'Source Serif 4', serif; font-weight:500; font-size:29px; margin-bottom:30px; }
+  h1.brand span{ color:var(--amber); }
+
+  .browser-frame{
+    width:960px; max-width:94vw; background:var(--surface); border:1px solid var(--line);
+    border-radius:20px; box-shadow:0 40px 80px -20px rgba(59,46,34,0.30); overflow:hidden; margin:0 auto;
+  }
+  .browser-bar{ height:46px; background:var(--surface-2); border-bottom:1px solid var(--line); display:flex; align-items:center; padding:0 16px; gap:14px; }
+  .browser-dots{ display:flex; gap:6px; }
+  .browser-dots span{ width:10px; height:10px; border-radius:50%; background:var(--line); }
+  .browser-url{ flex:1; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:6px 14px; font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--text-muted); text-align:center; }
+
+  .app-shell{ display:flex; height:620px; }
+
+  .login-screen{
+    height:620px; display:flex; align-items:center; justify-content:center;
+    background:var(--page-bg);
+  }
+  .login-card{ width:320px; text-align:left; }
+  .login-card label.field-label{ margin-top:14px; }
+  .login-card input[type=text]{
+    width:100%; background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:11px 13px; font-family:'Inter', sans-serif; font-size:13px; color:var(--text); outline:none;
+  }
+  .login-card select{
+    width:100%; background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:11px 13px; font-family:'Inter', sans-serif; font-size:13px; color:var(--text); outline:none; cursor:pointer;
+  }
+  .session-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--sage);
+    background:var(--sage-dim); padding:3px 9px; border-radius:20px; display:inline-block; margin-top:2px;
+  }
+  .app-sidebar{ width:220px; flex-shrink:0; background:var(--page-bg); border-right:1px solid var(--line); padding:26px 16px; display:flex; flex-direction:column; gap:4px; }
+  .app-logo{ font-family:'Source Serif 4', serif; font-size:19px; margin-bottom:4px; padding:0 10px; }
+  .app-logo span{ color:var(--amber); }
+  .app-sub{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); padding:0 10px; margin-bottom:20px; }
+  .app-nav-item{ font-size:13px; color:var(--text-muted); padding:10px 12px; border-radius:12px; cursor:pointer; display:flex; align-items:center; gap:10px; }
+  .app-nav-item:hover{ background:var(--surface); }
+  .app-nav-item.active{ background:var(--surface); color:var(--text); font-weight:600; box-shadow:0 2px 10px rgba(59,46,34,0.06); }
+
+  .avail-box{
+    margin-top:auto; background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:12px; display:flex; flex-direction:column; gap:8px;
+  }
+  .avail-label{ font-size:11.5px; color:var(--text-muted); }
+  .toggle{ display:flex; align-items:center; gap:8px; cursor:pointer; }
+  .toggle-track{ width:38px; height:20px; background:var(--sage); border-radius:20px; position:relative; transition:background .15s ease; }
+  .toggle-track::after{ content:''; position:absolute; top:2px; left:20px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left .15s ease; }
+  .toggle-track.off{ background:var(--line); }
+  .toggle-track.off::after{ left:2px; }
+  .toggle-text{ font-size:12.5px; font-weight:600; }
+
+  .app-main{ flex:1; padding:30px 34px; overflow-y:auto; background:var(--page-bg); }
+  .app-panel{ display:none; }
+  .app-panel.active{ display:block; }
+
+  .eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); margin-bottom:6px; }
+  .title{ font-family:'Source Serif 4', serif; font-size:24px; font-weight:500; }
+  .sub{ font-size:13px; color:var(--text-muted); line-height:1.55; margin-top:6px; max-width:480px; margin-bottom:20px; }
+
+  .btn{ border:none; border-radius:999px; padding:11px 18px; font-family:'Inter', sans-serif; font-weight:600; font-size:13px; cursor:pointer; transition:transform .1s ease, filter .15s ease; }
+  .btn:active{ transform:scale(0.98); }
+  .btn-primary{ background:var(--sage); color:#FBF9F1; }
+  .btn-amber{ background:var(--amber); color:#FBF3E7; }
+  .btn-ghost{ background:transparent; color:var(--text-muted); border:1px solid var(--line); }
+  .btn-danger{ background:var(--danger); color:#FBF1EE; }
+  .btn-block{ width:100%; }
+  .btn-sm{ padding:8px 14px; font-size:12px; }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  /* Queue */
+  .queue-item{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    padding:14px 16px; margin-bottom:10px; box-shadow:0 2px 10px rgba(59,46,34,0.05);
+  }
+  .queue-site{ font-weight:600; font-size:13.5px; }
+  .queue-meta{ font-size:11.5px; color:var(--text-muted); margin-top:3px; }
+  .wait-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:#7A4D26;
+    background:var(--amber-dim); padding:4px 10px; border-radius:20px; margin-right:12px;
+  }
+  .empty-queue{ text-align:center; padding:60px 20px; color:var(--text-muted); }
+  .empty-queue .big{ font-size:30px; margin-bottom:10px; }
+
+  /* Schedule readonly */
+  .sched-row{ display:flex; justify-content:space-between; padding:11px 16px; border-bottom:1px solid var(--line); font-size:13px; }
+  .sched-row:last-child{ border-bottom:none; }
+  .sched-card{ background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+  .sched-day{ font-weight:600; }
+  .sched-time{ color:var(--text-muted); font-family:'IBM Plex Mono', monospace; font-size:12px; }
+
+  /* Active chat */
+  .chat-wrap{ display:none; }
+  .chat-wrap.active{ display:flex; flex-direction:column; height:100%; }
+  .chat-top{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    padding:14px 18px; margin-bottom:14px;
+  }
+  .chat-alias-badge{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-muted); }
+  .chat-alias-badge b{ color:var(--sage); font-size:14px; font-family:'Source Serif 4', serif; }
+  .chat-site{ font-size:12.5px; color:var(--text-muted); margin-top:2px; }
+  .timer-pill{
+    font-family:'IBM Plex Mono', monospace; font-size:15px; font-weight:600;
+    color:#7A4D26; background:var(--amber-dim); padding:6px 14px; border-radius:20px;
+  }
+  .timer-pill.low{ color:#6B372B; background:var(--danger-dim); }
+
+  .timer-bar-track{ height:5px; background:var(--line); border-radius:4px; margin-bottom:14px; overflow:hidden; }
+  .timer-bar-fill{ height:100%; background:var(--sage); width:64%; transition:width .3s ease; }
+  .timer-bar-fill.low{ background:var(--danger); }
+
+  .chat-bubbles{ flex:1; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px; display:flex; flex-direction:column; overflow-y:auto; max-height:230px; }
+  .bubble{ max-width:70%; padding:10px 13px; border-radius:16px; font-size:13px; line-height:1.5; margin-bottom:10px; }
+  .bubble.them{ background:var(--surface-2); align-self:flex-start; border-bottom-left-radius:4px; }
+  .bubble.me{ background:var(--sage-dim); color:#33422D; align-self:flex-end; border-bottom-right-radius:4px; }
+
+  .chat-input-row{ display:flex; gap:8px; margin-bottom:14px; }
+  .chat-input-row input{ flex:1; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:11px 14px; font-family:'Inter', sans-serif; font-size:13px; }
+
+  .chat-actions{ display:flex; gap:10px; }
+
+  .end-panel{ display:none; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; margin-top:14px; }
+  .end-panel.active{ display:block; }
+  .end-panel .field-label{ font-size:11.5px; color:var(--text-muted); display:block; margin-bottom:8px; }
+  .end-panel textarea{ width:100%; min-height:60px; background:var(--page-bg); border:1px solid var(--line); border-radius:12px; padding:11px 13px; font-family:'Inter', sans-serif; font-size:13px; resize:none; }
+  .suggestion-chips{ display:flex; gap:7px; flex-wrap:wrap; margin:10px 0; }
+  .sugg-chip{ background:var(--amber-dim); color:#7A4D26; border-radius:20px; padding:6px 12px; font-size:11.5px; cursor:pointer; }
+  .end-actions{ display:flex; gap:10px; margin-top:14px; }
+  .end-actions .btn{ flex:1; }
+
+  /* --- Calendario de turnos por hora --- */
+  .shift-legend{ display:flex; gap:16px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+  .legend-chip{ display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--text-muted); }
+  .legend-swatch{ width:14px; height:14px; border-radius:4px; }
+  .legend-swatch.is-open{
+    background:repeating-linear-gradient(45deg, var(--surface), var(--surface) 3px, var(--surface-2) 3px, var(--surface-2) 6px);
+    border:1px solid var(--line);
+  }
+  .shift-grid-wrap{ max-height:460px; overflow-y:auto; border:1px solid var(--line); border-radius:16px; background:var(--surface); }
+  .shift-grid{ display:grid; grid-template-columns:56px repeat(7, 1fr); }
+  .shift-head{
+    position:sticky; top:0; z-index:2; background:var(--surface-2);
+    font-family:'IBM Plex Mono', monospace; font-size:10px; text-transform:uppercase;
+    color:var(--text-muted); padding:8px 4px; text-align:center; border-bottom:1px solid var(--line);
+  }
+  .shift-hour-label{
+    font-family:'IBM Plex Mono', monospace; font-size:9.5px; color:var(--text-muted);
+    padding:4px 6px; text-align:right; border-bottom:1px solid var(--line); border-right:1px solid var(--line);
+    background:var(--surface-2); position:sticky; left:0;
+  }
+  .shift-cell{
+    border-bottom:1px solid var(--line); border-right:1px solid var(--line);
+    min-height:21px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    font-size:9.5px; font-weight:600; font-family:'IBM Plex Mono', monospace;
+  }
+  .shift-cell:hover{ filter:brightness(0.95); }
+  .shift-cell.open{
+    background:repeating-linear-gradient(45deg, var(--surface), var(--surface) 3px, var(--surface-2) 3px, var(--surface-2) 6px);
+    color:var(--text-muted);
+  }
+  .shift-cell.not-clickable{ cursor:default; }
+  .shift-cell.mine{ outline:2px solid var(--sage); outline-offset:-2px; }
+
+  .slots-indicator{
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--text-muted);
+    margin-bottom:14px;
+  }
+  .chat-tabs{ display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+  .chat-tab{
+    padding:8px 14px; border-radius:12px; background:var(--surface); border:1px solid var(--line);
+    font-size:12.5px; cursor:pointer; display:flex; align-items:center; gap:7px;
+  }
+  .chat-tab.selected{ background:var(--sage-dim); border-color:var(--sage); font-weight:600; }
+  .tab-dot{ width:7px; height:7px; border-radius:50%; }
+  .tab-dot.waiting{ background:var(--text-muted); }
+  .tab-dot.running{ background:var(--sage); }
+  .tab-dot.farewell{ background:var(--danger); }
+
+  .waiting-box{
+    text-align:center; padding:36px 20px; background:var(--surface);
+    border:1px dashed var(--line); border-radius:16px; color:var(--text-muted);
+    font-size:13px; line-height:1.6;
+  }
+  .waiting-box .btn{ margin-top:14px; }
+</style>
+</head>
+<body>
+
+<div class="top-label">Portal del compañero — sesión de trabajo</div>
+<h1 class="brand">Limen<span>.</span> Trabajo</h1>
+
+<div class="browser-frame">
+  <div class="browser-bar">
+    <div class="browser-dots"><span></span><span></span><span></span></div>
+    <div class="browser-url">trabajo.limen.app</div>
+  </div>
+
+  <div class="login-screen" id="login-screen">
+    <div class="login-card">
+      <div class="app-logo" style="margin-bottom:4px;">Limen<span>.</span></div>
+      <div class="app-sub" style="margin-bottom:22px;">Portal de trabajo</div>
+      <div class="sub" style="margin-bottom:18px; max-width:none;">Este acceso lo otorga la administradora. Si no tienes usuario y contraseña, pídeselos directamente — aquí no hay registro abierto.</div>
+      <label class="field-label" style="margin-top:0;">Correo</label>
+      <input type="email" id="login-user" placeholder="maria@limen.app">
+      <label class="field-label">Contraseña</label>
+      <input type="password" id="login-pass" placeholder="••••••••••">
+      <div id="login-error" style="color:var(--danger,#B0503F); font-size:12px; margin-top:8px;"></div>
+      <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="doLogin()">Iniciar sesión</button>
+    </div>
+  </div>
+
+  <div class="app-shell" id="app-shell" style="display:none;">
+    <div class="app-sidebar">
+      <div class="app-logo">Limen<span>.</span></div>
+      <div class="app-sub">Compañero</div>
+      <div class="session-badge" style="margin-bottom:16px;">sin límite de chats</div>
+      <div class="app-nav-item active" data-panel="cola">&#128172; Cola de chats</div>
+      <div class="app-nav-item" data-panel="turnos">&#128198; Turnos disponibles</div>
+      <div class="app-nav-item" data-panel="horario">&#128197; Mi horario</div>
+
+      <div class="avail-box">
+        <div class="avail-label">Tu disponibilidad</div>
+        <div class="toggle" id="toggle-avail">
+          <div class="toggle-track" id="toggle-track"></div>
+          <div class="toggle-text" id="toggle-text">Disponible</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-main">
+
+      <!-- PANEL: COLA -->
+      <div class="app-panel active" id="panel-cola">
+        <div class="eyebrow">En espera</div>
+        <div class="title">Cola de chats</div>
+        <div class="sub">Sin límite de chats simultáneos — atiende tantos como puedas manejar. El tiempo de cada uno solo empieza a correr cuando la persona responde tu primer mensaje.</div>
+
+        <div id="queue-list">
+          <div class="sub" style="margin-top:16px;">Cargando cola…</div>
+        </div>
+
+        <div id="multichat-area" style="display:none; margin-top:22px;">
+          <div class="chat-tabs" id="chat-tabs"></div>
+          <div id="chat-panel-content"></div>
+        </div>
+      </div>
+
+      <!-- PANEL: TURNOS DISPONIBLES -->
+      <div class="app-panel" id="panel-turnos">
+        <div class="eyebrow" id="turnos-month-label">Calendario del mes</div>
+        <div class="title">Turnos disponibles</div>
+        <div class="sub">Toca una casilla abierta para inscribirte. Toca una tuya para cancelarla. Las de otros compañeros no se pueden tocar — por privacidad, no se muestra de quién es cada una, solo si está libre.</div>
+
+        <div class="shift-legend">
+          <div class="legend-chip"><span class="legend-swatch" style="background:var(--sage-dim,#E4EBDA);"></span> Mía</div>
+          <div class="legend-chip"><span class="legend-swatch" style="background:var(--surface-2,#F2E7D3);"></span> De otro compañero</div>
+          <div class="legend-chip"><span class="legend-swatch is-open"></span> Abierta</div>
+        </div>
+
+        <div class="shift-grid-wrap"><div id="comp-shift-grid">Cargando calendario…</div></div>
+      </div>
+
+      <!-- PANEL: HORARIO -->
+      <div class="app-panel" id="panel-horario">
+        <div class="eyebrow">Solo lectura</div>
+        <div class="title">Mi horario</div>
+        <div class="sub">Se arma solo con las casillas en las que te inscribiste en "Turnos disponibles". Para quitar una hora, hazlo desde ahí.</div>
+        <div class="sched-card" id="mi-horario-card"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+
+</body>
+</html>

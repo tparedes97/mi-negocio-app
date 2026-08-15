@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "Limen — bloqueo con acompañamiento",
+  "short_name": "Limen",
+  "version": "0.1.0",
+  "description": "Bloquea sitios distractores en tu horario. Antes de desbloquear antes de tiempo, habla con una persona real.",
+  "default_locale": "es",
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "permissions": [
+    "storage",
+    "alarms",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "tabs",
+    "identity"
+  ],
+
+  "oauth2": {
+    "client_id": "TODO_REEMPLAZAR.apps.googleusercontent.com",
+    "scopes": ["openid", "email", "profile"]
+  },
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["blocked.html", "blocked.js", "popup.css"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --page-bg:#F6EFE2;
+  --surface:#FFFCF5;
+  --surface-2:#F2E7D3;
+  --amber:#BE7A42;
+  --amber-dim:#F1E1C7;
+  --sage:#6E8768;
+  --sage-dim:#E4EBDA;
+  --text:#3B2E22;
+  --text-muted:#8C7A63;
+  --line:#E6D9C0;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+body{
+  width:360px;
+  background:var(--page-bg);
+  font-family:'Inter', sans-serif;
+  color:var(--text);
+}
+
+.app{ padding:18px 20px 20px; }
+
+.app-header{ margin-bottom:14px; }
+.brand{ font-family:'Source Serif 4', serif; font-size:20px; font-weight:600; }
+.brand span{ color:var(--amber); }
+
+.eyebrow{
+  font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--amber); margin-bottom:6px;
+}
+.title{ font-family:'Source Serif 4', serif; font-size:18px; font-weight:600; margin-bottom:6px; line-height:1.3; }
+.sub{ font-size:12.5px; color:var(--text-muted); line-height:1.5; margin-bottom:14px; }
+
+input[type=text]{
+  width:100%; background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:11px 13px; font-family:'Inter', sans-serif; font-size:13px; color:var(--text); outline:none;
+  margin-bottom:10px;
+}
+
+.site-list{ display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
+.site-pill{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:8px 12px; font-size:12.5px;
+}
+.site-pill .dot{ width:7px; height:7px; border-radius:50%; background:var(--amber); margin-right:6px; }
+.site-pill button{
+  background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:14px; line-height:1;
+}
+
+.confidential-note{
+  display:flex; gap:8px; align-items:flex-start; background:var(--sage-dim);
+  border:1px solid #D7E2CC; border-radius:12px; padding:11px 12px; font-size:11.5px;
+  color:#3E4E37; line-height:1.5; margin:6px 0 14px;
+}
+.confidential-note .ico{ color:var(--sage); }
+
+.btn{
+  width:100%; border:none; border-radius:999px; padding:12px 16px;
+  font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px; cursor:pointer;
+}
+.btn-primary{ background:var(--sage); color:#FBF9F1; }
+.btn-primary:disabled{ opacity:.5; cursor:not-allowed; }

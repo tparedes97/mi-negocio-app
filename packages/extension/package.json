@@ -1,0 +1,16 @@
+{
+  "name": "@limen/extension",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch"
+  },
+  "dependencies": {
+    "@limen/shared": "*",
+    "firebase": "^10.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.0"
+  }
+}

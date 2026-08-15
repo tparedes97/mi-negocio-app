@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Limen</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1 class="brand">Limen<span>.</span></h1>
+    </header>
+
+    <main id="view-root">
+      <!-- Renderizado por popup.js. Esta es la pantalla "Agregar sitio" del
+           flujo de onboarding (pantalla 1 del prototipo). Las demás
+           pantallas (configurar horario, intento de desbloqueo, chat, etc.)
+           siguen el mismo patrón: un <template> + una función render*() en
+           popup.js, usando los estilos ya definidos en popup.css. -->
+      <section id="view-add-site" class="view">
+        <p class="eyebrow">Paso 1</p>
+        <h2 class="title">¿Qué quieres proteger de ti mismo?</h2>
+        <p class="sub">Agrega el sitio que quieres bloquear. Puedes agregar más de uno.</p>
+
+        <input type="text" id="input-domain" placeholder="instagram.com" autocomplete="off">
+
+        <div id="site-list" class="site-list"></div>
+
+        <div class="confidential-note">
+          <span class="ico">●</span>
+          <span>Este es tu espacio, solo tuyo. Los sitios que agregues aquí son confidenciales.</span>
+        </div>
+
+        <button id="btn-continue" class="btn btn-primary" disabled>Continuar</button>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "@limen/admin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Panel de administrador (fundadora). Hoy es HTML/CSS/JS vanilla con datos de ejemplo — el siguiente paso es reemplazar los objetos mock por consultas reales a Firestore usando @limen/shared/src/types.ts como contrato.",
+  "dependencies": {
+    "@limen/shared": "*",
+    "firebase": "^10.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  },
+  "scripts": {
+    "dev": "serve . -l 4001"
+  }
+}
