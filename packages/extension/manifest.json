@@ -1,5 +1,6 @@
 {
   "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArFJV3a89oWqMua/J5ZNpOR2dZh/puP/ETYteYhPRrKZSgznd5/h++qg/w2TImIUIxshyHDqVVEu3vxc6AURjXU65S/OFK++HKad0eLeO3KtwE20YWSDB2UI31FBaQ60LI0S1YeitHRbEUvFoeHHP8e99WZ70vY3mGs+MKt+xtlEuIEYjHVk5uJMd51lWbjmtdU31zj3G5KG7Xpn1eCP1HbzmKkdsBIPUcsr+aSfd0Fg/Hc27JZ5X+gx/kSnVAOSToODCxNn5Spxk5x1N6WufTjBjDiHcrk9dhxKBjlpMI93wggNZ5e6pE+MHi04j78wq5zGEr84STFrPSytMnK/lcQIDAQAB",
   "name": "Limen — bloqueo con acompañamiento",
   "short_name": "Limen",
   "version": "0.1.0",
