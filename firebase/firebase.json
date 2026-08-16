@@ -7,7 +7,10 @@
     {
       "source": "functions",
       "codebase": "default",
-      "runtime": "nodejs20"
+      "runtime": "nodejs20",
+      "predeploy": [
+        "mkdir -p $RESOURCE_DIR/shared && cp $RESOURCE_DIR/../../packages/shared/src/constants.js $RESOURCE_DIR/shared/constants.js"
+      ]
     }
   ],
   "hosting": [

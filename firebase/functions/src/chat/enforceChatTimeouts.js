@@ -3,7 +3,7 @@ const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestor
 const {
   CHAT_DURATION_SECONDS,
   FAREWELL_DURATION_SECONDS,
-} = require('@limen/shared/src/constants');
+} = require('../../shared/constants');
 
 /**
  * Esta función es la implementación real de la regla más importante del

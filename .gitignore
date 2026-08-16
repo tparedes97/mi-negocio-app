@@ -1,5 +1,6 @@
 node_modules/
 dist/
+firebase/functions/shared/
 .env
 .env.local
 *.log

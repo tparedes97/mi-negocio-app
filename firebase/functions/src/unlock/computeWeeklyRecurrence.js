@@ -3,7 +3,7 @@ const { getFirestore, Timestamp } = require('firebase-admin/firestore');
 const {
   UNLOCK_FEES_USD,
   RECURRENCE_FEE_MULTIPLIER,
-} = require('@limen/shared/src/constants');
+} = require('../../shared/constants');
 
 function startOfWeekMonday(date) {
   const d = new Date(date);
