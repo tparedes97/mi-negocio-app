@@ -419,8 +419,8 @@ function renderWaitingForPayment() {
       '<div class="sub">Se abri\u00f3 en otra pesta\u00f1a. En cuanto se confirme el cobro, este sitio se desbloquea solo.</div>' +
     '</div>';
 
-  // confirmCulqiCharge es quien realmente marca el attempt como
-  // 'unlocked' (ver firebase/functions/src/payments/confirmCulqiCharge.js).
+  // paddleWebhook es quien realmente marca el attempt como
+  // 'unlocked' (ver firebase/functions/src/payments/paddleWebhook.js).
   unsubscribeAttempt = onSnapshot(attemptDocRef(), (snap) => {
     const data = snap.data();
     if (data.state === 'unlocked') {

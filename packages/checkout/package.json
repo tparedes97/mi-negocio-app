@@ -2,7 +2,7 @@
   "name": "@limen/checkout",
   "version": "0.1.0",
   "private": true,
-  "description": "Páginita de checkout de pagos (Culqi). Se abre en pestaña externa desde la extensión — Chrome Web Store no permite cobrar dentro de una extensión, así que esta página vive hosteada aparte (Firebase Hosting).",
+  "description": "Páginita de checkout de pagos (Paddle). Se abre en pestaña externa desde la extensión — Chrome Web Store no permite cobrar dentro de una extensión, así que esta página vive hosteada aparte (Firebase Hosting).",
   "devDependencies": {
     "serve": "^14.0.0"
   },

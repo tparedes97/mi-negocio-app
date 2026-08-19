@@ -11,7 +11,6 @@ exports.launchShiftCalendar = require('./shifts/launchShiftCalendar').launchShif
 exports.toggleMyShift = require('./shifts/toggleMyShift').toggleMyShift;
 
 exports.createCheckoutSession = require('./payments/createCheckoutSession').createCheckoutSession;
-exports.getCheckoutInfo = require('./payments/getCheckoutInfo').getCheckoutInfo;
-exports.confirmCulqiCharge = require('./payments/confirmCulqiCharge').confirmCulqiCharge;
+exports.paddleWebhook = require('./payments/paddleWebhook').paddleWebhook;
 
 exports.createCompanion = require('./companions/createCompanion').createCompanion;

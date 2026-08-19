@@ -19,8 +19,7 @@ shiftArchive/{archiveId}              → ShiftArchiveDoc      (snapshots inmuta
 
 donations/{donationId}                → DonationDoc
 cancellations/{cancellationId}        → CancellationDoc
-activeUnlocks/{userId_domain}         → ActiveUnlockDoc  (solo la escribe confirmCulqiCharge)
-pendingPayments/{paymentId}           → puente interno entre createCheckoutSession y confirmCulqiCharge (solo Cloud Functions)
+activeUnlocks/{userId_domain}         → ActiveUnlockDoc  (solo la escribe paddleWebhook)
 ```
 
 ## Notas de diseño importantes
@@ -43,7 +42,7 @@ pendingPayments/{paymentId}           → puente interno entre createCheckoutSes
 
 - **`activeUnlocks`**: el service worker de la extensión NUNCA decide por su
   cuenta que un pago fue exitoso — solo lee esta colección, que exclusivamente
-  escribe `confirmCulqiCharge` tras confirmar el cargo con Culqi (`v2/charges`).
+  escribe `paddleWebhook` tras verificar la firma del evento `transaction.completed` de Paddle.
   Esto evita que alguien manipule el cliente (ej. editando `chrome.storage`
   a mano) para desbloquearse sin pagar.
 
