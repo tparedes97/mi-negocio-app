@@ -1,0 +1,22 @@
+{
+  "name": "@limen/mobile-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "App Android de Limen (Capacitor). Bloqueo de sitios vía VpnService nativo — no existe declarativeNetRequest fuera de extensiones de navegador, así que este es un mecanismo aparte, no un port de packages/extension.",
+  "scripts": {
+    "sync": "cap sync android",
+    "open:android": "cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.1",
+    "@capacitor/app": "^6.0.3",
+    "@capacitor/cli": "^6.2.1",
+    "@capacitor/core": "^6.2.1",
+    "@capacitor/local-notifications": "^6.1.3",
+    "@capacitor/preferences": "^6.0.4",
+    "@capacitor/push-notifications": "^6.0.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

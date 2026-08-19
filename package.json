@@ -12,6 +12,7 @@
     "dev:companion": "npm run dev --workspace=packages/companion-portal",
     "dev:checkout": "npm run dev --workspace=packages/checkout",
     "build:extension": "npm run build --workspace=packages/extension",
+    "sync:mobile": "npm run sync --workspace=packages/mobile-app",
     "emulators": "firebase emulators:start --project limen-dev",
     "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes",
     "deploy:functions": "firebase deploy --only functions"

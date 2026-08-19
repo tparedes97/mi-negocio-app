@@ -1,0 +1,13 @@
+run = "npm run open:android"
+entrypoint = "src/index.html"
+
+[nix]
+channel = "stable-24_05"
+
+[env]
+ANDROID_SDK_ROOT = "/home/runner/${REPL_SLUG}/android-sdk"
+ANDROID_HOME = "/home/runner/${REPL_SLUG}/android-sdk"
+
+[[ports]]
+localPort = 8100
+externalPort = 80

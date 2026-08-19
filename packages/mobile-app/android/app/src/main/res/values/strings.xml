@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Limen</string>
+    <string name="title_activity_main">Limen</string>
+    <string name="package_name">app.limen.mobile</string>
+    <string name="custom_url_scheme">app.limen.mobile</string>
+</resources>
