@@ -306,6 +306,7 @@ window.launchCalendar = async function launchCalendar() {
     // la lista de calendarios guardados se actualiza vía el listener de shiftArchive.
   } catch (err) {
     console.error('[limen-admin] error al lanzar calendario', err);
+    alert('No se pudo lanzar el calendario: ' + (err.message || err.code || 'error desconocido'));
   }
 };
 
