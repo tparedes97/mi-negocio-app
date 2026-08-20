@@ -23,7 +23,11 @@ service cloud.firestore {
 
     // ---- Usuarios finales ----
     match /users/{userId} {
-      allow read, update: if isOwner(userId);
+      // isFounder() también, además del dueño — el dashboard de admin
+      // necesita contar usuarios activos, planes, etc. sobre toda la
+      // colección, no solo el propio documento.
+      allow read: if isOwner(userId) || isFounder();
+      allow update: if isOwner(userId);
       allow create: if isSignedIn() && request.auth.uid == userId;
       allow delete: if false; // baja de cuenta se maneja vía Cloud Function, no borrado directo
 
