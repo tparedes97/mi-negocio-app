@@ -554,9 +554,6 @@
             <div style="display:flex; align-items:center; gap:10px;">
               <select id="companion-filter" class="companion-select" onchange="applyCompanionFilter()">
                 <option value="all">Todo el equipo</option>
-                <option value="María Torres">María Torres</option>
-                <option value="Diego Ramos">Diego Ramos</option>
-                <option value="Tú (fundador)">Tú (fundador)</option>
               </select>
               <div class="period-toggle">
                 <button class="period-btn active" data-period="week" onclick="setPeriod('week')">Esta semana</button>
@@ -589,19 +586,19 @@
           <div class="kpi-row" style="margin-bottom:22px;">
             <div class="kpi-card">
               <div class="kpi-icon">&#128155;</div>
-              <div class="kpi-num" id="kpi-donations">$142</div>
+              <div class="kpi-num" id="kpi-donations">—</div>
               <div class="kpi-label">Donaciones recibidas</div>
             </div>
             <div class="kpi-card clickable" onclick="toggleIncomeBreakdown()">
               <div class="kpi-icon">&#128176;</div>
-              <div class="kpi-num" id="kpi-income">$486</div>
+              <div class="kpi-num" id="kpi-income">—</div>
               <div class="kpi-label">Ingreso total (suscripciones + tarifas + donaciones)</div>
               <div class="expand-hint">Toca para ver el desglose &#9660;</div>
             </div>
             <div class="kpi-card">
               <div class="kpi-icon">&#127942;</div>
-              <div class="kpi-num" id="kpi-top" style="font-size:19px;">María Torres</div>
-              <div class="kpi-label">Genera más donaciones — <span id="kpi-top-amount">$78</span></div>
+              <div class="kpi-num" id="kpi-top" style="font-size:19px;">—</div>
+              <div class="kpi-label">Genera más donaciones — <span id="kpi-top-amount">—</span></div>
             </div>
             <div class="kpi-card">
               <div class="kpi-icon">&#9878;</div>
@@ -659,93 +656,13 @@
         <!-- SUBTAB: ACTIVIDAD -->
         <div class="subtab-content" id="subtab-actividad">
           <div class="sub" style="margin-top:0; margin-bottom:16px;">Conexión, chats atendidos y cumplimiento del horario asignado ese mes.</div>
-
-          <div class="kpi-row">
-            <div class="kpi-card">
-              <div class="kpi-icon">&#9203;</div>
-              <div class="kpi-num">38s</div>
-              <div class="kpi-label">Espera promedio hoy</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-icon">&#128197;</div>
-              <div class="kpi-num">52s</div>
-              <div class="kpi-label">Espera promedio (7 días)</div>
-            </div>
-            <div class="kpi-card is-warn">
-              <div class="kpi-icon">&#9888;</div>
-              <div class="kpi-num warn">2m 40s</div>
-              <div class="kpi-label">Espera más larga (7 días)</div>
-            </div>
-          </div>
-          <div class="sub" style="margin-top:12px; font-size:11.5px;">Este dato es solo de vista para los usuarios en su pantalla de espera — aquí lo compilas tú para revisar si el equipo está respondiendo a tiempo.</div>
-
-          <div class="table-card" style="margin-bottom:24px; margin-top:16px;">
-            <table>
-              <thead>
-                <tr><th>Compañero</th><th>Última conexión</th><th>Chats (mes)</th><th>Horas (semana)</th><th>Cumplimiento</th><th></th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><div class="person-name">María Torres</div></td>
-                  <td>Hoy · 21:04</td>
-                  <td>38</td>
-                  <td>26.5h</td>
-                  <td><span class="badge active"><span class="dot"></span>92%</span></td>
-                  <td><button class="link-btn" onclick="showActivity('María Torres')">Ver detalle</button></td>
-                </tr>
-                <tr>
-                  <td><div class="person-name">Diego Ramos</div></td>
-                  <td>Hace 3 días</td>
-                  <td>6</td>
-                  <td>3h</td>
-                  <td><span class="badge inactive"><span class="dot"></span>54%</span></td>
-                  <td><button class="link-btn" onclick="showActivity('Diego Ramos')">Ver detalle</button></td>
-                </tr>
-                <tr>
-                  <td><div class="person-name">Tú (fundador)</div></td>
-                  <td>Ahora</td>
-                  <td>52</td>
-                  <td>34h</td>
-                  <td><span class="badge active"><span class="dot"></span>100%</span></td>
-                  <td><button class="link-btn" onclick="showActivity('Tú')">Ver detalle</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="title" style="font-size:16px;" id="detail-name">María Torres — cumplimiento esta semana</div>
-          <div class="sub" style="margin-bottom:14px;">Verde: se conectó dentro de su horario asignado. Rojo: no se conectó en ese bloque.</div>
-
-          <div class="cov-grid" style="margin-bottom:24px;">
-            <div class="cov-cell cov-head" style="background:none;"></div>
-            <div class="cov-cell cov-head">Lun</div>
-            <div class="cov-cell cov-head">Mar</div>
-            <div class="cov-cell cov-head">Mié</div>
-            <div class="cov-cell cov-head">Jue</div>
-            <div class="cov-cell cov-head">Vie</div>
-            <div class="cov-cell cov-head">Sáb</div>
-            <div class="cov-cell cov-head">Dom</div>
-
-            <div class="cov-cell cov-time">20–02</div>
-            <div class="cov-cell cov-covered">Sí</div>
-            <div class="cov-cell cov-covered">Sí</div>
-            <div class="cov-cell cov-gap">No</div>
-            <div class="cov-cell cov-covered">Sí</div>
-            <div class="cov-cell cov-covered">Sí</div>
-            <div class="cov-cell cov-covered">Sí</div>
-            <div class="cov-cell cov-covered">Sí</div>
-          </div>
-
-          <label class="field-label" style="margin-top:0;">Chats atendidos recientes</label>
-          <div class="table-card">
-            <table>
-              <thead><tr><th>Fecha</th><th>Sitio</th><th>Espera</th><th>Duración</th><th>Alias usado</th><th></th></tr></thead>
-              <tbody>
-                <tr><td>14 ago, 21:12</td><td>instagram.com</td><td>0:34</td><td>4m 40s</td><td>Sofía</td><td><button class="link-btn" onclick="openTranscript()">Ver conversación</button></td></tr>
-                <tr><td>14 ago, 19:03</td><td>tiktok.com</td><td>1:12</td><td>5m 12s</td><td>Lucía</td><td><button class="link-btn" onclick="openTranscript()">Ver conversación</button></td></tr>
-                <tr><td>13 ago, 23:40</td><td>instagram.com</td><td>0:19</td><td>2m 05s</td><td>Sofía</td><td><button class="link-btn" onclick="openTranscript()">Ver conversación</button></td></tr>
-              </tbody>
-            </table>
+          <div class="sub" style="font-size:12.5px;">
+            <b>Todavía no implementado.</b> Esto requiere trackear sesiones de
+            login por compañero y cruzarlas contra su horario asignado —
+            tracking que no existe aún en el backend (ver
+            <code>docs/especificacion.md</code> / README, sección
+            "Simplificaciones conocidas"). No se muestran números de ejemplo
+            a propósito, para no hacerlos pasar por datos reales.
           </div>
         </div>
       </div>
@@ -773,27 +690,7 @@
               </tr>
             </thead>
             <tbody id="team-body">
-              <tr>
-                <td><div class="person-name">Tú (fundador)</div><div class="person-note">admin</div></td>
-                <td><span class="alias-chip">Ana</span><span class="alias-chip">Mateo</span></td>
-                <td>Lun–Vie · 08:00–20:00</td>
-                <td><span class="badge active"><span class="dot"></span>Activo</span></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td><div class="person-name">María Torres</div><div class="person-note">maria@correo.com</div></td>
-                <td><span class="alias-chip">Lucía</span><span class="alias-chip">Sofía</span></td>
-                <td>Lun–Dom · 20:00–02:00</td>
-                <td><span class="badge active"><span class="dot"></span>Activo</span></td>
-                <td class="row-actions"><button class="link-btn">Editar</button><button class="link-btn danger">Desactivar</button></td>
-              </tr>
-              <tr>
-                <td><div class="person-name">Diego Ramos</div><div class="person-note">diego@correo.com</div></td>
-                <td><span class="alias-chip">Andrés</span></td>
-                <td>Sáb–Dom · 00:00–08:00</td>
-                <td><span class="badge inactive"><span class="dot"></span>Pausado</span></td>
-                <td class="row-actions"><button class="link-btn">Editar</button><button class="link-btn">Activar</button></td>
-              </tr>
+              <tr><td colspan="5" class="sub">Cargando compañeros…</td></tr>
             </tbody>
           </table>
         </div>
@@ -845,10 +742,7 @@
           <button class="btn btn-primary" id="btn-launch" onclick="launchCalendar()">Lanzar calendario</button>
         </div>
 
-        <div class="shift-legend">
-          <div class="legend-chip"><span class="legend-swatch" style="background:#E4EBDA;"></span> María Torres</div>
-          <div class="legend-chip"><span class="legend-swatch" style="background:#F1E1C7;"></span> Diego Ramos</div>
-          <div class="legend-chip"><span class="legend-swatch" style="background:#E3E2EF;"></span> Tú (fundador)</div>
+        <div class="shift-legend" id="shift-legend">
           <div class="legend-chip"><span class="legend-swatch is-open"></span> Abierto</div>
         </div>
         <div class="sub" style="margin-top:0; font-size:11.5px;">Clic en una casilla para asignar o quitar manualmente.</div>
@@ -1014,13 +908,17 @@
     document.querySelectorAll('.period-btn').forEach(b => b.classList.toggle('active', b.dataset.period === 'custom'));
     document.getElementById('range-label').textContent = formatRange(start, end) + ` · ${nDays} día${nDays === 1 ? '' : 's'} · cargando…`;
 
-    await loadPeriod('custom', start, end);
-    document.getElementById('range-label').textContent = formatRange(start, end) + ` · ${nDays} día${nDays === 1 ? '' : 's'}`;
-
-    renderDashboard();
-    renderUsuarios();
-    renderServicio();
-    renderCapacidad();
+    try {
+      await loadPeriod('custom', start, end);
+      document.getElementById('range-label').textContent = formatRange(start, end) + ` · ${nDays} día${nDays === 1 ? '' : 's'}`;
+      renderDashboard();
+      renderUsuarios();
+      renderServicio();
+      renderCapacidad();
+    } catch (err) {
+      console.error('[limen-admin] error cargando el dashboard (rango personalizado)', err);
+      document.getElementById('range-label').textContent = 'Error cargando datos: ' + (err.message || err.code || 'desconocido');
+    }
   }
 
   async function setPeriod(p){
@@ -1031,13 +929,17 @@
     const range = p === 'month' ? getMonthRange(today) : getWeekRange(today);
     document.getElementById('range-label').textContent = formatRange(range.start, range.end) + ' · cargando…';
 
-    await loadPeriod(p, range.start, new Date(range.end.getTime() + 24 * 3600 * 1000)); // fin de rango inclusivo
-    document.getElementById('range-label').textContent = formatRange(range.start, range.end);
-
-    renderDashboard();
-    renderUsuarios();
-    renderServicio();
-    renderCapacidad();
+    try {
+      await loadPeriod(p, range.start, new Date(range.end.getTime() + 24 * 3600 * 1000)); // fin de rango inclusivo
+      document.getElementById('range-label').textContent = formatRange(range.start, range.end);
+      renderDashboard();
+      renderUsuarios();
+      renderServicio();
+      renderCapacidad();
+    } catch (err) {
+      console.error('[limen-admin] error cargando el dashboard', err);
+      document.getElementById('range-label').textContent = 'Error cargando datos: ' + (err.message || err.code || 'desconocido');
+    }
   }
 
   function setSubtab(name){

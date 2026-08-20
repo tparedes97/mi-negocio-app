@@ -136,6 +136,23 @@ function renderTeamTable() {
       </tr>`;
   }).join('');
   document.getElementById('team-body').innerHTML = rows;
+  renderCompanionFilterOptions();
+}
+
+// El filtro del Dashboard por compañero se arma con nombres reales de
+// companionsById — antes tenía "María Torres"/"Diego Ramos" hardcodeados.
+function renderCompanionFilterOptions() {
+  const select = document.getElementById('companion-filter');
+  if (!select) return;
+  const previousValue = select.value;
+  const options = [...companionsById.entries()].map(([uid, c]) => {
+    const name = uid === currentUser.uid ? 'Tú (fundador)' : c.fullName;
+    return `<option value="${name}">${name}</option>`;
+  });
+  select.innerHTML = '<option value="all">Todo el equipo</option>' + options.join('');
+  if ([...select.options].some((o) => o.value === previousValue)) {
+    select.value = previousValue;
+  }
 }
 
 // --- Modal: agregar compañero ---
@@ -236,7 +253,21 @@ function updateLaunchStatus(launchedAt) {
   }
 }
 
+// La leyenda de colores del calendario de turnos se arma con compañeros
+// reales — antes tenía "María Torres"/"Diego Ramos" hardcodeados.
+function renderShiftLegend() {
+  const legend = document.getElementById('shift-legend');
+  if (!legend) return;
+  const chips = [...companionsById.keys()].map((uid) => {
+    const style = personStyle(uid);
+    const name = uid === currentUser.uid ? 'Tú (fundador)' : companionsById.get(uid).fullName;
+    return `<div class="legend-chip"><span class="legend-swatch" style="background:${style.bg};"></span> ${name}</div>`;
+  });
+  legend.innerHTML = chips.join('') + '<div class="legend-chip"><span class="legend-swatch is-open"></span> Abierto</div>';
+}
+
 function renderAdminGrid() {
+  renderShiftLegend();
   document.getElementById('admin-shift-grid').innerHTML = buildGridHtml(currentShiftGrid, true);
   document.querySelectorAll('#admin-shift-grid [data-cell]').forEach((cell) => {
     cell.addEventListener('click', () => cycleAdminCell(...cell.dataset.cell.split(':').map(Number)));
