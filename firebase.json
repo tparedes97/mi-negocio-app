@@ -1,11 +1,11 @@
 {
   "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
+    "rules": "firebase/firestore.rules",
+    "indexes": "firebase/firestore.indexes.json"
   },
   "functions": [
     {
-      "source": "functions",
+      "source": "firebase/functions",
       "codebase": "default",
       "runtime": "nodejs20",
       "predeploy": [
@@ -16,17 +16,18 @@
   "hosting": [
     {
       "target": "admin",
-      "public": "../packages/admin/dist",
-      "rewrites": [{ "source": "**", "destination": "/index.html" }]
+      "public": "packages/admin",
+      "ignore": ["package.json"]
     },
     {
       "target": "companion-portal",
-      "public": "../packages/companion-portal/dist",
-      "rewrites": [{ "source": "**", "destination": "/index.html" }]
+      "public": "packages/companion-portal",
+      "ignore": ["package.json"]
     },
     {
       "target": "checkout",
-      "public": "../packages/checkout"
+      "public": "packages/checkout",
+      "ignore": ["package.json"]
     }
   ],
   "emulators": {
