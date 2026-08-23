@@ -51,6 +51,16 @@ service cloud.firestore {
       }
     }
 
+    // Las reglas anidadas de arriba (dentro de /users/{userId}/...) SOLO
+    // cubren consultas a la subcolección de un usuario puntual — nunca
+    // alcanzan a las consultas collectionGroup(db, 'unlockAttempts'), que
+    // usan tanto el dashboard del admin como la cola global de chats del
+    // portal de compañeras. Hace falta esta regla aparte con {path=**}
+    // para que esas consultas no queden bloqueadas.
+    match /{path=**}/unlockAttempts/{attemptId} {
+      allow read: if isSignedIn() && (request.auth.uid == path[1] || isCompanion());
+    }
+
     // ---- Chats ----
     match /chats/{chatId} {
       allow read: if isSignedIn() &&
