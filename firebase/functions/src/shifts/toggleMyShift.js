@@ -4,9 +4,10 @@ const { getFirestore } = require('firebase-admin/firestore');
 /**
  * "Toca una casilla abierta para inscribirte. Toca una tuya para
  * cancelarla. Las de otros compañeros no se pueden tocar." — esta regla no
- * se puede aplicar de forma segura solo con Firestore Rules porque el grid
- * es un array anidado (mutar una sola celda sin poder tocar las demás no es
- * expresable ahí), así que se valida acá, en el servidor.
+ * se puede aplicar de forma segura solo con Firestore Rules porque mutar una
+ * sola celda sin poder tocar las demás no es expresable ahí, así que se
+ * valida acá, en el servidor. (grid es un array de 7 mapas hora->uid, no un
+ * array anidado — Firestore no soporta arrays dentro de arrays.)
  */
 exports.toggleMyShift = onCall(async (request) => {
   const uid = request.auth?.uid;
@@ -31,7 +32,7 @@ exports.toggleMyShift = onCall(async (request) => {
     }
 
     const data = snap.data();
-    const grid = data.grid.map((row) => row.slice()); // copia profunda de un array 2D
+    const grid = data.grid.map((row) => ({ ...row })); // copia profunda de un array de mapas
     const current = grid[day][hour];
 
     if (current !== null && current !== uid) {

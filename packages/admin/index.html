@@ -616,7 +616,7 @@
             <div class="legend-chip"><span class="legend-swatch" style="background:var(--amber);"></span> Ingreso total</div>
             <div class="legend-chip"><span class="legend-swatch" style="background:var(--sage);"></span> Donaciones</div>
           </div>
-          <div class="chart-card">
+          <div class="chart-card" id="trend-chart-card">
             <svg viewBox="0 0 640 220" id="trend-chart-svg" style="width:100%; height:auto; display:block;"></svg>
           </div>
 
@@ -991,21 +991,11 @@
   }
 
   // --- Tendencia mensual: histórico + el punto final según la selección de arriba ---
-  const MONTHLY_HISTORY = [
-    { label: 'Mar', donations: 380, income: 1420 },
-    { label: 'Abr', donations: 410, income: 1510 },
-    { label: 'May', donations: 460, income: 1650 },
-    { label: 'Jun', donations: 495, income: 1740 },
-    { label: 'Jul', donations: 530, income: 1860 },
-  ];
-
-  const MONTHLY_HISTORY_USERS = [
-    { label: 'Mar', activeUsers: 215, mrr: 780 },
-    { label: 'Abr', activeUsers: 248, mrr: 890 },
-    { label: 'May', activeUsers: 276, mrr: 980 },
-    { label: 'Jun', activeUsers: 298, mrr: 1060 },
-    { label: 'Jul', activeUsers: 318, mrr: 1150 },
-  ];
+  // Vacío a propósito — todavía no se guarda un histórico mes a mes real.
+  // No se simulan meses pasados: hasta que exista ese tracking, el gráfico
+  // muestra solo el período real seleccionado (ver renderTrendChart).
+  const MONTHLY_HISTORY = [];
+  const MONTHLY_HISTORY_USERS = [];
 
   // Genera el SVG interno de un gráfico de tendencia de dos series. Reutilizable en cualquier pestaña.
   function buildTrendSvgHtml(points, keyA, colorA, prefixA, keyB, colorB, prefixB){
@@ -1060,9 +1050,19 @@
     return currentPeriod === 'week' ? 'Esta semana' : currentPeriod === 'month' ? 'Este mes' : 'Tu rango';
   }
 
+  // Sin al menos 2 puntos no hay línea que trazar (y dividiría por cero) —
+  // pasa siempre por ahora, porque MONTHLY_HISTORY está vacío a propósito.
+  // Reconstruye el <svg> con id estable dentro del contenedor cada vez,
+  // en vez de reemplazar el propio elemento con id (eso lo perdería para
+  // el próximo render).
+  const NO_HISTORY_MSG = '<div class="sub" style="text-align:center; padding:30px 0;">Todavía no hay histórico de meses anteriores para graficar — este es el primer período real.</div>';
+
   function renderTrendChart(){
     const d = periodData[currentPeriod];
     const points = [...MONTHLY_HISTORY, { label: currentPeriodLabel(), donations: d.donations, income: d.income, isCurrent: true }];
+    const card = document.getElementById('trend-chart-card');
+    if (points.length < 2) { card.innerHTML = NO_HISTORY_MSG; return; }
+    card.innerHTML = '<svg viewBox="0 0 640 220" id="trend-chart-svg" style="width:100%; height:auto; display:block;"></svg>';
     document.getElementById('trend-chart-svg').innerHTML =
       buildTrendSvgHtml(points, 'income', 'var(--amber)', '$', 'donations', 'var(--sage)', '$');
   }
@@ -1070,8 +1070,12 @@
   function renderUsersTrendChart(){
     const d = periodData[currentPeriod].users;
     const points = [...MONTHLY_HISTORY_USERS, { label: currentPeriodLabel(), activeUsers: d.activeUsers, mrr: d.mrr, isCurrent: true }];
-    const el = document.getElementById('trend-chart-users-svg');
-    if (el) el.innerHTML = buildTrendSvgHtml(points, 'mrr', 'var(--amber)', '$', 'activeUsers', 'var(--sage)', '');
+    const card = document.getElementById('trend-chart-users-card');
+    if (!card) return;
+    if (points.length < 2) { card.innerHTML = NO_HISTORY_MSG; return; }
+    card.innerHTML = '<svg viewBox="0 0 640 220" id="trend-chart-users-svg" style="width:100%; height:auto; display:block;"></svg>';
+    document.getElementById('trend-chart-users-svg').innerHTML =
+      buildTrendSvgHtml(points, 'mrr', 'var(--amber)', '$', 'activeUsers', 'var(--sage)', '');
   }
 
   function renderProdTable(rows){
@@ -1198,7 +1202,7 @@
         <div class="legend-chip"><span class="legend-swatch" style="background:var(--amber);"></span> Ingreso recurrente (MRR)</div>
         <div class="legend-chip"><span class="legend-swatch" style="background:var(--sage);"></span> Usuarios activos</div>
       </div>
-      <div class="chart-card">
+      <div class="chart-card" id="trend-chart-users-card">
         <svg viewBox="0 0 640 220" id="trend-chart-users-svg" style="width:100%; height:auto; display:block;"></svg>
       </div>
 
@@ -1331,7 +1335,7 @@
     const totalChats = d.service.totalChats;
 
     // Cobertura real: cuántas de las 168 casillas de la semana tienen alguien asignado
-    const scheduledSlots = adminShiftGrid.reduce((sum, day) => sum + day.filter(v => v).length, 0);
+    const scheduledSlots = adminShiftGrid.reduce((sum, day) => sum + Object.values(day).filter(v => v).length, 0);
     const capacityWeekly = scheduledSlots * CAPACITY_PER_PERSON;
     const utilization = Math.min(999, Math.round((totalChats / capacityWeekly) * 100));
 
@@ -1347,8 +1351,8 @@
 
     // Huecos de cobertura actuales (casillas sin nadie asignado)
     const gaps = [];
-    adminShiftGrid.forEach((day, dIdx) => day.forEach((val, h) => {
-      if (!val) gaps.push({ day: DAYS[dIdx], hour: h });
+    adminShiftGrid.forEach((day, dIdx) => Object.entries(day).forEach(([h, val]) => {
+      if (!val) gaps.push({ day: DAYS[dIdx], hour: Number(h) });
     }));
 
     let alertHtml = '';
@@ -1447,7 +1451,7 @@
     const factor = periodDays() / 7;
     return HOURLY_BY_DAY.map((arr, idx) => {
       const demand = Math.round(arr.reduce((s, v) => s + v, 0) * factor);
-      const scheduledHours = adminShiftGrid[idx].filter(v => v).length;
+      const scheduledHours = Object.values(adminShiftGrid[idx]).filter(v => v).length;
       const capacity = Math.round(scheduledHours * CAPACITY_PER_PERSON * factor);
       const utilization = capacity > 0 ? Math.round((demand / capacity) * 100) : 999;
       const peakIdx = arr.indexOf(Math.max(...arr));
@@ -1535,7 +1539,11 @@
   // window.adminShiftGrid cada vez que cambia, para que computeDayStats()
   // (Capacidad) siga leyendo datos reales sin tener que reescribir esa
   // subpestaña todavía — queda pendiente para una próxima vuelta.
-  window.adminShiftGrid = Array.from({ length: 7 }, () => Array(24).fill(null));
+  window.adminShiftGrid = Array.from({ length: 7 }, () => {
+    const day = {};
+    for (let h = 0; h < 24; h++) day[h] = null;
+    return day;
+  });
 
   function showActivity(name){
     document.getElementById('detail-name').textContent = name + ' — cumplimiento esta semana';

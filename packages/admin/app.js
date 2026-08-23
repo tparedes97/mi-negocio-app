@@ -92,8 +92,16 @@ function currentYearMonth() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
 
+// Firestore no soporta arrays anidados (array dentro de array) — por eso
+// cada día es un mapa {"0": uid|null, ..., "23": uid|null} en vez de un
+// array de 24. El acceso sigue siendo grid[day][hour] porque las claves
+// numéricas de un objeto JS funcionan igual con bracket notation.
 function emptyGrid() {
-  return Array.from({ length: 7 }, () => Array(24).fill(null));
+  return Array.from({ length: 7 }, () => {
+    const day = {};
+    for (let h = 0; h < 24; h++) day[h] = null;
+    return day;
+  });
 }
 
 function personStyle(uid) {
@@ -276,7 +284,7 @@ function renderAdminGrid() {
 
 function renderCoberturaGrid() {
   document.getElementById('cobertura-live-grid').innerHTML = buildGridHtml(currentShiftGrid, false);
-  const gapCount = currentShiftGrid.reduce((sum, day) => sum + day.filter((v) => !v).length, 0);
+  const gapCount = currentShiftGrid.reduce((sum, day) => sum + Object.values(day).filter((v) => !v).length, 0);
   const alertEl = document.getElementById('cobertura-alert');
   alertEl.innerHTML = gapCount > 0
     ? `<span>⚠</span><span>Hay <b>${gapCount} casillas</b> sin cobertura ahora mismo. Edítalas desde "Turnos" para cerrar el hueco.</span>`
@@ -306,7 +314,7 @@ async function cycleAdminCell(d, h) {
   const idx = ids.indexOf(current);
   const next = ids[(idx + 1) % ids.length];
 
-  const grid = currentShiftGrid.map((row) => row.slice());
+  const grid = currentShiftGrid.map((row) => ({ ...row }));
   grid[d][h] = next;
   await setDoc(doc(db, 'shiftAssignments', currentYearMonth()), { grid }, { merge: true });
   // no hace falta releer — el onSnapshot de arriba re-renderiza solo
@@ -314,7 +322,7 @@ async function cycleAdminCell(d, h) {
 
 function renderLeaderboard() {
   const counts = new Map();
-  currentShiftGrid.forEach((day) => day.forEach((uid) => {
+  currentShiftGrid.forEach((day) => Object.values(day).forEach((uid) => {
     if (uid) counts.set(uid, (counts.get(uid) || 0) + 1);
   }));
   const ranked = [...counts.entries()]

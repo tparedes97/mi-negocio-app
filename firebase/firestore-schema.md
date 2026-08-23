@@ -46,14 +46,21 @@ activeUnlocks/{userId_domain}         → ActiveUnlockDoc  (solo la escribe padd
   Esto evita que alguien manipule el cliente (ej. editando `chrome.storage`
   a mano) para desbloquearse sin pagar.
 
+- **`shiftAssignments.grid`**: array de 7 elementos (uno por día de la
+  semana), donde cada elemento es un **mapa** `{"0": uid|null, ..., "23":
+  uid|null}` — NUNCA un array anidado. Firestore no soporta arrays dentro de
+  arrays, así que modelar esto como un array 7×24 (array de arrays) falla
+  siempre al guardar. El acceso `grid[d][h]` sigue funcionando igual desde
+  JS sea `grid[d]` un array o un mapa con llaves numéricas.
+
 - **`shiftAssignments` — quién puede tocar qué casilla**: las Firestore
   Rules solo dejan escribir a la fundadora (`allow write: if isFounder()`).
   Un compañero normal nunca escribe el documento directo — pasa siempre por
   la Cloud Function `toggleMyShift`, que valida en el servidor que la
   casilla esté abierta o le pertenezca antes de tocarla. Esto no se puede
-  expresar de forma segura solo con Firestore Rules porque el grid es un
-  array anidado (no hay forma de decir "solo puede cambiar el elemento
-  [d][h] sin poder tocar los demás" en el lenguaje de reglas).
+  expresar de forma segura solo con Firestore Rules (no hay forma de decir
+  "solo puede cambiar el elemento [d][h] sin poder tocar los demás" en el
+  lenguaje de reglas).
 
 - **Reincidencia semanal**: `unlockAttemptDoc.weeklyRecurrenceCount` se
   calcula en una Cloud Function al crear el attempt, contando cuántos

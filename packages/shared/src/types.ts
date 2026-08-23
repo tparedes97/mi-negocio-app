@@ -111,8 +111,9 @@ export interface ShiftAssignmentDoc {
   id: string;               // `${year}-${month}`
   year: number;
   month: number;             // 1-12
-  /** grid[dayOfWeek][hour] = companionUid | null */
-  grid: (string | null)[][]; // 7 días x 24 horas
+  /** grid[dayOfWeek][hour] = companionUid | null. Cada día es un mapa (no un
+   * array) porque Firestore no soporta arrays anidados dentro de arrays. */
+  grid: Record<string, string | null>[]; // 7 días, cada uno {"0": uid|null, ..., "23": uid|null}
   launchedAt: FirestoreTimestamp | null; // null mientras no se publique
   launchedBy: string | null;
 }
@@ -123,7 +124,7 @@ export interface ShiftArchiveDoc {
   yearMonth: string;         // "2026-08" — para poder contar versiones del mismo mes
   label: string;              // ej. "agosto 2026 — v1"
   savedAt: FirestoreTimestamp;
-  grid: (string | null)[][];
+  grid: Record<string, string | null>[];
 }
 
 export interface DonationDoc {
