@@ -1,5 +1,6 @@
 node_modules/
 dist/
+*.zip
 firebase/functions/shared/
 .env
 .env.local
