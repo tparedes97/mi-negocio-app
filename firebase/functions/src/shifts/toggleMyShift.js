@@ -9,7 +9,7 @@ const { getFirestore } = require('firebase-admin/firestore');
  * valida acá, en el servidor. (grid es un array de 7 mapas hora->uid, no un
  * array anidado — Firestore no soporta arrays dentro de arrays.)
  */
-exports.toggleMyShift = onCall(async (request) => {
+exports.toggleMyShift = onCall({ invoker: 'public' }, async (request) => {
   const uid = request.auth?.uid;
   if (!uid) throw new HttpsError('unauthenticated', 'Debes iniciar sesión.');
 

@@ -8,7 +8,7 @@ const { getFirestore, FieldValue } = require('firebase-admin/firestore');
  * "createUserForSomeoneElse" en el SDK normal de Firebase Auth). Por eso
  * esto vive acá, protegido para que solo la fundadora pueda llamarlo.
  */
-exports.createCompanion = onCall(async (request) => {
+exports.createCompanion = onCall({ invoker: 'public' }, async (request) => {
   const callerUid = request.auth?.uid;
   if (!callerUid) throw new HttpsError('unauthenticated', 'Debes iniciar sesión.');
 

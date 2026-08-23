@@ -9,7 +9,7 @@ const MONTH_NAMES = ['enero','febrero','marzo','abril','mayo','junio','julio','a
  * casillas abiertas) y guarda una copia inmutable en shiftArchive — esto es
  * lo que alimenta la sección "Calendarios guardados" de Cobertura.
  */
-exports.launchShiftCalendar = onCall(async (request) => {
+exports.launchShiftCalendar = onCall({ invoker: 'public' }, async (request) => {
   const uid = request.auth?.uid;
   if (!uid) throw new HttpsError('unauthenticated', 'Debes iniciar sesión.');
 

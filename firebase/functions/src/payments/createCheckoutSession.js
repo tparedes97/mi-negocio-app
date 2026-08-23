@@ -18,7 +18,7 @@ const paddleEnv = defineSecret('PADDLE_ENVIRONMENT'); // 'sandbox' o 'production
  * ("LIMEN"), nunca con el nombre legal de la fundadora.
  */
 exports.createCheckoutSession = onCall(
-  { secrets: [paddleApiKey, paddleEnv] },
+  { secrets: [paddleApiKey, paddleEnv], invoker: 'public' },
   async (request) => {
     const uid = request.auth?.uid;
     if (!uid) throw new HttpsError('unauthenticated', 'Debes iniciar sesión.');

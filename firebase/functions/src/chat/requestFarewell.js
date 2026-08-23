@@ -8,7 +8,7 @@ const { getFirestore, FieldValue } = require('firebase-admin/firestore');
  * se cumplan los 5 minutos, si la conversación ya llegó a un buen punto.
  * El cierre real, pasado ese minuto, lo sigue haciendo enforceChatTimeouts.
  */
-exports.requestFarewell = onCall(async (request) => {
+exports.requestFarewell = onCall({ invoker: 'public' }, async (request) => {
   const { chatId } = request.data;
   const uid = request.auth?.uid;
   if (!uid) throw new HttpsError('unauthenticated', 'Debes iniciar sesión.');
