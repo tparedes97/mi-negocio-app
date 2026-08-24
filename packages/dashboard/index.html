@@ -92,21 +92,27 @@
   .badge-row{ display:flex; flex-wrap:wrap; gap:14px; margin-top:30px; }
   @media (max-width:859px){ .badge-row{ justify-content:center; } }
   .store-badge{
-    display:flex; flex-direction:column; gap:1px; text-decoration:none; color:inherit;
+    display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit;
     background:rgba(255,255,255,0.08); border:1px solid rgba(251,243,231,0.22); border-radius:12px;
-    padding:9px 16px 9px 14px;
+    padding:9px 16px 9px 12px;
   }
+  .store-glyph{ width:22px; height:22px; flex-shrink:0; }
+  .store-badge .txt{ display:flex; flex-direction:column; gap:1px; }
   .store-badge .l1{ font-size:9.5px; color:rgba(251,243,231,0.65); letter-spacing:.03em; }
-  .store-badge .l2{ font-size:12.5px; font-weight:700; color:#FBF3E7; }
-  .store-badge.disabled{ opacity:.55; cursor:default; }
+  .store-badge .l2{ font-size:12px; font-weight:700; color:#FBF3E7; }
+  .store-badge.disabled{ opacity:.6; cursor:default; }
 
-  .social-proof{ display:flex; align-items:center; gap:12px; margin-top:26px; }
+  .social-proof{ display:flex; align-items:center; gap:14px; margin-top:26px; }
   @media (max-width:859px){ .social-proof{ justify-content:center; } }
   .social-proof p{ font-size:12.5px; color:rgba(251,243,231,0.75); max-width:26ch; line-height:1.5; }
-  .proof-icon{
-    flex-shrink:0; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    background:rgba(255,255,255,0.1); border:1px solid rgba(251,243,231,0.25); color:#F3C892;
+  .avatar-stack{ display:flex; flex-shrink:0; }
+  .avatar-stack .av{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--sage-dim), #cfd9c5); border:2px solid rgba(251,243,231,0.5); color:#3F5238;
+    margin-left:-10px;
   }
+  .avatar-stack .av:first-child{ margin-left:0; }
+  .avatar-stack .av .icon{ width:15px; height:15px; }
 
   .hero-photo{ position:relative; flex-shrink:0; width:min(320px, 76vw); }
   .hero-photo-frame{
@@ -117,14 +123,14 @@
   .hero-photo-frame img{ display:block; width:100%; aspect-ratio:4/5; object-fit:cover; object-position:center 12%; }
   .hero-photo-frame::after{
     content:''; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(30,14,4,0.62) 0%, rgba(30,14,4,0.18) 20%, rgba(30,14,4,0) 42%, rgba(58,20,8,0.62) 100%);
+    background:linear-gradient(200deg, rgba(30,14,4,0) 30%, rgba(30,14,4,0.4) 62%, rgba(58,20,8,0.68) 100%);
   }
   .hero-photo-quote{
-    position:absolute; left:20px; right:20px; top:22px; z-index:2;
+    position:absolute; right:20px; left:20px; bottom:78px; z-index:2; text-align:right;
     font-family:'Lora',serif; font-style:italic; font-size:13.5px; line-height:1.5; color:#FBF3E7;
-    text-shadow:0 2px 10px rgba(0,0,0,0.35);
+    text-shadow:0 2px 10px rgba(0,0,0,0.4);
   }
-  .hero-photo-quote cite{ display:block; margin-top:6px; font-style:normal; font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:rgba(251,243,231,0.7); }
+  .hero-photo-quote cite{ display:block; margin-top:6px; font-style:normal; font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:rgba(251,243,231,0.75); }
   .hero-photo-badge{
     position:absolute; left:-14px; bottom:-16px; z-index:2; width:max-content;
     display:flex; align-items:center; gap:10px;
@@ -210,6 +216,10 @@
   .phone-frame .screen{ background:var(--surface); border-radius:22px; overflow:hidden; aspect-ratio:9/18.5; padding:16px 12px; text-align:left; position:relative; }
   .phone-frame .notch{ position:absolute; top:0; left:50%; transform:translateX(-50%); width:44%; height:16px; background:#3B2E22; border-radius:0 0 10px 10px; z-index:2; }
 
+  .mini-rail{ position:absolute; top:14px; right:14px; display:flex; flex-direction:column; gap:6px; }
+  .mini-rail span{ width:18px; height:18px; border-radius:50%; background:var(--amber-dim); color:var(--terracotta); display:flex; align-items:center; justify-content:center; }
+  .mini-rail .icon{ width:9px; height:9px; }
+  .laptop-frame .screen{ position:relative; }
   .mini-brand{ font-family:'Lora',serif; font-weight:600; font-size:12px; color:var(--text); margin-bottom:12px; }
   .mini-brand span{ color:var(--terracotta); }
   .mini-site{ display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:9px; padding:8px 10px; margin-bottom:6px; }
@@ -217,6 +227,27 @@
   .mini-site .m-name{ font-size:10.5px; font-weight:600; flex:1; }
   .mini-site .m-time{ font-size:8.5px; color:var(--text-muted); }
   .mini-add{ font-size:10px; color:var(--amber); font-weight:700; text-align:center; padding:6px; border:1px dashed var(--line); border-radius:9px; }
+  .mini-stats{ display:flex; gap:14px; margin-bottom:2px; }
+  .mini-stats span{ font-size:8.5px; color:var(--text-muted); display:flex; flex-direction:column; }
+  .mini-stats strong{ font-family:'Lora',serif; font-size:16px; color:var(--terracotta); font-weight:600; }
+
+  /* ---- Pricing ---- */
+  .pricing-grid{ display:grid; grid-template-columns:1fr; gap:20px; max-width:640px; margin:44px auto 0; }
+  @media (min-width:600px){ .pricing-grid{ grid-template-columns:1fr 1fr; } }
+  .price-card{ background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:30px 26px; box-shadow:var(--shadow-soft); position:relative; }
+  .price-card.featured{ background:linear-gradient(160deg, #C2793F, #9A3412); color:#FBF3E7; border:none; box-shadow:var(--shadow-lift); }
+  .price-badge{ position:absolute; top:-12px; right:26px; background:var(--terracotta-deep); color:#F3C892; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:5px 12px; border-radius:999px; }
+  .price-name{ font-family:'Lora',serif; font-size:16px; font-weight:600; margin-bottom:10px; }
+  .price-amount{ font-family:'Lora',serif; font-size:34px; font-weight:600; margin-bottom:18px; }
+  .price-amount span{ font-size:13px; font-weight:400; opacity:.7; }
+  .price-features{ list-style:none; display:flex; flex-direction:column; gap:9px; margin-bottom:24px; }
+  .price-features li{ font-size:13px; padding-left:20px; position:relative; }
+  .price-features li::before{ content:'✓'; position:absolute; left:0; font-weight:700; color:var(--sage); }
+  .price-card.featured .price-features li::before{ color:#F3C892; }
+  .btn-outline.dark{ border-color:var(--line); color:var(--text); width:100%; justify-content:center; }
+  .btn-outline.dark:hover{ background:var(--page-bg); }
+  .unlock-note{ max-width:640px; margin:22px auto 0; text-align:center; font-size:12.5px; color:var(--text-muted); line-height:1.6; }
+  .unlock-note strong{ color:var(--text); }
 
   .mini-blocked-eyebrow{ font-size:8.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--terracotta); font-weight:700; margin-bottom:4px; }
   .mini-blocked-title{ font-family:'Lora',serif; font-size:14px; font-weight:600; margin-bottom:4px; }
@@ -289,15 +320,34 @@
 
   /* ---- Footer ---- */
   footer.site-footer{ background:#2C2118; color:rgba(251,243,231,0.7); padding:56px 24px 28px; }
-  .footer-inner{ max-width:1080px; margin:0 auto; display:grid; grid-template-columns:1fr; gap:36px; }
-  @media (min-width:700px){ .footer-inner{ grid-template-columns:1.4fr 1fr 1fr; } }
+  .footer-inner{ max-width:1160px; margin:0 auto; display:grid; grid-template-columns:1fr; gap:36px; }
+  @media (min-width:700px){ .footer-inner{ grid-template-columns:repeat(2, 1fr); } }
+  @media (min-width:1000px){ .footer-inner{ grid-template-columns:1.6fr 1fr 1fr 1fr 1.2fr; } }
   .footer-brand .brand{ color:#FBF3E7; }
   .footer-brand p{ font-size:13px; line-height:1.6; margin-top:12px; max-width:34ch; color:rgba(251,243,231,0.55); }
+  .footer-social{ display:flex; gap:10px; margin-top:18px; }
+  .footer-social a{
+    width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:rgba(251,243,231,0.08); color:rgba(251,243,231,0.7); transition:background .15s ease, color .15s ease;
+  }
+  .footer-social a:hover{ background:var(--terracotta); color:#FBF3E7; }
+  .footer-social .icon{ width:15px; height:15px; }
   .footer-col h4{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:rgba(251,243,231,0.85); font-weight:700; margin-bottom:14px; }
   .footer-col ul{ list-style:none; display:flex; flex-direction:column; gap:10px; }
   .footer-col a{ font-size:13px; color:rgba(251,243,231,0.6); text-decoration:none; }
   .footer-col a:hover{ color:#F3C892; }
-  .footer-bottom{ max-width:1080px; margin:40px auto 0; padding-top:24px; border-top:1px solid rgba(251,243,231,0.12); text-align:center; font-size:12px; color:rgba(251,243,231,0.4); }
+  .newsletter-form{ display:flex; gap:6px; }
+  .newsletter-form input{
+    flex:1; min-width:0; background:rgba(251,243,231,0.06); border:1px solid rgba(251,243,231,0.16); border-radius:10px;
+    padding:9px 12px; font-size:12.5px; color:#FBF3E7; outline:none;
+  }
+  .newsletter-form input::placeholder{ color:rgba(251,243,231,0.4); }
+  .newsletter-form button{
+    flex-shrink:0; width:36px; border:none; border-radius:10px; cursor:pointer;
+    background:linear-gradient(135deg, var(--amber), #A5652F); color:#FBF9F1; display:flex; align-items:center; justify-content:center;
+  }
+  .newsletter-form .icon{ width:15px; height:15px; }
+  .footer-bottom{ max-width:1160px; margin:40px auto 0; padding-top:24px; border-top:1px solid rgba(251,243,231,0.12); text-align:center; font-size:12px; color:rgba(251,243,231,0.4); }
 
   /* ---- App shell (post-login) ---- */
   .top-hero{
@@ -387,6 +437,9 @@
         <li><a href="#inicio">Inicio</a></li>
         <li><a href="#como-funciona">Cómo funciona</a></li>
         <li><a href="#descargas">Descargas</a></li>
+        <li><a href="#precios">Precios</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Ayuda</a></li>
       </ul>
       <button class="btn-primary-sm js-google-login">Comenzar ahora</button>
     </div>
@@ -406,7 +459,7 @@
       <div class="hero-text">
         <div class="hero-eyebrow">Acompañamiento en tiempo real</div>
         <h1>Tu mejor decisión, <em>en el momento más difícil.</em></h1>
-        <p class="hero-sub">Limen te acompaña en el segundo antes de romper el horario que te pusiste. No es otra alarma — es una persona real que te escucha antes de que decidas.</p>
+        <p class="hero-sub">Limen te acompaña en el segundo antes de romper el horario que te pusiste.</p>
         <div class="cta-row">
           <button class="btn-google js-google-login">
             <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
@@ -419,18 +472,28 @@
           <div id="login-error"></div>
         </div>
         <div class="badge-row">
-          <a class="store-badge js-extension-download" href="#" target="_blank">
-            <span class="l1">Extensión para</span>
-            <span class="l2">Chrome Web Store</span>
-          </a>
           <span class="store-badge disabled">
-            <span class="l1">App Android</span>
-            <span class="l2">Muy pronto</span>
+            <svg class="store-glyph" viewBox="0 0 24 24"><path fill="#EA4335" d="M4 3.5v17a1 1 0 0 0 1.6.8l13-8.5a1 1 0 0 0 0-1.6l-13-8.5A1 1 0 0 0 4 3.5z"/></svg>
+            <span class="txt">
+              <span class="l1">Descarga la app</span>
+              <span class="l2">Muy pronto en Google Play</span>
+            </span>
           </span>
+          <a class="store-badge js-extension-download" href="#" target="_blank">
+            <svg class="store-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#fff"/><circle cx="12" cy="12" r="9" fill="none" stroke="#EA4335" stroke-width="3" stroke-dasharray="14.2 40"/><circle cx="12" cy="12" r="9" fill="none" stroke="#4285F4" stroke-width="3" stroke-dasharray="14.2 40" stroke-dashoffset="-14.2"/><circle cx="12" cy="12" r="9" fill="none" stroke="#34A853" stroke-width="3" stroke-dasharray="14.2 40" stroke-dashoffset="-28.4"/><circle cx="12" cy="12" r="3.4" fill="#4285F4"/></svg>
+            <span class="txt">
+              <span class="l1">Extensión para Chrome</span>
+              <span class="l2">Disponible en Chrome Web Store</span>
+            </span>
+          </a>
         </div>
         <div class="social-proof">
-          <span class="proof-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
-          <p>Hecho por alguien que también perdía sus horas en el scroll — y armó esto para dejar de hacerlo solo.</p>
+          <span class="avatar-stack">
+            <span class="av"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg></span>
+            <span class="av"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg></span>
+            <span class="av"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg></span>
+          </span>
+          <p>Sumate a las primeras personas construyendo un mejor hábito con Limen.</p>
         </div>
       </div>
       <div class="hero-photo">
@@ -522,6 +585,11 @@
         <h3>Panel web</h3>
         <div class="laptop-frame">
           <div class="screen">
+            <div class="mini-rail">
+              <span><svg class="icon" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+              <span><svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+              <span><svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            </div>
             <div class="mini-brand">Limen<span>.</span></div>
             <div class="mini-site"><span class="m-dot"></span><span class="m-name">instagram.com</span><span class="m-time">20–23h</span></div>
             <div class="mini-site"><span class="m-dot"></span><span class="m-name">tiktok.com</span><span class="m-time">22–00h</span></div>
@@ -573,11 +641,28 @@
 
   <div class="section" style="padding-top:24px;">
     <div class="center" style="max-width:600px; margin:0 auto;">
-      <div class="eyebrow">Así se ve por dentro</div>
+      <div class="eyebrow">Así se ve Limen en acción</div>
       <h2 style="font-size:26px;">El momento en que más importa</h2>
-      <p style="font-size:14px; color:var(--text-muted); margin-top:10px; line-height:1.6;">Cuatro pantallas reales del mismo flujo: desde que tocás un sitio bloqueado hasta que decidís qué hacer.</p>
+      <p style="font-size:14px; color:var(--text-muted); margin-top:10px; line-height:1.6;">Cada interfaz está diseñada para apoyarte en tu mejor decisión.</p>
     </div>
     <div class="action-scroller">
+
+      <div>
+        <div class="phone-frame">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="mini-brand" style="margin-top:10px;">¡Buenos días! 👋</div>
+            <div class="mini-stats">
+              <span><strong>3</strong>Bloqueos</span>
+              <span><strong>5</strong>Charlas</span>
+            </div>
+            <div class="mini-blocked-meta" style="margin-top:8px;">Sitios bloqueados hoy</div>
+            <div class="mini-site"><span class="m-dot"></span><span class="m-name">instagram.com</span><span class="m-time">20–23h</span></div>
+            <div class="mini-site"><span class="m-dot"></span><span class="m-name">tiktok.com</span><span class="m-time">22–00h</span></div>
+          </div>
+        </div>
+        <div class="action-label">1. Tu resumen</div>
+      </div>
 
       <div>
         <div class="phone-frame">
@@ -590,7 +675,7 @@
             <div class="mini-btn outline">Seguir bloqueado</div>
           </div>
         </div>
-        <div class="action-label">1. Sitio bloqueado</div>
+        <div class="action-label">2. Sitio bloqueado</div>
       </div>
 
       <div>
@@ -601,7 +686,7 @@
             <div style="font-size:11px; font-weight:600;">Buscando a alguien<br>disponible para vos…</div>
           </div>
         </div>
-        <div class="action-label">2. Conectando</div>
+        <div class="action-label">3. Conectando</div>
       </div>
 
       <div>
@@ -614,7 +699,7 @@
             <div class="chat-bubble">Gracias por contarme. ¿Qué harías en su lugar?</div>
           </div>
         </div>
-        <div class="action-label">3. Acompañante</div>
+        <div class="action-label">4. Acompañante</div>
       </div>
 
       <div>
@@ -629,9 +714,41 @@
             <div class="mini-btn">Continuar</div>
           </div>
         </div>
-        <div class="action-label">4. Tu decisión</div>
+        <div class="action-label">5. Tu decisión</div>
       </div>
 
+    </div>
+  </div>
+
+  <div class="section" id="precios" style="padding-top:24px;">
+    <div class="center" style="max-width:600px; margin:0 auto;">
+      <div class="eyebrow">Precios</div>
+      <h2 style="font-size:26px;">Simple, sin letra chica</h2>
+      <p style="font-size:14px; color:var(--text-muted); margin-top:10px; line-height:1.6;">Hablar con tu acompañante siempre es gratis. Esto es lo que cuesta el resto.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">Básico</div>
+        <div class="price-amount">$3<span>/mes</span></div>
+        <ul class="price-features">
+          <li>Sitios bloqueados ilimitados</li>
+          <li>Acompañamiento en chat, gratis</li>
+        </ul>
+        <button class="btn-outline dark js-google-login">Comenzar ahora</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Recomendado</div>
+        <div class="price-name">Premium</div>
+        <div class="price-amount">$6<span>/mes</span></div>
+        <ul class="price-features">
+          <li>Todo lo de Básico</li>
+          <li>Estadísticas de tu progreso</li>
+        </ul>
+        <button class="btn-primary btn-block js-google-login">Comenzar ahora</button>
+      </div>
+    </div>
+    <div class="unlock-note">
+      <strong>Desbloqueo temporal, si igual lo necesitás:</strong> 10 min — $2.00 · 30 min — $6.00 · 60 min — $12.00. La tarifa sube si repetís el mismo sitio esa semana.
     </div>
   </div>
 
@@ -653,9 +770,19 @@
     <div class="closing-inner">
       <h2>Empieza a decidir acompañado, hoy.</h2>
       <p>No prometemos fuerza de voluntad instantánea. Prometemos que la próxima vez que dudes, no vas a estar decidiendo solo.</p>
+      <div class="badge-row" style="justify-content:center; margin-top:0; margin-bottom:22px;">
+        <span class="store-badge disabled">
+          <svg class="store-glyph" viewBox="0 0 24 24"><path fill="#EA4335" d="M4 3.5v17a1 1 0 0 0 1.6.8l13-8.5a1 1 0 0 0 0-1.6l-13-8.5A1 1 0 0 0 4 3.5z"/></svg>
+          <span class="txt"><span class="l1">Descarga la app</span><span class="l2">Muy pronto en Google Play</span></span>
+        </span>
+        <a class="store-badge js-extension-download" href="#" target="_blank">
+          <svg class="store-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#fff"/><circle cx="12" cy="12" r="9" fill="none" stroke="#EA4335" stroke-width="3" stroke-dasharray="14.2 40"/><circle cx="12" cy="12" r="9" fill="none" stroke="#4285F4" stroke-width="3" stroke-dasharray="14.2 40" stroke-dashoffset="-14.2"/><circle cx="12" cy="12" r="9" fill="none" stroke="#34A853" stroke-width="3" stroke-dasharray="14.2 40" stroke-dashoffset="-28.4"/><circle cx="12" cy="12" r="3.4" fill="#4285F4"/></svg>
+          <span class="txt"><span class="l1">Extensión para Chrome</span><span class="l2">Disponible en Chrome Web Store</span></span>
+        </a>
+      </div>
       <button class="btn-google js-google-login">
         <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-        Comenzar ahora
+        Comenzar en la web
       </button>
       <div class="closing-note">Tú puedes más de lo que crees.</div>
     </div>
@@ -665,23 +792,51 @@
     <div class="footer-inner">
       <div class="footer-brand">
         <div class="brand">Limen<span>.</span></div>
-        <p>Bloqueo de sitios con acompañamiento humano real, en el momento exacto en que más cuesta decidir.</p>
+        <p>Te acompañamos en el momento exacto para que elijas tu mejor versión.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg class="icon" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" aria-label="Twitter/X"><svg class="icon" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg class="icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z"/></svg></a>
+        </div>
       </div>
       <div class="footer-col">
         <h4>Producto</h4>
         <ul>
           <li><a href="#como-funciona">Cómo funciona</a></li>
           <li><a href="#descargas">Descargas</a></li>
+          <li><a href="#precios">Precios</a></li>
+          <li><a href="#">Blog</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Legal</h4>
+        <h4>Empresa</h4>
         <ul>
+          <li><a href="#">Sobre nosotros</a></li>
+          <li><a href="#">Contacto</a></li>
           <li><a href="../checkout/privacy.html">Privacidad</a></li>
+          <li><a href="#">Términos</a></li>
         </ul>
       </div>
+      <div class="footer-col">
+        <h4>Recursos</h4>
+        <ul>
+          <li><a href="#">Centro de ayuda</a></li>
+          <li><a href="#">Guías</a></li>
+          <li><a href="#">Comunidad</a></li>
+          <li><a href="#">Estado del servicio</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Newsletter</h4>
+        <p style="font-size:13px; color:rgba(251,243,231,0.6); margin-bottom:14px; line-height:1.6;">Recibe consejos y novedades.</p>
+        <form class="newsletter-form" onsubmit="return false;">
+          <input type="email" placeholder="Tu email" aria-label="Tu email">
+          <button type="submit" aria-label="Suscribirme"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </form>
+      </div>
     </div>
-    <div class="footer-bottom">© 2026 Limen.</div>
+    <div class="footer-bottom">© 2026 Limen. Todos los derechos reservados.</div>
   </footer>
 
 </div>
