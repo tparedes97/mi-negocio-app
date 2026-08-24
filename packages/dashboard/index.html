@@ -88,31 +88,26 @@
     text-decoration:none; transition:border-color .15s ease, background .15s ease;
   }
   .btn-outline:hover{ border-color:#FBF3E7; background:rgba(251,243,231,0.08); }
+  .btn-primary-lg{
+    background:linear-gradient(135deg, var(--amber), #A5652F); color:#FBF9F1; border:none; border-radius:999px;
+    padding:15px 30px; font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px; cursor:pointer;
+    box-shadow:0 18px 34px -16px rgba(190,122,66,0.6);
+  }
 
-  .badge-row{ display:flex; flex-wrap:wrap; gap:14px; margin-top:30px; }
+  .badge-row{ display:flex; flex-wrap:wrap; gap:26px; margin-top:32px; }
   @media (max-width:859px){ .badge-row{ justify-content:center; } }
+  .store-badge-group{ display:flex; flex-direction:column; gap:8px; }
+  .group-label{ font-size:11px; color:rgba(251,243,231,0.6); }
   .store-badge{
-    display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit;
-    background:rgba(255,255,255,0.08); border:1px solid rgba(251,243,231,0.22); border-radius:12px;
-    padding:9px 16px 9px 12px;
+    display:flex; align-items:center; gap:9px; text-decoration:none; color:inherit;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(251,243,231,0.22); border-radius:10px;
+    padding:8px 14px 8px 10px;
   }
-  .store-glyph{ width:22px; height:22px; flex-shrink:0; }
-  .store-badge .txt{ display:flex; flex-direction:column; gap:1px; }
-  .store-badge .l1{ font-size:9.5px; color:rgba(251,243,231,0.65); letter-spacing:.03em; }
-  .store-badge .l2{ font-size:12px; font-weight:700; color:#FBF3E7; }
+  .store-glyph{ width:20px; height:20px; flex-shrink:0; }
+  .store-badge .txt{ display:flex; flex-direction:column; gap:0; line-height:1.25; }
+  .store-badge .l1{ font-size:8.5px; color:rgba(251,243,231,0.65); letter-spacing:.02em; }
+  .store-badge .l2{ font-size:13px; font-weight:700; color:#FBF3E7; }
   .store-badge.disabled{ opacity:.6; cursor:default; }
-
-  .social-proof{ display:flex; align-items:center; gap:14px; margin-top:26px; }
-  @media (max-width:859px){ .social-proof{ justify-content:center; } }
-  .social-proof p{ font-size:12.5px; color:rgba(251,243,231,0.75); max-width:26ch; line-height:1.5; }
-  .avatar-stack{ display:flex; flex-shrink:0; }
-  .avatar-stack .av{
-    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(135deg, var(--sage-dim), #cfd9c5); border:2px solid rgba(251,243,231,0.5); color:#3F5238;
-    margin-left:-10px;
-  }
-  .avatar-stack .av:first-child{ margin-left:0; }
-  .avatar-stack .av .icon{ width:15px; height:15px; }
 
   /* Foto a pantalla completa dentro del hero, sin tarjeta ni rotación — igual que la referencia */
   .hero-photo-panel{ display:none; }
@@ -461,13 +456,10 @@
     <div class="hero-inner">
       <div class="hero-text">
         <div class="hero-eyebrow">Acompañamiento en tiempo real</div>
-        <h1>Tu mejor decisión, <em>en el momento más difícil.</em></h1>
+        <h1>Tu mejor decisión,<br><em>en el momento<br>más difícil.</em></h1>
         <p class="hero-sub">Limen te acompaña en el segundo antes de romper el horario que te pusiste.</p>
         <div class="cta-row">
-          <button class="btn-google js-google-login">
-            <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-            Comenzar ahora
-          </button>
+          <button class="btn-primary-lg js-google-login">Comenzar ahora</button>
           <a class="btn-outline" href="#como-funciona">
             <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8l6 4-6 4z"/></svg>
             Ver cómo funciona
@@ -475,28 +467,20 @@
           <div id="login-error"></div>
         </div>
         <div class="badge-row">
-          <span class="store-badge disabled">
-            <svg class="store-glyph" viewBox="0 0 24 24"><path fill="#EA4335" d="M4 3.5v17a1 1 0 0 0 1.6.8l13-8.5a1 1 0 0 0 0-1.6l-13-8.5A1 1 0 0 0 4 3.5z"/></svg>
-            <span class="txt">
-              <span class="l1">Descarga la app</span>
-              <span class="l2">Muy pronto en Google Play</span>
+          <div class="store-badge-group">
+            <span class="group-label">Descarga la app</span>
+            <span class="store-badge disabled">
+              <svg class="store-glyph" viewBox="0 0 24 24"><path fill="#EA4335" d="M4 3.5v17a1 1 0 0 0 1.6.8l13-8.5a1 1 0 0 0 0-1.6l-13-8.5A1 1 0 0 0 4 3.5z"/></svg>
+              <span class="txt"><span class="l1">Muy pronto en</span><span class="l2">Google Play</span></span>
             </span>
-          </span>
-          <a class="store-badge js-extension-download" href="#" target="_blank">
-            <svg class="store-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#fff"/><circle cx="12" cy="12" r="9" fill="none" stroke="#EA4335" stroke-width="3" stroke-dasharray="14.2 40"/><circle cx="12" cy="12" r="9" fill="none" stroke="#4285F4" stroke-width="3" stroke-dasharray="14.2 40" stroke-dashoffset="-14.2"/><circle cx="12" cy="12" r="9" fill="none" stroke="#34A853" stroke-width="3" stroke-dasharray="14.2 40" stroke-dashoffset="-28.4"/><circle cx="12" cy="12" r="3.4" fill="#4285F4"/></svg>
-            <span class="txt">
-              <span class="l1">Extensión para Chrome</span>
-              <span class="l2">Disponible en Chrome Web Store</span>
-            </span>
-          </a>
-        </div>
-        <div class="social-proof">
-          <span class="avatar-stack">
-            <span class="av"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg></span>
-            <span class="av"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg></span>
-            <span class="av"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg></span>
-          </span>
-          <p>Sumate a las primeras personas construyendo un mejor hábito con Limen.</p>
+          </div>
+          <div class="store-badge-group">
+            <span class="group-label">Extensión para Chrome</span>
+            <a class="store-badge js-extension-download" href="#" target="_blank">
+              <svg class="store-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#fff"/><circle cx="12" cy="12" r="9" fill="none" stroke="#EA4335" stroke-width="3" stroke-dasharray="14.2 40"/><circle cx="12" cy="12" r="9" fill="none" stroke="#4285F4" stroke-width="3" stroke-dasharray="14.2 40" stroke-dashoffset="-14.2"/><circle cx="12" cy="12" r="9" fill="none" stroke="#34A853" stroke-width="3" stroke-dasharray="14.2 40" stroke-dashoffset="-28.4"/><circle cx="12" cy="12" r="3.4" fill="#4285F4"/></svg>
+              <span class="txt"><span class="l1">Disponible en</span><span class="l2">Chrome Web Store</span></span>
+            </a>
+          </div>
         </div>
         <div class="hero-photo-mobile">
           <img src="assets/hero-photo.jpg" alt="Una persona celebrando haber cumplido una meta que se propuso" width="480" height="600">
@@ -767,11 +751,11 @@
       <div class="badge-row" style="justify-content:center; margin-top:0; margin-bottom:22px;">
         <span class="store-badge disabled">
           <svg class="store-glyph" viewBox="0 0 24 24"><path fill="#EA4335" d="M4 3.5v17a1 1 0 0 0 1.6.8l13-8.5a1 1 0 0 0 0-1.6l-13-8.5A1 1 0 0 0 4 3.5z"/></svg>
-          <span class="txt"><span class="l1">Descarga la app</span><span class="l2">Muy pronto en Google Play</span></span>
+          <span class="txt"><span class="l1">Muy pronto en</span><span class="l2">Google Play</span></span>
         </span>
         <a class="store-badge js-extension-download" href="#" target="_blank">
           <svg class="store-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#fff"/><circle cx="12" cy="12" r="9" fill="none" stroke="#EA4335" stroke-width="3" stroke-dasharray="14.2 40"/><circle cx="12" cy="12" r="9" fill="none" stroke="#4285F4" stroke-width="3" stroke-dasharray="14.2 40" stroke-dashoffset="-14.2"/><circle cx="12" cy="12" r="9" fill="none" stroke="#34A853" stroke-width="3" stroke-dasharray="14.2 40" stroke-dashoffset="-28.4"/><circle cx="12" cy="12" r="3.4" fill="#4285F4"/></svg>
-          <span class="txt"><span class="l1">Extensión para Chrome</span><span class="l2">Disponible en Chrome Web Store</span></span>
+          <span class="txt"><span class="l1">Disponible en</span><span class="l2">Chrome Web Store</span></span>
         </a>
       </div>
       <button class="btn-google js-google-login">
