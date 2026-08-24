@@ -9,6 +9,17 @@ const domainInput = document.getElementById('input-domain');
 const siteListEl = document.getElementById('site-list');
 const continueBtn = document.getElementById('btn-continue');
 
+// chrome.i18n usa automáticamente el idioma del navegador (chrome.i18n.getUILanguage())
+// y cae de vuelta a default_locale ("es") si no hay traducción para ese idioma —
+// ver _locales/{es,en}/messages.json. No hace falta detectar nada a mano.
+document.documentElement.lang = chrome.i18n.getUILanguage();
+document.title = chrome.i18n.getMessage('popupTitle');
+document.getElementById('step-label').textContent = chrome.i18n.getMessage('step1Label');
+document.getElementById('add-site-title').textContent = chrome.i18n.getMessage('addSiteTitle');
+document.getElementById('add-site-sub').textContent = chrome.i18n.getMessage('addSiteSub');
+document.getElementById('confidential-text').textContent = chrome.i18n.getMessage('confidentialNote');
+continueBtn.textContent = chrome.i18n.getMessage('continueButton');
+
 /** @returns {Promise<Array<{id:string, domain:string, schedule: object}>>} */
 async function loadSites() {
   const { blockedSites = [] } = await chrome.storage.local.get('blockedSites');
@@ -28,7 +39,7 @@ function renderSiteList(sites) {
   siteListEl.innerHTML = sites.map((site) => `
     <div class="site-pill" data-id="${site.id}">
       <span><span class="dot"></span>${site.domain}</span>
-      <button data-remove="${site.id}" aria-label="Quitar ${site.domain}">✕</button>
+      <button data-remove="${site.id}" aria-label="${chrome.i18n.getMessage('removeSiteAriaLabel', [site.domain])}">✕</button>
     </div>
   `).join('');
 

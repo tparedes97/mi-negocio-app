@@ -32,6 +32,9 @@ function copyStatics() {
   if (existsSync(path.join(root, 'icons'))) {
     cpSync(path.join(root, 'icons'), path.join(dist, 'icons'), { recursive: true });
   }
+  if (existsSync(path.join(root, '_locales'))) {
+    cpSync(path.join(root, '_locales'), path.join(dist, '_locales'), { recursive: true });
+  }
   console.log('[build] estáticos copiados a dist/');
 }
 

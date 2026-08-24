@@ -1,0 +1,109 @@
+{
+  "extName": { "message": "Limen — blocking with human support" },
+  "extDescription": { "message": "Blocks distracting sites during your schedule. Before you unlock early, talk to a real person." },
+
+  "popupTitle": { "message": "Limen" },
+  "step1Label": { "message": "Step 1" },
+  "addSiteTitle": { "message": "What do you want to protect yourself from?" },
+  "addSiteSub": { "message": "Add the site you want to block. You can add more than one." },
+  "confidentialNote": { "message": "This is your space, only yours. The sites you add here are confidential." },
+  "continueButton": { "message": "Continue" },
+  "removeSiteAriaLabel": {
+    "message": "Remove $DOMAIN$",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+
+  "blockedPageTitle": { "message": "Limen — blocked" },
+  "loadingState": { "message": "Loading…" },
+
+  "motivationalQuestion1": { "message": "What exactly do you want to see right now?" },
+  "motivationalQuestion2": { "message": "What would happen if you waited 10 more minutes before deciding?" },
+  "motivationalQuestion3": { "message": "What were you planning to do during this time before the idea of going in showed up?" },
+
+  "domainBlockedEyebrow": {
+    "message": "$DOMAIN$ is blocked",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "questionOfLabel": {
+    "message": "Question $CURRENT$ of $TOTAL$",
+    "placeholders": { "current": { "content": "$1" }, "total": { "content": "$2" } }
+  },
+  "answerPlaceholder": { "message": "Answer honestly..." },
+  "stillWantBtn": { "message": "I still want to continue" },
+
+  "offerChatTitle": { "message": "Do you want to talk to someone before continuing?" },
+  "offerChatSub": { "message": "A real person — not a bot — can be with you for 5 minutes before you decide, at no cost." },
+  "yesChatBtn": { "message": "Yes, I want to talk for 5 min" },
+  "noChatBtn": { "message": "No, continue without talking" },
+
+  "queuedTitle": { "message": "Looking for someone available" },
+  "queuedSub": { "message": "We already let your support person know. Your chat time hasn't started counting yet — that only starts once the conversation begins." },
+  "cancelWaitBtn": { "message": "Cancel and stay blocked" },
+
+  "connectingName": { "message": "Connecting…" },
+  "onlineStatus": { "message": "● online, real person" },
+  "chatAliasSuffix": {
+    "message": "$ALIAS$ · Support",
+    "placeholders": { "alias": { "content": "$1" } }
+  },
+  "chatInputPlaceholder": { "message": "Type your message..." },
+  "sendBtn": { "message": "Send" },
+  "farewellBanner": { "message": "Your support person is about to say goodbye — the chat closes in one minute." },
+
+  "chatEndedTitle": { "message": "Chat ended" },
+  "continueAfterChatBtn": { "message": "Continue" },
+
+  "afterChatEyebrow": { "message": "After the chat" },
+  "donationTitle": { "message": "Help us keep this space running" },
+  "donationSub": { "message": "Your donation helps pay for the time of the people who support you. It's 100% optional." },
+  "donateBtn": { "message": "Donate" },
+  "donateAmountBtn": {
+    "message": "Donate $$AMOUNT$",
+    "placeholders": { "amount": { "content": "$1" } }
+  },
+  "skipDonationBtn": { "message": "Skip, don't donate" },
+
+  "finalConfirmTitle": {
+    "message": "Do you still want to unlock $DOMAIN$?",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "finalConfirmSub": { "message": "This is your decision, take a second before answering." },
+  "stayBlockedBtn": { "message": "No, stay blocked" },
+  "wantUnlockBtn": { "message": "Yes, I want to unlock" },
+
+  "stayedBlockedTitle": { "message": "Still blocked — well done" },
+  "stayedBlockedSub": { "message": "You can close this tab whenever you want." },
+
+  "recurrenceEyebrowSuffix": {
+    "message": " · $COUNT$ unlock this week",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "feeSelectionTitle": { "message": "Choose how much time you need" },
+  "recurrenceFeeNote": { "message": "The fee is doubled due to repeat use this week." },
+  "feeMinutesLabel": {
+    "message": "$MINUTES$ minutes",
+    "placeholders": { "minutes": { "content": "$1" } }
+  },
+  "feeNoteDouble": { "message": "2x fee" },
+  "feeNoteBase": { "message": "base fee" },
+  "selectOptionBtn": { "message": "Select an option" },
+  "payAndUnlockBtn": {
+    "message": "Pay and unlock $MINUTES$ min",
+    "placeholders": { "minutes": { "content": "$1" } }
+  },
+
+  "waitingPaymentTitle": { "message": "Waiting for payment confirmation" },
+  "waitingPaymentSub": { "message": "It opened in another tab. As soon as the payment is confirmed, this site unlocks on its own." },
+
+  "unlockedTitle": {
+    "message": "$DOMAIN$ is unlocked",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "unlockedSub": { "message": "You can close this tab and go back in." },
+
+  "reincidenceTitle": { "message": "You already made this decision today" },
+  "reincidenceSub": {
+    "message": "You unlocked $DOMAIN$ earlier. No need to decide again — tomorrow is a new day and you can start fresh.",
+    "placeholders": { "domain": { "content": "$1" } }
+  }
+}

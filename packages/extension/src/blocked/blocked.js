@@ -19,6 +19,13 @@ const siteId = params.get('siteId');
 const root = document.getElementById('view-root');
 const functions = getFunctions(getApp());
 
+// chrome.i18n usa automáticamente el idioma del navegador (chrome.i18n.getUILanguage())
+// y cae de vuelta a default_locale ("es") si no hay traducción — ver
+// _locales/{es,en}/messages.json. No hace falta detectar nada a mano.
+document.documentElement.lang = chrome.i18n.getUILanguage();
+document.title = chrome.i18n.getMessage('blockedPageTitle');
+document.getElementById('loading-state').textContent = chrome.i18n.getMessage('loadingState');
+
 let user = null;
 let attemptId = null;
 let attempt = null; // espejo local del UnlockAttemptDoc
@@ -28,9 +35,9 @@ let unsubscribeMessages = null;
 let chatTimerInterval = null;
 let currentQuestionIndex = 0;
 const MOTIVATIONAL_QUESTIONS = [
-  '¿Qué es exactamente lo que quieres ver ahora?',
-  '¿Qué pasaría si esperas 10 minutos más antes de decidir?',
-  '¿Qué tenías pensado hacer en este horario antes de que apareciera la idea de entrar?',
+  chrome.i18n.getMessage('motivationalQuestion1'),
+  chrome.i18n.getMessage('motivationalQuestion2'),
+  chrome.i18n.getMessage('motivationalQuestion3'),
 ];
 const questionAnswers = ['', '', ''];
 
@@ -102,11 +109,11 @@ function renderMotivationalQuestions() {
 
   root.innerHTML =
     '<div class="stepper">' + dots + '</div>' +
-    '<div class="eyebrow">' + domain + ' está bloqueado</div>' +
-    '<div class="title">Pregunta ' + (currentQuestionIndex + 1) + ' de ' + MOTIVATIONAL_QUESTIONS.length + '</div>' +
-    '<div class="sub">' + MOTIVATIONAL_QUESTIONS[currentQuestionIndex] + '</div>' +
-    '<textarea id="q-answer" placeholder="Responde con honestidad...">' + questionAnswers[currentQuestionIndex] + '</textarea>' +
-    '<button class="btn btn-primary" id="btn-next">Aún quiero seguir</button>';
+    '<div class="eyebrow">' + escapeHtml(chrome.i18n.getMessage('domainBlockedEyebrow', [domain])) + '</div>' +
+    '<div class="title">' + escapeHtml(chrome.i18n.getMessage('questionOfLabel', [String(currentQuestionIndex + 1), String(MOTIVATIONAL_QUESTIONS.length)])) + '</div>' +
+    '<div class="sub">' + escapeHtml(MOTIVATIONAL_QUESTIONS[currentQuestionIndex]) + '</div>' +
+    '<textarea id="q-answer" placeholder="' + escapeHtml(chrome.i18n.getMessage('answerPlaceholder')) + '">' + escapeHtml(questionAnswers[currentQuestionIndex]) + '</textarea>' +
+    '<button class="btn btn-primary" id="btn-next">' + escapeHtml(chrome.i18n.getMessage('stillWantBtn')) + '</button>';
 
   document.getElementById('btn-next').addEventListener('click', async () => {
     questionAnswers[currentQuestionIndex] = document.getElementById('q-answer').value;
@@ -127,11 +134,11 @@ function renderOfferedChat() {
   root.innerHTML =
     '<div class="center-block">' +
       '<div class="big-emoji">\u2609</div>' +
-      '<div class="title">\u00bfDeseas hablar con alguien antes de continuar?</div>' +
-      '<div class="sub">Una persona real \u2014 no un bot \u2014 puede acompa\u00f1arte 5 minutos antes de que decidas.</div>' +
+      '<div class="title">' + escapeHtml(chrome.i18n.getMessage('offerChatTitle')) + '</div>' +
+      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('offerChatSub')) + '</div>' +
     '</div>' +
-    '<button class="btn btn-primary" id="btn-yes-chat">S\u00ed, quiero hablar 5 min</button>' +
-    '<button class="btn-link" id="btn-no-chat">No, continuar sin hablar</button>';
+    '<button class="btn btn-primary" id="btn-yes-chat">' + escapeHtml(chrome.i18n.getMessage('yesChatBtn')) + '</button>' +
+    '<button class="btn-link" id="btn-no-chat">' + escapeHtml(chrome.i18n.getMessage('noChatBtn')) + '</button>';
 
   document.getElementById('btn-yes-chat').addEventListener('click', async () => {
     await patchAttempt({ state: 'queued', queuedAt: serverTimestamp() });
@@ -151,11 +158,11 @@ function renderQueued() {
   root.innerHTML =
     '<div class="center-block" style="margin-top:20px;">' +
       '<div class="big-emoji">\u2609</div>' +
-      '<div class="title">Buscando a alguien disponible</div>' +
-      '<div class="sub">Ya avisamos a tu acompa\u00f1ante. El tiempo de tu chat todav\u00eda no empieza a correr \u2014 eso pasa reci\u00e9n cuando comienza la conversaci\u00f3n.</div>' +
+      '<div class="title">' + escapeHtml(chrome.i18n.getMessage('queuedTitle')) + '</div>' +
+      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('queuedSub')) + '</div>' +
       '<div class="wait-dots"><span></span><span></span><span></span></div>' +
     '</div>' +
-    '<button class="btn-link" id="btn-cancel-wait">Cancelar y seguir bloqueado</button>';
+    '<button class="btn-link" id="btn-cancel-wait">' + escapeHtml(chrome.i18n.getMessage('cancelWaitBtn')) + '</button>';
 
   document.getElementById('btn-cancel-wait').addEventListener('click', async () => {
     await patchAttempt({ state: 'stayed_blocked' });
@@ -183,16 +190,16 @@ function renderChat(chatId) {
     '<div class="chat-header">' +
       '<div class="avatar" id="chat-avatar">\u00b7</div>' +
       '<div class="chat-meta">' +
-        '<div class="name" id="chat-name">Conectando\u2026</div>' +
-        '<div class="status">\u25cf en l\u00ednea, persona real</div>' +
+        '<div class="name" id="chat-name">' + escapeHtml(chrome.i18n.getMessage('connectingName')) + '</div>' +
+        '<div class="status">' + escapeHtml(chrome.i18n.getMessage('onlineStatus')) + '</div>' +
       '</div>' +
       '<div class="chat-timer" id="chat-timer" style="display:none;">5:00</div>' +
     '</div>' +
     '<div id="farewell-banner"></div>' +
     '<div class="chat-bubbles" id="chat-bubbles"></div>' +
     '<div class="chat-input-row">' +
-      '<input type="text" id="chat-input" placeholder="Escribe tu mensaje...">' +
-      '<button class="btn btn-primary" id="btn-send" style="width:auto; padding:10px 16px;">Enviar</button>' +
+      '<input type="text" id="chat-input" placeholder="' + escapeHtml(chrome.i18n.getMessage('chatInputPlaceholder')) + '">' +
+      '<button class="btn btn-primary" id="btn-send" style="width:auto; padding:10px 16px;">' + escapeHtml(chrome.i18n.getMessage('sendBtn')) + '</button>' +
     '</div>';
 
   const chatRef = doc(db, 'chats', chatId);
@@ -200,7 +207,7 @@ function renderChat(chatId) {
 
   unsubscribeChat = onSnapshot(chatRef, (snap) => {
     const chat = snap.data();
-    document.getElementById('chat-name').textContent = chat.aliasUsed + ' \u00b7 Acompa\u00f1amiento';
+    document.getElementById('chat-name').textContent = chrome.i18n.getMessage('chatAliasSuffix', [chat.aliasUsed]);
     document.getElementById('chat-avatar').textContent = (chat.aliasUsed || '\u00b7')[0];
 
     if (chat.state === 'running' && chat.timerStartedAt) {
@@ -209,7 +216,7 @@ function renderChat(chatId) {
 
     if (chat.state === 'farewell' && lastRenderedState !== 'farewell') {
       document.getElementById('farewell-banner').innerHTML =
-        '<div class="farewell-banner">Tu acompa\u00f1ante est\u00e1 por despedirse \u2014 el chat se cierra en un minuto.</div>';
+        '<div class="farewell-banner">' + escapeHtml(chrome.i18n.getMessage('farewellBanner')) + '</div>';
       if (chat.farewellStartedAt) {
         startLocalTimer(chat.farewellStartedAt.toMillis(), FAREWELL_DURATION_SECONDS, 'chat-timer');
       }
@@ -276,10 +283,10 @@ function renderChatClosed(closingMessage) {
   root.innerHTML =
     '<div class="center-block">' +
       '<div class="big-emoji">\u2713</div>' +
-      '<div class="title">Chat terminado</div>' +
+      '<div class="title">' + escapeHtml(chrome.i18n.getMessage('chatEndedTitle')) + '</div>' +
       (closingMessage ? '<div class="sub">"' + escapeHtml(closingMessage) + '"</div>' : '') +
     '</div>' +
-    '<button class="btn btn-primary" id="btn-continue-after-chat">Continuar</button>';
+    '<button class="btn btn-primary" id="btn-continue-after-chat">' + escapeHtml(chrome.i18n.getMessage('continueAfterChatBtn')) + '</button>';
 
   document.getElementById('btn-continue-after-chat').addEventListener('click', async () => {
     await patchAttempt({ state: 'donation_prompt', chatId: attempt.chatId });
@@ -292,14 +299,14 @@ function renderChatClosed(closingMessage) {
 // ---------------------------------------------------------------
 function renderDonationPrompt() {
   root.innerHTML =
-    '<div class="eyebrow">Despu\u00e9s del chat</div>' +
-    '<div class="title">Ay\u00fadanos a mantener este espacio</div>' +
-    '<div class="sub">Tu donaci\u00f3n ayuda a pagar el tiempo de las personas que te acompa\u00f1an. Es 100% opcional.</div>' +
+    '<div class="eyebrow">' + escapeHtml(chrome.i18n.getMessage('afterChatEyebrow')) + '</div>' +
+    '<div class="title">' + escapeHtml(chrome.i18n.getMessage('donationTitle')) + '</div>' +
+    '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('donationSub')) + '</div>' +
     '<div class="chip-row" id="donation-chips">' +
       DONATION_SUGGESTED_AMOUNTS_USD.map((amt) => '<div class="chip" data-amount="' + amt + '">$' + amt + '</div>').join('') +
     '</div>' +
-    '<button class="btn btn-primary" id="btn-donate" disabled>Donar</button>' +
-    '<button class="btn-link" id="btn-skip-donation">Omitir, no donar</button>';
+    '<button class="btn btn-primary" id="btn-donate" disabled>' + escapeHtml(chrome.i18n.getMessage('donateBtn')) + '</button>' +
+    '<button class="btn-link" id="btn-skip-donation">' + escapeHtml(chrome.i18n.getMessage('skipDonationBtn')) + '</button>';
 
   let selectedAmount = null;
   document.querySelectorAll('#donation-chips .chip').forEach((chip) => {
@@ -309,7 +316,7 @@ function renderDonationPrompt() {
       selectedAmount = Number(chip.dataset.amount);
       const btn = document.getElementById('btn-donate');
       btn.disabled = false;
-      btn.textContent = 'Donar $' + selectedAmount;
+      btn.textContent = chrome.i18n.getMessage('donateAmountBtn', [String(selectedAmount)]);
     });
   });
 
@@ -339,11 +346,11 @@ async function goToFinalConfirmation() {
 function renderFinalConfirmation() {
   root.innerHTML =
     '<div class="center-block">' +
-      '<div class="title">\u00bfA\u00fan quieres desbloquear ' + domain + '?</div>' +
-      '<div class="sub">Esta es tu decisi\u00f3n, t\u00f3mate un segundo antes de responder.</div>' +
+      '<div class="title">' + escapeHtml(chrome.i18n.getMessage('finalConfirmTitle', [domain])) + '</div>' +
+      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('finalConfirmSub')) + '</div>' +
     '</div>' +
-    '<button class="btn btn-primary" id="btn-stay-blocked">No, seguir bloqueado</button>' +
-    '<button class="btn-ghost" id="btn-want-unlock">S\u00ed, quiero desbloquear</button>';
+    '<button class="btn btn-primary" id="btn-stay-blocked">' + escapeHtml(chrome.i18n.getMessage('stayBlockedBtn')) + '</button>' +
+    '<button class="btn-ghost" id="btn-want-unlock">' + escapeHtml(chrome.i18n.getMessage('wantUnlockBtn')) + '</button>';
 
   document.getElementById('btn-stay-blocked').addEventListener('click', async () => {
     await patchAttempt({ state: 'stayed_blocked' });
@@ -360,8 +367,8 @@ function renderStayedBlocked() {
   root.innerHTML =
     '<div class="center-block">' +
       '<div class="big-emoji">\ud83c\udf3f</div>' +
-      '<div class="title">Sigues bloqueado \u2014 bien hecho</div>' +
-      '<div class="sub">Puedes cerrar esta pesta\u00f1a cuando quieras.</div>' +
+      '<div class="title">' + escapeHtml(chrome.i18n.getMessage('stayedBlockedTitle')) + '</div>' +
+      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('stayedBlockedSub')) + '</div>' +
     '</div>';
 }
 
@@ -372,19 +379,19 @@ function renderFeeSelection() {
   const multiplier = attempt.weeklyRecurrenceCount > 0 ? RECURRENCE_FEE_MULTIPLIER : 1;
 
   root.innerHTML =
-    '<div class="eyebrow">' + domain + (attempt.weeklyRecurrenceCount > 0 ? ' \u00b7 ' + (attempt.weeklyRecurrenceCount + 1) + '\u00b0 desbloqueo esta semana' : '') + '</div>' +
-    '<div class="title">Elige cu\u00e1nto tiempo necesitas</div>' +
-    '<div class="sub">' + (multiplier > 1 ? 'La tarifa est\u00e1 duplicada por reincidencia esta semana.' : '') + '</div>' +
+    '<div class="eyebrow">' + escapeHtml(domain) + (attempt.weeklyRecurrenceCount > 0 ? escapeHtml(chrome.i18n.getMessage('recurrenceEyebrowSuffix', [String(attempt.weeklyRecurrenceCount + 1)])) : '') + '</div>' +
+    '<div class="title">' + escapeHtml(chrome.i18n.getMessage('feeSelectionTitle')) + '</div>' +
+    '<div class="sub">' + (multiplier > 1 ? escapeHtml(chrome.i18n.getMessage('recurrenceFeeNote')) : '') + '</div>' +
     '<div id="fee-rows">' +
       Object.entries(UNLOCK_FEES_USD).map(([minutes, baseUsd]) => {
         const price = (baseUsd * multiplier).toFixed(2);
         return '<div class="fee-row" data-minutes="' + minutes + '" data-price="' + price + '">' +
-          '<div><div class="fee-time">' + minutes + ' minutos</div><div class="fee-note">' + (multiplier > 1 ? 'tarifa x2' : 'tarifa base') + '</div></div>' +
+          '<div><div class="fee-time">' + escapeHtml(chrome.i18n.getMessage('feeMinutesLabel', [minutes])) + '</div><div class="fee-note">' + escapeHtml(multiplier > 1 ? chrome.i18n.getMessage('feeNoteDouble') : chrome.i18n.getMessage('feeNoteBase')) + '</div></div>' +
           '<div class="fee-price">$' + price + '</div>' +
         '</div>';
       }).join('') +
     '</div>' +
-    '<button class="btn btn-primary" id="btn-pay" disabled>Selecciona una opci\u00f3n</button>';
+    '<button class="btn btn-primary" id="btn-pay" disabled>' + escapeHtml(chrome.i18n.getMessage('selectOptionBtn')) + '</button>';
 
   let selected = null;
   document.querySelectorAll('.fee-row').forEach((row) => {
@@ -394,7 +401,7 @@ function renderFeeSelection() {
       selected = { minutes: Number(row.dataset.minutes), price: Number(row.dataset.price) };
       const btn = document.getElementById('btn-pay');
       btn.disabled = false;
-      btn.textContent = 'Pagar y desbloquear ' + selected.minutes + ' min';
+      btn.textContent = chrome.i18n.getMessage('payAndUnlockBtn', [String(selected.minutes)]);
     });
   });
 
@@ -415,8 +422,8 @@ function renderWaitingForPayment() {
   root.innerHTML =
     '<div class="center-block">' +
       '<div class="wait-dots"><span></span><span></span><span></span></div>' +
-      '<div class="title" style="margin-top:16px;">Esperando la confirmaci\u00f3n del pago</div>' +
-      '<div class="sub">Se abri\u00f3 en otra pesta\u00f1a. En cuanto se confirme el cobro, este sitio se desbloquea solo.</div>' +
+      '<div class="title" style="margin-top:16px;">' + escapeHtml(chrome.i18n.getMessage('waitingPaymentTitle')) + '</div>' +
+      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('waitingPaymentSub')) + '</div>' +
     '</div>';
 
   // paddleWebhook es quien realmente marca el attempt como
@@ -434,8 +441,8 @@ function renderUnlocked() {
   root.innerHTML =
     '<div class="center-block">' +
       '<div class="big-emoji">\u2713</div>' +
-      '<div class="title">' + domain + ' est\u00e1 desbloqueado</div>' +
-      '<div class="sub">Puedes cerrar esta pesta\u00f1a y volver a entrar.</div>' +
+      '<div class="title">' + escapeHtml(chrome.i18n.getMessage('unlockedTitle', [domain])) + '</div>' +
+      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('unlockedSub')) + '</div>' +
     '</div>';
 }
 
@@ -446,8 +453,8 @@ function renderReincidenceReminder() {
   root.innerHTML =
     '<div class="center-block" style="margin-top:40px;">' +
       '<div class="big-emoji">\ud83c\udf3f</div>' +
-      '<div class="title">Ya tomaste esta decisi\u00f3n hoy</div>' +
-      '<div class="sub">Desbloqueaste ' + domain + ' antes. No hace falta decidir de nuevo \u2014 ma\u00f1ana es un d\u00eda nuevo y puedes volver a empezar.</div>' +
+      '<div class="title">' + escapeHtml(chrome.i18n.getMessage('reincidenceTitle')) + '</div>' +
+      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('reincidenceSub', [domain])) + '</div>' +
     '</div>';
 }
 

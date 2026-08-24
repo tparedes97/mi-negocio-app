@@ -18,9 +18,9 @@
            siguen el mismo patrón: un <template> + una función render*() en
            popup.js, usando los estilos ya definidos en popup.css. -->
       <section id="view-add-site" class="view">
-        <p class="eyebrow">Paso 1</p>
-        <h2 class="title">¿Qué quieres proteger de ti mismo?</h2>
-        <p class="sub">Agrega el sitio que quieres bloquear. Puedes agregar más de uno.</p>
+        <p class="eyebrow" id="step-label"></p>
+        <h2 class="title" id="add-site-title"></h2>
+        <p class="sub" id="add-site-sub"></p>
 
         <input type="text" id="input-domain" placeholder="instagram.com" autocomplete="off">
 
@@ -28,10 +28,10 @@
 
         <div class="confidential-note">
           <span class="ico">●</span>
-          <span>Este es tu espacio, solo tuyo. Los sitios que agregues aquí son confidenciales.</span>
+          <span id="confidential-text"></span>
         </div>
 
-        <button id="btn-continue" class="btn btn-primary" disabled>Continuar</button>
+        <button id="btn-continue" class="btn btn-primary" disabled></button>
       </section>
     </main>
   </div>
