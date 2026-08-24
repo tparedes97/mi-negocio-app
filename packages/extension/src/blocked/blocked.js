@@ -464,4 +464,18 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-init();
+function renderInitError(err) {
+  console.error('[limen] no se pudo iniciar la pantalla de bloqueo', err);
+  root.innerHTML =
+    '<div class="center-block">' +
+      '<div class="title">' + escapeHtml(chrome.i18n.getMessage('initErrorTitle')) + '</div>' +
+      '<div class="sub">' + escapeHtml(err?.message || String(err)) + '</div>' +
+    '</div>' +
+    '<button class="btn btn-primary" id="btn-retry-init">' + escapeHtml(chrome.i18n.getMessage('retryBtn')) + '</button>';
+  document.getElementById('btn-retry-init').addEventListener('click', () => location.reload());
+}
+
+// Antes, si ensureSignedIn() (u otra parte de init) fallaba, la pantalla se
+// quedaba en "Cargando…" para siempre sin mostrar nada — el error solo era
+// visible abriendo DevTools. Ahora sí se muestra en pantalla.
+init().catch(renderInitError);

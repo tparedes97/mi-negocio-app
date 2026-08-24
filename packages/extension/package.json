@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "watch": "node scripts/build.mjs --watch",
-    "package:store": "node scripts/package-store.mjs"
+    "package:store": "node scripts/package-store.mjs",
+    "package:dev": "node scripts/package-dev.mjs"
   },
   "dependencies": {
     "@limen/shared": "*",

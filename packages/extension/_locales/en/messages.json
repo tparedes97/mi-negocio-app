@@ -35,6 +35,8 @@
 
   "blockedPageTitle": { "message": "Limen — blocked" },
   "loadingState": { "message": "Loading…" },
+  "initErrorTitle": { "message": "Couldn't load" },
+  "retryBtn": { "message": "Retry" },
 
   "motivationalQuestion1": { "message": "What exactly do you want to see right now?" },
   "motivationalQuestion2": { "message": "What would happen if you waited 10 more minutes before deciding?" },

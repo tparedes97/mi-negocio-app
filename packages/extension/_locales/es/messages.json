@@ -35,6 +35,8 @@
 
   "blockedPageTitle": { "message": "Limen — bloqueado" },
   "loadingState": { "message": "Cargando…" },
+  "initErrorTitle": { "message": "No se pudo cargar" },
+  "retryBtn": { "message": "Reintentar" },
 
   "motivationalQuestion1": { "message": "¿Qué es exactamente lo que quieres ver ahora?" },
   "motivationalQuestion2": { "message": "¿Qué pasaría si esperas 10 minutos más antes de decidir?" },
