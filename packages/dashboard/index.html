@@ -41,14 +41,50 @@
   .hero-blob.b1{ width:380px; height:380px; top:-160px; right:-90px; background:rgba(255,255,255,0.09); }
   .hero-blob.b2{ width:240px; height:240px; bottom:-110px; left:6%; background:rgba(110,135,104,0.32); border-radius:60% 40% 35% 65% / 55% 45% 55% 45%; }
   .hero-blob.b3{ width:130px; height:130px; top:22%; right:20%; background:rgba(255,255,255,0.07); border-radius:50%; }
-  .hero-inner{ position:relative; z-index:1; max-width:720px; margin:0 auto; text-align:center; }
+  .hero-inner{ position:relative; z-index:1; max-width:1080px; margin:0 auto; display:flex; flex-direction:column-reverse; align-items:center; gap:48px; text-align:center; }
+  @media (min-width:860px){ .hero-inner{ flex-direction:row; align-items:center; text-align:left; gap:64px; } }
+  .hero-text{ flex:1; min-width:0; }
+  @media (min-width:860px){ .hero-text{ max-width:460px; } }
+  .hero-eyebrow{
+    display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:700;
+    letter-spacing:.14em; text-transform:uppercase; color:#F3C892; margin-bottom:20px;
+  }
+  .hero-eyebrow::before{ content:''; width:16px; height:1px; background:#F3C892; }
+  .hero-photo{ position:relative; flex-shrink:0; width:min(300px, 72vw); }
+  .hero-photo-frame{
+    position:relative; border-radius:26px; overflow:hidden;
+    box-shadow:0 36px 80px -24px rgba(20,10,4,0.6), 0 0 0 1px rgba(255,255,255,0.08) inset;
+    transform:rotate(-2.2deg); transition:transform .3s ease;
+  }
+  .hero-photo-frame img{ display:block; width:100%; aspect-ratio:4/5; object-fit:cover; object-position:center 12%; }
+  .hero-photo-frame::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(200deg, rgba(124,45,18,0) 45%, rgba(58,20,8,0.55) 100%);
+  }
+  .hero-photo-badge{
+    position:absolute; left:-14px; bottom:-16px; z-index:2; width:max-content;
+    display:flex; align-items:center; gap:10px;
+    background:#FFFCF5; border-radius:16px; padding:11px 16px 11px 12px;
+    box-shadow:0 20px 40px -16px rgba(20,10,4,0.45);
+    font-family:'Inter', sans-serif;
+  }
+  @media (max-width:859px){ .hero-photo-badge{ left:50%; transform:translateX(-50%); } }
+  .hero-photo-badge .dot{
+    flex-shrink:0; width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--sage), #5C7355); color:#FBF9F1;
+  }
+  .hero-photo-badge .dot .icon{ width:17px; height:17px; }
+  .hero-photo-badge strong{ display:block; font-size:12.5px; color:var(--text); line-height:1.3; white-space:nowrap; }
+  .hero-photo-badge span{ display:block; font-size:10.5px; color:var(--text-muted); margin-top:1px; white-space:nowrap; }
   .brand{ font-family:'Lora', serif; font-size:26px; font-weight:600; letter-spacing:-.01em; color:#FBF3E7; margin-bottom:36px; }
   .brand span{ color:#F3C892; }
-  .hero h1{ font-size:44px; color:#FFFDF8; margin-bottom:18px; }
+  .hero h1{ font-size:45px; line-height:1.14; letter-spacing:-.01em; color:#FFFDF8; margin-bottom:20px; }
   .hero h1 em{ font-style:normal; color:#F3C892; }
-  .hero-sub{ font-size:16.5px; color:rgba(251,243,231,0.86); max-width:52ch; margin:0 auto 34px; line-height:1.65; }
+  .hero-sub{ font-size:16.5px; color:rgba(251,243,231,0.86); max-width:50ch; margin:0 0 36px; line-height:1.65; }
+  @media (max-width:859px){ .hero-sub{ margin:0 auto 36px; } }
 
   .cta-row{ display:flex; flex-direction:column; align-items:center; gap:12px; }
+  @media (min-width:860px){ .cta-row{ align-items:flex-start; } }
   #login-error{ color:#FCD9CE; font-size:12.5px; }
   .trust-note{ font-size:12px; color:rgba(251,243,231,0.65); margin-top:2px; }
 
@@ -187,16 +223,31 @@
     <div class="hero-blob b2"></div>
     <div class="hero-blob b3"></div>
     <div class="hero-inner">
-      <div class="brand">Limen<span>.</span></div>
-      <h1>Atraviesa el momento difícil con <em>alguien del otro lado.</em></h1>
-      <p class="hero-sub">Cuando la tentación de romper tu horario aparece, Limen no te da otra alarma — te conecta con una persona real que te escucha antes de que decidas. Tu tiempo, protegido con intención, no con fuerza de voluntad sola.</p>
-      <div class="cta-row">
-        <button class="btn-google" id="btn-google-login">
-          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-          Empezar con Google
-        </button>
-        <div id="login-error"></div>
-        <div class="trust-note">Gratis hablar con tu acompañante. Tu decisión, siempre.</div>
+      <div class="hero-text">
+        <div class="brand">Limen<span>.</span></div>
+        <div class="hero-eyebrow">Acompañamiento en tiempo real</div>
+        <h1>Atraviesa el momento difícil con <em>alguien del otro lado.</em></h1>
+        <p class="hero-sub">Cuando la tentación de romper tu horario aparece, Limen no te da otra alarma — te conecta con una persona real que te escucha antes de que decidas. Tu tiempo, protegido con intención, no con fuerza de voluntad sola.</p>
+        <div class="cta-row">
+          <button class="btn-google" id="btn-google-login">
+            <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+            Empezar con Google
+          </button>
+          <div id="login-error"></div>
+          <div class="trust-note">Gratis hablar con tu acompañante. Tu decisión, siempre.</div>
+        </div>
+      </div>
+      <div class="hero-photo">
+        <div class="hero-photo-frame">
+          <img src="assets/hero-photo.jpg" alt="Una persona celebrando haber cumplido una meta que se propuso" width="480" height="600">
+        </div>
+        <div class="hero-photo-badge">
+          <span class="dot"><svg class="icon" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span>
+            <strong>Meta cumplida</strong>
+            <span>con alguien a tu lado</span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
