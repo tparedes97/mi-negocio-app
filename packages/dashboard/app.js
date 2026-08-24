@@ -15,7 +15,9 @@ const db = getFirestore(app);
 // en borrador) — el link empieza a funcionar solo cuando Google aprueba la
 // publicación, no hace falta tocar este código en ese momento.
 const EXTENSION_STORE_URL = 'https://chromewebstore.google.com/detail/ckiogdenolblgafclplhpnfhompaogil';
-document.getElementById('btn-download-extension').href = EXTENSION_STORE_URL;
+document.querySelectorAll('.js-extension-download').forEach((el) => {
+  el.href = EXTENSION_STORE_URL;
+});
 
 // ---------------------------------------------------------------
 // Validación/normalización de dominios y ventana de bloqueo — copia
@@ -68,10 +70,11 @@ async function handleGoogleLogin() {
   }
 }
 
-// Dos botones "Empezar con Google" en la página de aterrizaje (uno en el
-// hero, otro al final, como refuerzo) — mismo handler para ambos.
-document.getElementById('btn-google-login').addEventListener('click', handleGoogleLogin);
-document.getElementById('btn-google-login-2').addEventListener('click', handleGoogleLogin);
+// Varios botones "Comenzar ahora" en la página de aterrizaje (nav, hero,
+// refuerzo final) — todos comparten esta clase y el mismo handler.
+document.querySelectorAll('.js-google-login').forEach((btn) => {
+  btn.addEventListener('click', handleGoogleLogin);
+});
 
 document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
