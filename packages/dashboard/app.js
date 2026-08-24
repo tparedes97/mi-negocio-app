@@ -76,7 +76,8 @@ let currentSites = [];
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
-  document.getElementById('login-screen').style.display = user ? 'none' : 'block';
+  document.getElementById('login-card-wrap').style.display = user ? 'none' : 'block';
+  document.getElementById('user-bar').style.display = user ? 'flex' : 'none';
   document.getElementById('app-shell').style.display = user ? 'block' : 'none';
 
   if (unsubscribeSites) { unsubscribeSites(); unsubscribeSites = null; }
@@ -104,6 +105,10 @@ function sitesCollectionRef() {
 // ---------------------------------------------------------------
 const confirmingRemovalIds = new Set();
 
+const ICON_LOCK = '<svg class="icon" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+const ICON_EDIT = '<svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+const ICON_CLOSE = '<svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>';
+
 function scheduleSummary(site) {
   const days = Object.keys(site.schedule || {});
   if (!days.length) return '';
@@ -130,7 +135,7 @@ function renderSiteList() {
             <div class="name"><span class="dot"></span>${site.domain}</div>
             <div class="meta">${scheduleSummary(site)}</div>
           </div>
-          <span class="lock-ico" title="No puedes editar ni quitar esto mientras está bloqueado. Solo puedes hacerlo en las horas libres de este sitio.">🔒</span>
+          <span class="lock-badge" title="No puedes editar ni quitar esto mientras está bloqueado. Solo puedes hacerlo en las horas libres de este sitio.">${ICON_LOCK}</span>
         </div>`;
     }
 
@@ -152,8 +157,8 @@ function renderSiteList() {
           <div class="meta">${scheduleSummary(site)}</div>
         </div>
         <div class="actions">
-          <button data-edit="${site.id}" aria-label="Editar ${site.domain}">✎</button>
-          <button data-remove="${site.id}" aria-label="Quitar ${site.domain}">✕</button>
+          <button data-edit="${site.id}" aria-label="Editar ${site.domain}">${ICON_EDIT}</button>
+          <button data-remove="${site.id}" aria-label="Quitar ${site.domain}">${ICON_CLOSE}</button>
         </div>
       </div>`;
   }).join('');
