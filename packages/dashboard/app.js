@@ -3,7 +3,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
-  getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot,
+  getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, limit, getDocs,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 
@@ -80,7 +80,9 @@ document.getElementById('btn-logout').addEventListener('click', () => signOut(au
 
 let currentUser = null;
 let unsubscribeSites = null;
+let unsubscribeAttempts = null;
 let currentSites = [];
+let currentAttempts = [];
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
@@ -88,6 +90,7 @@ onAuthStateChanged(auth, (user) => {
   document.getElementById('app-shell').style.display = user ? 'block' : 'none';
 
   if (unsubscribeSites) { unsubscribeSites(); unsubscribeSites = null; }
+  if (unsubscribeAttempts) { unsubscribeAttempts(); unsubscribeAttempts = null; }
   if (!user) return;
 
   document.getElementById('user-email').textContent = user.email || '';
@@ -97,6 +100,30 @@ onAuthStateChanged(auth, (user) => {
   }, (err) => {
     console.error('[limen-dashboard] error escuchando blockedSites', err);
     document.getElementById('site-list').innerHTML = '<div class="field-error">No se pudo cargar tu lista: ' + (err.message || err.code) + '</div>';
+  });
+
+  const attemptsQuery = query(collection(db, 'users', user.uid, 'unlockAttempts'), orderBy('createdAt', 'desc'), limit(50));
+  unsubscribeAttempts = onSnapshot(attemptsQuery, (snap) => {
+    currentAttempts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    renderChatsList();
+    renderMetrics();
+  }, (err) => {
+    console.error('[limen-dashboard] error escuchando unlockAttempts', err);
+    document.getElementById('chats-list').innerHTML = '<div class="field-error">No se pudo cargar tu historial: ' + (err.message || err.code) + '</div>';
+    document.getElementById('metrics-grid').innerHTML = '<div class="field-error">No se pudo cargar tus métricas.</div>';
+  });
+});
+
+// ---------------------------------------------------------------
+// Pestañas del panel logueado
+// ---------------------------------------------------------------
+document.querySelectorAll('.app-tab').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.app-tab').forEach((t) => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.tab-panel').forEach((p) => { p.style.display = 'none'; });
+    document.getElementById('tab-' + tab.dataset.tab).style.display = 'block';
   });
 });
 
@@ -313,3 +340,124 @@ document.getElementById('btn-save-schedule').addEventListener('click', async () 
   scheduleCard.style.display = 'none';
   editingSite = null;
 });
+
+// ---------------------------------------------------------------
+// Chats — historial real de users/{uid}/unlockAttempts (lo mismo que
+// escribe packages/extension/src/blocked/blocked.js). Los mensajes de
+// cada conversación se cargan recién al expandir, desde chats/{chatId}/messages.
+// ---------------------------------------------------------------
+const ATTEMPT_STATE_LABELS = {
+  motivational_questions: 'Pensándolo',
+  offered_chat: 'Le ofrecieron hablar',
+  queued: 'Esperando a alguien',
+  donation_prompt: 'Terminó de hablar',
+  final_confirmation: 'Decidiendo',
+  fee_selection: 'Eligiendo desbloqueo',
+  stayed_blocked: 'Se quedó bloqueado',
+  unlocked: 'Desbloqueó',
+};
+
+function attemptStateBadgeClass(state) {
+  if (state === 'stayed_blocked') return 'resisted';
+  if (state === 'unlocked') return 'unlocked';
+  return 'progress';
+}
+
+function formatAttemptWhen(createdAt) {
+  if (!createdAt?.toDate) return 'Justo ahora';
+  return createdAt.toDate().toLocaleString('es', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+const loadedChatMessages = new Map();
+
+async function toggleChatMessages(chatId, containerEl, toggleBtn) {
+  const isOpen = containerEl.classList.toggle('open');
+  toggleBtn.textContent = isOpen ? 'Ocultar conversación ▲' : 'Ver conversación ▼';
+  if (!isOpen || loadedChatMessages.has(chatId)) return;
+
+  containerEl.innerHTML = '<div class="sub">Cargando mensajes…</div>';
+  try {
+    const messagesQuery = query(collection(db, 'chats', chatId, 'messages'), orderBy('sentAt', 'asc'));
+    const snap = await getDocs(messagesQuery);
+    const messages = snap.docs.map((d) => d.data());
+    loadedChatMessages.set(chatId, messages);
+    renderChatMessages(containerEl, messages);
+  } catch (err) {
+    console.error('[limen-dashboard] error cargando mensajes del chat', err);
+    containerEl.innerHTML = '<div class="field-error">No se pudo cargar la conversación.</div>';
+  }
+}
+
+function renderChatMessages(containerEl, messages) {
+  if (!messages.length) {
+    containerEl.innerHTML = '<div class="sub">No hubo mensajes en esta conversación.</div>';
+    return;
+  }
+  containerEl.innerHTML = messages.map((m) => `
+    <div class="chat-msg ${m.from === 'user' ? 'user' : ''}">
+      <div class="who">${m.from === 'user' ? 'Vos' : 'Tu acompañante'}</div>
+      ${escapeHtmlDash(m.text || '')}
+    </div>`).join('');
+}
+
+function escapeHtmlDash(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function renderChatsList() {
+  const el = document.getElementById('chats-list');
+  if (!currentAttempts.length) {
+    el.innerHTML = '<div class="sub">Todavía no tuviste ningún intento de desbloqueo — buena señal.</div>';
+    return;
+  }
+
+  el.innerHTML = currentAttempts.map((a) => `
+    <div class="chat-attempt">
+      <div class="chat-attempt-head" data-expand="${a.id}">
+        <div>
+          <div class="chat-attempt-domain"><span class="m-dot" style="width:6px;height:6px;border-radius:50%;background:var(--amber);"></span>${escapeHtmlDash(a.domain || '')}</div>
+          <div class="chat-attempt-when">${formatAttemptWhen(a.createdAt)}</div>
+        </div>
+        <span class="chat-state-badge ${attemptStateBadgeClass(a.state)}">${ATTEMPT_STATE_LABELS[a.state] || a.state}</span>
+      </div>
+      ${a.chatId ? `
+        <button class="chat-toggle-messages" data-toggle-chat="${a.chatId}">Ver conversación ▼</button>
+        <div class="chat-messages" data-messages="${a.chatId}"></div>
+      ` : ''}
+    </div>`).join('');
+
+  el.querySelectorAll('button[data-toggle-chat]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const chatId = btn.dataset.toggleChat;
+      const container = el.querySelector(`[data-messages="${chatId}"]`);
+      toggleChatMessages(chatId, container, btn);
+    });
+  });
+}
+
+// ---------------------------------------------------------------
+// Métricas — calculadas en el momento a partir de currentAttempts,
+// nada precomputado ni inventado.
+// ---------------------------------------------------------------
+function renderMetrics() {
+  const el = document.getElementById('metrics-grid');
+  const total = currentAttempts.length;
+
+  if (!total) {
+    el.innerHTML = '<div class="sub">Todavía no hay datos — van a aparecer acá apenas tengas tu primer intento de desbloqueo.</div>';
+    return;
+  }
+
+  const talked = currentAttempts.filter((a) => a.chatId).length;
+  const resisted = currentAttempts.filter((a) => a.state === 'stayed_blocked').length;
+  const unlocked = currentAttempts.filter((a) => a.state === 'unlocked').length;
+  const spentCents = currentAttempts.reduce((sum, a) => sum + (a.state === 'unlocked' ? (a.feeAmountCents || 0) : 0), 0);
+
+  el.innerHTML = `
+    <div class="metric-tile"><div class="n">${total}</div><div class="l">Intentos de desbloqueo</div></div>
+    <div class="metric-tile"><div class="n">${talked}</div><div class="l">Veces que hablaste con un acompañante</div></div>
+    <div class="metric-tile"><div class="n">${resisted}</div><div class="l">Veces que te quedaste bloqueado</div></div>
+    <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">Gastado en desbloqueos (${unlocked} pagos)</div></div>
+    <div class="metric-note">Hablar con tu acompañante siempre es gratis — lo único que tiene costo es el desbloqueo temporal, y solo si lo confirmás.</div>
+  `;
+}
