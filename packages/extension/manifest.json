@@ -5,7 +5,6 @@
   "short_name": "Limen",
   "version": "0.1.0",
   "description": "Bloquea sitios distractores en tu horario. Antes de desbloquear antes de tiempo, habla con una persona real.",
-  "default_locale": "es",
 
   "action": {
     "default_popup": "popup.html",
