@@ -8,56 +8,69 @@
   @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
   :root{
     --page-bg:#F6EFE2; --surface:#FFFCF5; --amber:#BE7A42; --amber-dim:#F1E1C7;
-    --sage:#6E8768; --sage-dim:#E4EBDA; --terracotta:#9A3412; --danger:#B0503F;
+    --sage:#6E8768; --sage-dim:#E4EBDA; --terracotta:#9A3412; --terracotta-deep:#7C2D12; --danger:#B0503F;
     --text:#3B2E22; --text-muted:#8C7A63; --line:#E6D9C0;
     --shadow-soft: 0 18px 40px -20px rgba(59,46,34,0.28);
-    --shadow-lift: 0 26px 60px -24px rgba(59,46,34,0.34);
+    --shadow-lift: 0 30px 70px -26px rgba(59,46,34,0.4);
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
   body{
     background:var(--page-bg); font-family:'Inter', sans-serif; color:var(--text);
     min-height:100vh;
   }
-  .wrap{ max-width:560px; margin:0 auto; padding:0 20px 90px; }
+  .wrap{ max-width:960px; margin:0 auto; padding:0 24px 100px; }
 
-  /* ---- Hero ---- */
+  /* ---- Hero (full-bleed) ---- */
   .hero{
-    position:relative; overflow:hidden; margin:0 -20px 28px; padding:44px 24px 40px;
+    position:relative; overflow:hidden; width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
+    margin-bottom:40px; padding:64px 24px 56px;
     background:
-      radial-gradient(120% 90% at 85% -10%, rgba(190,122,66,0.35), transparent 60%),
-      radial-gradient(90% 70% at -10% 110%, rgba(110,135,104,0.30), transparent 55%),
-      linear-gradient(160deg, #F1E4C9 0%, #F6EFE2 55%, #EFE6D2 100%);
+      radial-gradient(70% 100% at 100% 0%, rgba(255,214,163,0.35), transparent 60%),
+      radial-gradient(60% 80% at 0% 100%, rgba(110,135,104,0.45), transparent 55%),
+      linear-gradient(135deg, #C2793F 0%, #9A3412 62%, #7C2D12 100%);
+    color:#FBF3E7;
   }
-  .hero-blob{
-    position:absolute; border-radius:42% 58% 63% 37% / 45% 40% 60% 55%; filter:blur(1px);
-    opacity:.55; pointer-events:none;
-  }
-  .hero-blob.b1{ width:180px; height:180px; top:-70px; right:-50px; background:var(--amber); opacity:.28; }
-  .hero-blob.b2{ width:130px; height:130px; bottom:-60px; left:-40px; background:var(--sage); opacity:.25; border-radius:60% 40% 35% 65% / 55% 45% 55% 45%; }
-  .hero-inner{ position:relative; z-index:1; }
-  .brand{ font-family:'Lora', serif; font-size:30px; font-weight:600; letter-spacing:-.01em; }
-  .brand span{ color:var(--terracotta); }
-  .hero-tagline{ font-size:14px; color:var(--text-muted); margin-top:8px; max-width:34ch; line-height:1.5; }
+  .hero-blob{ position:absolute; border-radius:42% 58% 63% 37% / 45% 40% 60% 55%; pointer-events:none; }
+  .hero-blob.b1{ width:340px; height:340px; top:-140px; right:-80px; background:rgba(255,255,255,0.10); }
+  .hero-blob.b2{ width:220px; height:220px; bottom:-100px; left:8%; background:rgba(110,135,104,0.35); border-radius:60% 40% 35% 65% / 55% 45% 55% 45%; }
+  .hero-blob.b3{ width:120px; height:120px; top:20%; right:18%; background:rgba(255,255,255,0.08); border-radius:50%; }
+  .hero-inner{ position:relative; z-index:1; max-width:960px; margin:0 auto; }
+  .brand{ font-family:'Lora', serif; font-size:38px; font-weight:600; letter-spacing:-.01em; color:#FBF3E7; }
+  .brand span{ color:#F3C892; }
+  .hero-tagline{ font-size:15.5px; color:rgba(251,243,231,0.82); margin-top:10px; max-width:38ch; line-height:1.6; }
   .hero-eyebrow{
     font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--terracotta);
     font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:6px;
   }
 
-  .user-bar{ display:flex; align-items:center; justify-content:space-between; margin-top:26px; }
-  .user-bar .email{ font-size:12.5px; color:var(--text-muted); }
+  .user-bar{ display:flex; align-items:center; justify-content:space-between; margin-top:30px; padding-top:20px; border-top:1px solid rgba(251,243,231,0.2); }
+  .user-bar .email{ font-size:13px; color:rgba(251,243,231,0.85); }
+  .user-bar .btn-link{ color:rgba(251,243,231,0.85); }
+
+  .login-card-hero{
+    background:rgba(255,252,245,0.97); border-radius:20px; padding:28px; margin-top:28px;
+    max-width:420px; box-shadow:var(--shadow-lift); color:var(--text);
+  }
+
+  /* ---- Layout grid for the app shell ---- */
+  .grid-2{ display:grid; grid-template-columns:1fr; gap:20px; }
+  @media (min-width:760px){
+    .grid-2{ grid-template-columns:1fr 1fr; align-items:start; }
+  }
 
   /* ---- Cards ---- */
   .card{
     background:var(--surface); border:1px solid var(--line); border-radius:20px;
-    padding:24px; margin-bottom:20px; box-shadow:var(--shadow-soft);
+    padding:26px; margin-bottom:20px; box-shadow:var(--shadow-soft);
   }
-  .title{ font-family:'Lora', serif; font-size:19px; font-weight:600; margin-bottom:6px; line-height:1.3; }
-  .sub{ font-size:13px; color:var(--text-muted); line-height:1.55; margin-bottom:14px; }
+  .title{ font-family:'Lora', serif; font-size:20px; font-weight:600; margin-bottom:7px; line-height:1.3; }
+  .sub{ font-size:13.5px; color:var(--text-muted); line-height:1.6; margin-bottom:16px; }
   .field-label{ display:block; font-size:11.5px; font-weight:600; color:var(--text); margin-bottom:6px; }
 
   input[type=text], select, textarea{
     width:100%; background:#fff; border:1px solid var(--line); border-radius:12px;
-    padding:11px 13px; font-family:'Inter', sans-serif; font-size:13.5px; color:var(--text); outline:none;
+    padding:12px 14px; font-family:'Inter', sans-serif; font-size:13.5px; color:var(--text); outline:none;
     transition:border-color .15s ease;
   }
   input[type=text]:focus, select:focus, textarea:focus{ border-color:var(--amber); }
@@ -67,7 +80,7 @@
   .input-row input{ flex:1; min-width:0; }
 
   .btn{
-    border:none; border-radius:999px; padding:13px 18px;
+    border:none; border-radius:999px; padding:13px 20px;
     font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px; cursor:pointer;
     transition:transform .15s ease, box-shadow .15s ease;
   }
@@ -75,13 +88,12 @@
   .btn-block{ width:100%; }
   .btn-primary{ background:linear-gradient(135deg, var(--sage), #5C7355); color:#FBF9F1; box-shadow:0 14px 28px -14px rgba(110,135,104,0.55); }
   .btn-primary:disabled{ opacity:.5; cursor:not-allowed; box-shadow:none; }
-  .btn-add{ flex-shrink:0; width:46px; border:none; border-radius:12px; cursor:pointer; background:linear-gradient(135deg, var(--sage), #5C7355); color:#FBF9F1; font-size:20px; line-height:1; display:flex; align-items:center; justify-content:center; box-shadow:0 14px 28px -14px rgba(110,135,104,0.55); }
+  .btn-add{ flex-shrink:0; width:48px; border:none; border-radius:12px; cursor:pointer; background:linear-gradient(135deg, var(--sage), #5C7355); color:#FBF9F1; font-size:20px; line-height:1; display:flex; align-items:center; justify-content:center; box-shadow:0 14px 28px -14px rgba(110,135,104,0.55); }
   .btn-link{ background:none; border:none; color:var(--text-muted); font-size:12.5px; text-decoration:underline; cursor:pointer; }
   .btn-google{
     display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
     background:#fff; border:1px solid var(--line); border-radius:999px; padding:13px 18px;
     font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px; color:var(--text); cursor:pointer;
-    box-shadow:var(--shadow-soft);
   }
   .btn-amber{ background:linear-gradient(135deg, var(--amber), #A5652F); color:#FBF9F1; box-shadow:0 14px 28px -14px rgba(190,122,66,0.55); }
 
@@ -92,13 +104,13 @@
   .site-list{ display:flex; flex-direction:column; gap:10px; }
   .site-row{
     display:flex; align-items:center; justify-content:space-between; gap:10px;
-    background:#fff; border:1px solid var(--line); border-radius:14px; padding:13px 15px;
+    background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px;
   }
   .site-row .name{ font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:8px; }
   .site-row .dot{ width:7px; height:7px; border-radius:50%; background:var(--amber); flex-shrink:0; }
   .site-row .meta{ font-size:11px; color:var(--text-muted); margin-top:3px; }
   .site-row .actions{ display:flex; gap:4px; align-items:center; }
-  .site-row button{ background:none; border:none; color:var(--text-muted); cursor:pointer; padding:6px; border-radius:8px; display:flex; }
+  .site-row button{ background:none; border:none; color:var(--text-muted); cursor:pointer; padding:7px; border-radius:8px; display:flex; }
   .site-row button:hover{ background:var(--page-bg); color:var(--text); }
   .lock-badge{ color:var(--amber); display:flex; align-items:center; }
 
@@ -118,68 +130,72 @@
   .hour-row{ display:flex; gap:10px; margin-bottom:16px; }
   .hour-field{ flex:1; display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--text-muted); }
 
-  .download-card{ display:flex; gap:16px; align-items:flex-start; }
+  .download-card{ display:flex; gap:16px; align-items:flex-start; height:100%; }
   .download-icon{
-    flex-shrink:0; width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center;
     background:linear-gradient(135deg, var(--amber-dim), #EAD9BC); color:var(--terracotta);
   }
   .download-icon .icon{ width:22px; height:22px; }
   .download-body{ flex:1; }
 
   #login-error{ color:var(--danger); font-size:12.5px; margin-top:10px; text-align:center; }
-  .login-wrap{ margin-top:26px; }
+
+  .section-title{ font-family:'Lora', serif; font-size:15px; font-weight:600; color:var(--text-muted); margin:8px 0 -6px; }
 </style>
 </head>
 <body>
+
+<div class="hero">
+  <div class="hero-blob b1"></div>
+  <div class="hero-blob b2"></div>
+  <div class="hero-blob b3"></div>
+  <div class="hero-inner">
+    <div class="brand">Limen<span>.</span></div>
+    <div class="hero-tagline">Tu espacio para decidir con calma qué bloquear, cuándo, y por qué.</div>
+
+    <div id="login-card-wrap">
+      <div class="login-card-hero" id="login-card">
+        <div class="title">Entra a tu cuenta</div>
+        <div class="sub">Gestiona tus sitios bloqueados desde acá — se sincroniza en vivo con tu extensión.</div>
+        <button class="btn-google" id="btn-google-login">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+          Continuar con Google
+        </button>
+        <div id="login-error"></div>
+      </div>
+    </div>
+
+    <div id="user-bar" class="user-bar" style="display:none;">
+      <span class="email" id="user-email"></span>
+      <button class="btn-link" id="btn-logout">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
 <div class="wrap">
-
-  <div class="hero">
-    <div class="hero-blob b1"></div>
-    <div class="hero-blob b2"></div>
-    <div class="hero-inner">
-      <div class="brand">Limen<span>.</span></div>
-      <div class="hero-tagline">Tu espacio para decidir con calma qué bloquear, cuándo, y por qué.</div>
-
-      <div id="user-bar" class="user-bar" style="display:none;">
-        <span class="email" id="user-email"></span>
-        <button class="btn-link" id="btn-logout">Cerrar sesión</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="login-card-wrap">
-    <div class="card" id="login-card">
-      <div class="title">Entra a tu cuenta</div>
-      <div class="sub">Gestiona tus sitios bloqueados desde acá — se sincroniza en vivo con tu extensión.</div>
-      <button class="btn-google" id="btn-google-login">
-        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-        Continuar con Google
-      </button>
-      <div id="login-error"></div>
-    </div>
-  </div>
-
   <div id="app-shell" style="display:none;">
-    <div class="card download-card">
-      <div class="download-icon">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+    <div class="grid-2">
+      <div class="card download-card">
+        <div class="download-icon">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        </div>
+        <div class="download-body">
+          <div class="hero-eyebrow">Extensión de Chrome</div>
+          <div class="title">Bloquea desde tu navegador</div>
+          <div class="sub">Instala la extensión para que el bloqueo funcione mientras navegas — se conecta sola con esta misma cuenta.</div>
+          <a class="btn btn-amber btn-block" id="btn-download-extension" href="#" target="_blank" style="display:inline-block; text-decoration:none; text-align:center;">Descargar la extensión</a>
+        </div>
       </div>
-      <div class="download-body">
-        <div class="hero-eyebrow">Extensión de Chrome</div>
-        <div class="title">Bloquea desde tu navegador</div>
-        <div class="sub">Instala la extensión para que el bloqueo funcione mientras navegas — se conecta sola con esta misma cuenta.</div>
-        <a class="btn btn-amber btn-block" id="btn-download-extension" href="#" target="_blank" style="display:inline-block; text-decoration:none; text-align:center;">Descargar la extensión</a>
-      </div>
-    </div>
 
-    <div class="card">
-      <div class="title">Agregar sitio</div>
-      <div class="sub">Escribe el dominio (o pega el link completo) que quieres bloquear.</div>
-      <div class="input-row">
-        <input type="text" id="input-domain" placeholder="instagram.com" autocomplete="off">
-        <button type="button" id="btn-add-site" class="btn-add">+</button>
+      <div class="card">
+        <div class="title">Agregar sitio</div>
+        <div class="sub">Escribe el dominio (o pega el link completo) que quieres bloquear.</div>
+        <div class="input-row">
+          <input type="text" id="input-domain" placeholder="instagram.com" autocomplete="off">
+          <button type="button" id="btn-add-site" class="btn-add">+</button>
+        </div>
+        <p class="field-error" id="domain-error" style="display:none;"></p>
       </div>
-      <p class="field-error" id="domain-error" style="display:none;"></p>
     </div>
 
     <div id="schedule-card" class="card" style="display:none;">
