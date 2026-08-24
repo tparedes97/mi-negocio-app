@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build.mjs",
-    "watch": "node scripts/build.mjs --watch"
+    "watch": "node scripts/build.mjs --watch",
+    "package:store": "node scripts/package-store.mjs"
   },
   "dependencies": {
     "@limen/shared": "*",
