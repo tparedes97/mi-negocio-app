@@ -38,7 +38,18 @@ body{
 input[type=text]{
   width:100%; background:var(--surface); border:1px solid var(--line); border-radius:12px;
   padding:11px 13px; font-family:'Inter', sans-serif; font-size:13px; color:var(--text); outline:none;
-  margin-bottom:10px;
+}
+
+.input-row{ display:flex; gap:8px; margin-bottom:6px; align-items:stretch; }
+.input-row input{ flex:1; min-width:0; }
+.btn-add{
+  flex-shrink:0; width:42px; background:var(--sage); color:#FBF9F1; border:none; border-radius:12px;
+  font-size:20px; line-height:1; font-weight:600; cursor:pointer;
+}
+.btn-add:hover{ background:#5F7659; }
+
+.field-error{
+  color:var(--danger, #B0503F); font-size:11.5px; margin-bottom:8px; line-height:1.4;
 }
 
 .site-list{ display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
@@ -65,3 +76,25 @@ input[type=text]{
 }
 .btn-primary{ background:var(--sage); color:#FBF9F1; }
 .btn-primary:disabled{ opacity:.5; cursor:not-allowed; }
+.btn-link{
+  display:block; width:100%; background:none; border:none; color:var(--text-muted);
+  font-size:12.5px; text-decoration:underline; cursor:pointer; text-align:center; margin-top:10px;
+}
+
+.center-block{ text-align:center; }
+.center-block .big-emoji{ font-size:32px; margin-bottom:12px; }
+
+.day-toggle-row{ display:flex; gap:6px; margin-bottom:14px; }
+.day-toggle{
+  flex:1; text-align:center; padding:9px 0; border-radius:10px; border:1px solid var(--line);
+  background:var(--surface); font-size:11.5px; font-weight:600; color:var(--text-muted); cursor:pointer;
+  user-select:none;
+}
+.day-toggle.active{ background:var(--sage); border-color:var(--sage); color:#FBF9F1; }
+
+.hour-row{ display:flex; gap:10px; margin-bottom:16px; }
+.hour-field{ flex:1; display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--text-muted); }
+.hour-field select{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:9px 10px; font-family:'Inter', sans-serif; font-size:13px; color:var(--text); outline:none;
+}

@@ -12,17 +12,20 @@
     </header>
 
     <main id="view-root">
-      <!-- Renderizado por popup.js. Esta es la pantalla "Agregar sitio" del
-           flujo de onboarding (pantalla 1 del prototipo). Las demás
-           pantallas (configurar horario, intento de desbloqueo, chat, etc.)
-           siguen el mismo patrón: un <template> + una función render*() en
-           popup.js, usando los estilos ya definidos en popup.css. -->
+      <!-- Onboarding del popup: 3 secciones estáticas, popup.js muestra una
+           a la vez con showView(). El flujo del intento de desbloqueo/chat
+           vive aparte, en blocked.html/blocked.js, con su propio patrón de
+           renderizado dinámico. -->
       <section id="view-add-site" class="view">
         <p class="eyebrow" id="step-label"></p>
         <h2 class="title" id="add-site-title"></h2>
         <p class="sub" id="add-site-sub"></p>
 
-        <input type="text" id="input-domain" placeholder="instagram.com" autocomplete="off">
+        <div class="input-row">
+          <input type="text" id="input-domain" placeholder="instagram.com" autocomplete="off">
+          <button type="button" id="btn-add-site" class="btn-add">+</button>
+        </div>
+        <p class="field-error" id="domain-error" style="display:none;"></p>
 
         <div id="site-list" class="site-list"></div>
 
@@ -32,6 +35,37 @@
         </div>
 
         <button id="btn-continue" class="btn btn-primary" disabled></button>
+      </section>
+
+      <section id="view-schedule" class="view" style="display:none;">
+        <p class="eyebrow" id="step2-label"></p>
+        <h2 class="title" id="schedule-title"></h2>
+        <p class="sub" id="schedule-sub"></p>
+
+        <div class="day-toggle-row" id="day-toggles"></div>
+
+        <div class="hour-row">
+          <label class="hour-field">
+            <span id="label-start"></span>
+            <select id="select-start"></select>
+          </label>
+          <label class="hour-field">
+            <span id="label-end"></span>
+            <select id="select-end"></select>
+          </label>
+        </div>
+
+        <button id="btn-save-schedule" class="btn btn-primary"></button>
+        <button id="btn-back-to-sites" class="btn-link"></button>
+      </section>
+
+      <section id="view-done" class="view" style="display:none;">
+        <div class="center-block">
+          <div class="big-emoji">🌿</div>
+          <div class="title" id="done-title"></div>
+          <div class="sub" id="done-sub"></div>
+        </div>
+        <button id="btn-edit-more" class="btn-link"></button>
       </section>
     </main>
   </div>
