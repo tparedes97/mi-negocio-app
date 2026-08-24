@@ -20,46 +20,108 @@
     min-height:100vh;
   }
   .wrap{ max-width:960px; margin:0 auto; padding:0 24px 100px; }
+  .section{ max-width:1040px; margin:0 auto; padding:64px 24px; }
+  .full-bleed{ width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); }
+  .center{ text-align:center; }
+  .eyebrow{
+    font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--terracotta);
+    font-weight:700; margin-bottom:12px;
+  }
+  h1, h2, h3{ font-family:'Lora', serif; font-weight:600; line-height:1.25; }
 
-  /* ---- Hero (full-bleed) ---- */
+  /* ---- Hero ---- */
   .hero{
-    position:relative; overflow:hidden; width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
-    margin-bottom:40px; padding:64px 24px 56px;
+    position:relative; overflow:hidden; padding:90px 24px 80px; color:#FBF3E7;
     background:
       radial-gradient(70% 100% at 100% 0%, rgba(255,214,163,0.35), transparent 60%),
       radial-gradient(60% 80% at 0% 100%, rgba(110,135,104,0.45), transparent 55%),
       linear-gradient(135deg, #C2793F 0%, #9A3412 62%, #7C2D12 100%);
-    color:#FBF3E7;
   }
   .hero-blob{ position:absolute; border-radius:42% 58% 63% 37% / 45% 40% 60% 55%; pointer-events:none; }
-  .hero-blob.b1{ width:340px; height:340px; top:-140px; right:-80px; background:rgba(255,255,255,0.10); }
-  .hero-blob.b2{ width:220px; height:220px; bottom:-100px; left:8%; background:rgba(110,135,104,0.35); border-radius:60% 40% 35% 65% / 55% 45% 55% 45%; }
-  .hero-blob.b3{ width:120px; height:120px; top:20%; right:18%; background:rgba(255,255,255,0.08); border-radius:50%; }
-  .hero-inner{ position:relative; z-index:1; max-width:960px; margin:0 auto; }
-  .brand{ font-family:'Lora', serif; font-size:38px; font-weight:600; letter-spacing:-.01em; color:#FBF3E7; }
+  .hero-blob.b1{ width:380px; height:380px; top:-160px; right:-90px; background:rgba(255,255,255,0.09); }
+  .hero-blob.b2{ width:240px; height:240px; bottom:-110px; left:6%; background:rgba(110,135,104,0.32); border-radius:60% 40% 35% 65% / 55% 45% 55% 45%; }
+  .hero-blob.b3{ width:130px; height:130px; top:22%; right:20%; background:rgba(255,255,255,0.07); border-radius:50%; }
+  .hero-inner{ position:relative; z-index:1; max-width:720px; margin:0 auto; text-align:center; }
+  .brand{ font-family:'Lora', serif; font-size:26px; font-weight:600; letter-spacing:-.01em; color:#FBF3E7; margin-bottom:36px; }
   .brand span{ color:#F3C892; }
-  .hero-tagline{ font-size:15.5px; color:rgba(251,243,231,0.82); margin-top:10px; max-width:38ch; line-height:1.6; }
-  .hero-eyebrow{
-    font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--terracotta);
-    font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:6px;
-  }
+  .hero h1{ font-size:44px; color:#FFFDF8; margin-bottom:18px; }
+  .hero h1 em{ font-style:normal; color:#F3C892; }
+  .hero-sub{ font-size:16.5px; color:rgba(251,243,231,0.86); max-width:52ch; margin:0 auto 34px; line-height:1.65; }
 
+  .cta-row{ display:flex; flex-direction:column; align-items:center; gap:12px; }
+  #login-error{ color:#FCD9CE; font-size:12.5px; }
+  .trust-note{ font-size:12px; color:rgba(251,243,231,0.65); margin-top:2px; }
+
+  /* ---- Feature grid ---- */
+  .feature-grid{ display:grid; grid-template-columns:1fr; gap:20px; margin-top:36px; }
+  @media (min-width:760px){ .feature-grid{ grid-template-columns:repeat(3, 1fr); } }
+  .feature-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:30px 26px;
+    box-shadow:var(--shadow-soft);
+  }
+  .feature-icon{
+    width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--amber-dim), #EAD9BC); color:var(--terracotta); margin-bottom:18px;
+  }
+  .feature-icon .icon{ width:22px; height:22px; }
+  .feature-card h3{ font-size:17px; margin-bottom:8px; }
+  .feature-card p{ font-size:13.5px; color:var(--text-muted); line-height:1.6; }
+
+  /* ---- Quote band ---- */
+  .quote-band{ background:linear-gradient(160deg, #5C7355, #3F5238); color:#F3F0E4; padding:72px 24px; }
+  .quote-grid{ display:grid; grid-template-columns:1fr; gap:36px; max-width:1000px; margin:0 auto; }
+  @media (min-width:760px){ .quote-grid{ grid-template-columns:1fr 1fr; } }
+  .quote-card blockquote{
+    font-family:'Lora', serif; font-size:21px; line-height:1.5; font-weight:500;
+    position:relative; padding-left:8px;
+  }
+  .quote-card cite{ display:block; margin-top:16px; font-style:normal; font-size:12.5px; color:rgba(243,240,228,0.7); letter-spacing:.04em; text-transform:uppercase; }
+
+  /* ---- Reinforcement / final CTA ---- */
+  .reinforce{ text-align:center; max-width:640px; margin:0 auto; }
+  .reinforce h2{ font-size:28px; margin-bottom:14px; }
+  .reinforce p{ font-size:15px; color:var(--text-muted); line-height:1.65; margin-bottom:28px; }
+
+  .btn{
+    border:none; border-radius:999px; padding:14px 26px;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:14px; cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:active{ transform:scale(.98); }
+  .btn-block{ width:100%; }
+  .btn-primary{ background:linear-gradient(135deg, var(--sage), #5C7355); color:#FBF9F1; box-shadow:0 14px 28px -14px rgba(110,135,104,0.55); }
+  .btn-primary:disabled{ opacity:.5; cursor:not-allowed; box-shadow:none; }
+  .btn-add{ flex-shrink:0; width:48px; border:none; border-radius:12px; cursor:pointer; background:linear-gradient(135deg, var(--sage), #5C7355); color:#FBF9F1; font-size:20px; line-height:1; display:flex; align-items:center; justify-content:center; box-shadow:0 14px 28px -14px rgba(110,135,104,0.55); }
+  .btn-link{ background:none; border:none; color:var(--text-muted); font-size:12.5px; text-decoration:underline; cursor:pointer; }
+  .btn-google{
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    background:#fff; border:1px solid var(--line); border-radius:999px; padding:15px 30px;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:14.5px; color:var(--text); cursor:pointer;
+    box-shadow:0 20px 40px -18px rgba(0,0,0,0.4);
+  }
+  .btn-amber{ background:linear-gradient(135deg, var(--amber), #A5652F); color:#FBF9F1; box-shadow:0 14px 28px -14px rgba(190,122,66,0.55); }
+
+  .icon{ width:16px; height:16px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ---- App shell (post-login) ---- */
+  .top-hero{
+    position:relative; overflow:hidden; width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
+    margin-bottom:40px; padding:64px 24px 56px; color:#FBF3E7;
+    background:
+      radial-gradient(70% 100% at 100% 0%, rgba(255,214,163,0.35), transparent 60%),
+      radial-gradient(60% 80% at 0% 100%, rgba(110,135,104,0.45), transparent 55%),
+      linear-gradient(135deg, #C2793F 0%, #9A3412 62%, #7C2D12 100%);
+  }
+  .top-hero-inner{ position:relative; z-index:1; max-width:960px; margin:0 auto; }
+  .top-hero .brand{ margin-bottom:0; text-align:left; }
+  .top-hero-tagline{ font-size:15px; color:rgba(251,243,231,0.82); margin-top:10px; max-width:38ch; line-height:1.6; }
   .user-bar{ display:flex; align-items:center; justify-content:space-between; margin-top:30px; padding-top:20px; border-top:1px solid rgba(251,243,231,0.2); }
   .user-bar .email{ font-size:13px; color:rgba(251,243,231,0.85); }
   .user-bar .btn-link{ color:rgba(251,243,231,0.85); }
 
-  .login-card-hero{
-    background:rgba(255,252,245,0.97); border-radius:20px; padding:28px; margin-top:28px;
-    max-width:420px; box-shadow:var(--shadow-lift); color:var(--text);
-  }
-
-  /* ---- Layout grid for the app shell ---- */
   .grid-2{ display:grid; grid-template-columns:1fr; gap:20px; }
-  @media (min-width:760px){
-    .grid-2{ grid-template-columns:1fr 1fr; align-items:start; }
-  }
+  @media (min-width:760px){ .grid-2{ grid-template-columns:1fr 1fr; align-items:start; } }
 
-  /* ---- Cards ---- */
   .card{
     background:var(--surface); border:1px solid var(--line); border-radius:20px;
     padding:26px; margin-bottom:20px; box-shadow:var(--shadow-soft);
@@ -75,31 +137,9 @@
   }
   input[type=text]:focus, select:focus, textarea:focus{ border-color:var(--amber); }
   textarea{ resize:none; min-height:56px; margin-bottom:14px; }
-
   .input-row{ display:flex; gap:8px; margin-bottom:6px; }
   .input-row input{ flex:1; min-width:0; }
-
-  .btn{
-    border:none; border-radius:999px; padding:13px 20px;
-    font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px; cursor:pointer;
-    transition:transform .15s ease, box-shadow .15s ease;
-  }
-  .btn:active{ transform:scale(.98); }
-  .btn-block{ width:100%; }
-  .btn-primary{ background:linear-gradient(135deg, var(--sage), #5C7355); color:#FBF9F1; box-shadow:0 14px 28px -14px rgba(110,135,104,0.55); }
-  .btn-primary:disabled{ opacity:.5; cursor:not-allowed; box-shadow:none; }
-  .btn-add{ flex-shrink:0; width:48px; border:none; border-radius:12px; cursor:pointer; background:linear-gradient(135deg, var(--sage), #5C7355); color:#FBF9F1; font-size:20px; line-height:1; display:flex; align-items:center; justify-content:center; box-shadow:0 14px 28px -14px rgba(110,135,104,0.55); }
-  .btn-link{ background:none; border:none; color:var(--text-muted); font-size:12.5px; text-decoration:underline; cursor:pointer; }
-  .btn-google{
-    display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
-    background:#fff; border:1px solid var(--line); border-radius:999px; padding:13px 18px;
-    font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px; color:var(--text); cursor:pointer;
-  }
-  .btn-amber{ background:linear-gradient(135deg, var(--amber), #A5652F); color:#FBF9F1; box-shadow:0 14px 28px -14px rgba(190,122,66,0.55); }
-
   .field-error{ color:var(--danger); font-size:11.5px; margin-bottom:8px; line-height:1.4; }
-
-  .icon{ width:16px; height:16px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 
   .site-list{ display:flex; flex-direction:column; gap:10px; }
   .site-row{
@@ -137,50 +177,97 @@
   }
   .download-icon .icon{ width:22px; height:22px; }
   .download-body{ flex:1; }
-
-  #login-error{ color:var(--danger); font-size:12.5px; margin-top:10px; text-align:center; }
-
-  .section-title{ font-family:'Lora', serif; font-size:15px; font-weight:600; color:var(--text-muted); margin:8px 0 -6px; }
 </style>
 </head>
 <body>
 
-<div class="hero">
-  <div class="hero-blob b1"></div>
-  <div class="hero-blob b2"></div>
-  <div class="hero-blob b3"></div>
-  <div class="hero-inner">
-    <div class="brand">Limen<span>.</span></div>
-    <div class="hero-tagline">Tu espacio para decidir con calma qué bloquear, cuándo, y por qué.</div>
-
-    <div id="login-card-wrap">
-      <div class="login-card-hero" id="login-card">
-        <div class="title">Entra a tu cuenta</div>
-        <div class="sub">Gestiona tus sitios bloqueados desde acá — se sincroniza en vivo con tu extensión.</div>
+<div id="landing">
+  <div class="hero">
+    <div class="hero-blob b1"></div>
+    <div class="hero-blob b2"></div>
+    <div class="hero-blob b3"></div>
+    <div class="hero-inner">
+      <div class="brand">Limen<span>.</span></div>
+      <h1>Atraviesa el momento difícil con <em>alguien del otro lado.</em></h1>
+      <p class="hero-sub">Cuando la tentación de romper tu horario aparece, Limen no te da otra alarma — te conecta con una persona real que te escucha antes de que decidas. Tu tiempo, protegido con intención, no con fuerza de voluntad sola.</p>
+      <div class="cta-row">
         <button class="btn-google" id="btn-google-login">
           <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-          Continuar con Google
+          Empezar con Google
         </button>
         <div id="login-error"></div>
+        <div class="trust-note">Gratis hablar con tu acompañante. Tu decisión, siempre.</div>
       </div>
     </div>
+  </div>
 
-    <div id="user-bar" class="user-bar" style="display:none;">
-      <span class="email" id="user-email"></span>
-      <button class="btn-link" id="btn-logout">Cerrar sesión</button>
+  <div class="section">
+    <div class="center" style="max-width:600px; margin:0 auto 8px;">
+      <div class="eyebrow">Cómo te acompaña</div>
+      <h2 style="font-size:26px;">No es otro bloqueador más</h2>
     </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+        <h3>Bloqueo con intención</h3>
+        <p>Eliges qué sitio, en qué horario, y por qué — no una regla genérica, sino una decisión tuya que puedes recordar en el momento en que más cuesta.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <h3>Una persona, no un bot</h3>
+        <p>Cuando sientes que vas a ceder, puedes hablar con un acompañante real, en tiempo real, sin costo — nunca pagas solo por pedir apoyo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        <h3>Tu tiempo, protegido</h3>
+        <p>Cada minuto que no se va en scroll automático es un minuto que sí decidiste vivir de otra forma. Eso no se recupera — por eso vale la pena protegerlo.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote-band full-bleed">
+    <div class="quote-grid">
+      <div class="quote-card">
+        <blockquote>"No es que tengamos poco tiempo, sino que perdemos mucho."</blockquote>
+        <cite>— Séneca, Sobre la brevedad de la vida</cite>
+      </div>
+      <div class="quote-card">
+        <blockquote>"El tiempo perdido nunca se vuelve a encontrar."</blockquote>
+        <cite>— Benjamin Franklin</cite>
+      </div>
+    </div>
+  </div>
+
+  <div class="section reinforce">
+    <h2>Tu horario, tu decisión — con alguien contigo.</h2>
+    <p>No prometemos fuerza de voluntad instantánea. Prometemos que la próxima vez que dudes, no vas a estar decidiendo solo.</p>
+    <button class="btn-google" id="btn-google-login-2">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+      Empezar con Google
+    </button>
   </div>
 </div>
 
-<div class="wrap">
-  <div id="app-shell" style="display:none;">
+<div id="app-shell" style="display:none;">
+  <div class="top-hero">
+    <div class="top-hero-inner">
+      <div class="brand">Limen<span>.</span></div>
+      <div class="top-hero-tagline">Tu espacio para decidir con calma qué bloquear, cuándo, y por qué.</div>
+      <div class="user-bar">
+        <span class="email" id="user-email"></span>
+        <button class="btn-link" id="btn-logout">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
     <div class="grid-2">
       <div class="card download-card">
         <div class="download-icon">
           <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
         </div>
         <div class="download-body">
-          <div class="hero-eyebrow">Extensión de Chrome</div>
+          <div class="eyebrow">Extensión de Chrome</div>
           <div class="title">Bloquea desde tu navegador</div>
           <div class="sub">Instala la extensión para que el bloqueo funcione mientras navegas — se conecta sola con esta misma cuenta.</div>
           <a class="btn btn-amber btn-block" id="btn-download-extension" href="#" target="_blank" style="display:inline-block; text-decoration:none; text-align:center;">Descargar la extensión</a>
@@ -199,7 +286,7 @@
     </div>
 
     <div id="schedule-card" class="card" style="display:none;">
-      <div class="hero-eyebrow" id="schedule-eyebrow"></div>
+      <div class="eyebrow" id="schedule-eyebrow"></div>
       <div class="title">Antes de bloquear, piénsalo bien</div>
       <div class="sub">Este horario será difícil de romper. Elígelo con intención.</div>
 

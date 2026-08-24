@@ -56,7 +56,7 @@ function isWithinBlockedWindow(site) {
 // ---------------------------------------------------------------
 // Login
 // ---------------------------------------------------------------
-document.getElementById('btn-google-login').addEventListener('click', async () => {
+async function handleGoogleLogin() {
   const errorEl = document.getElementById('login-error');
   errorEl.textContent = '';
   try {
@@ -66,7 +66,12 @@ document.getElementById('btn-google-login').addEventListener('click', async () =
     errorEl.textContent = 'No se pudo iniciar sesión. Intenta de nuevo.';
     console.error('[limen-dashboard] error de login', err);
   }
-});
+}
+
+// Dos botones "Empezar con Google" en la página de aterrizaje (uno en el
+// hero, otro al final, como refuerzo) — mismo handler para ambos.
+document.getElementById('btn-google-login').addEventListener('click', handleGoogleLogin);
+document.getElementById('btn-google-login-2').addEventListener('click', handleGoogleLogin);
 
 document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
@@ -76,8 +81,7 @@ let currentSites = [];
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
-  document.getElementById('login-card-wrap').style.display = user ? 'none' : 'block';
-  document.getElementById('user-bar').style.display = user ? 'flex' : 'none';
+  document.getElementById('landing').style.display = user ? 'none' : 'block';
   document.getElementById('app-shell').style.display = user ? 'block' : 'none';
 
   if (unsubscribeSites) { unsubscribeSites(); unsubscribeSites = null; }
