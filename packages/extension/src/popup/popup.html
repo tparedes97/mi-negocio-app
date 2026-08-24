@@ -42,6 +42,7 @@
         <h2 class="title" id="schedule-title"></h2>
         <p class="sub" id="schedule-sub"></p>
 
+        <label class="field-label" id="days-hours-label"></label>
         <div class="day-toggle-row" id="day-toggles"></div>
 
         <div class="hour-row">
@@ -54,6 +55,13 @@
             <select id="select-end"></select>
           </label>
         </div>
+
+        <label class="field-label" id="reason-why-label"></label>
+        <textarea id="reason-why"></textarea>
+        <p class="field-error" id="reason-why-error" style="display:none;"></p>
+
+        <label class="field-label" id="reason-instead-label"></label>
+        <textarea id="reason-instead"></textarea>
 
         <button id="btn-save-schedule" class="btn btn-primary"></button>
         <button id="btn-back-to-sites" class="btn-link"></button>

@@ -15,6 +15,7 @@
 
 import { onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db, ensureSignedIn } from '../lib/firebase.js';
+import { isWithinBlockedWindow } from '@limen/shared/src/schedule';
 
 const RULE_ID_BASE = 1000; // IDs de regla reservados para Limen (evitar colisión con otras extensiones)
 const ALARM_NAME = 'limen-schedule-check';
@@ -34,20 +35,6 @@ async function getActiveUnlocks() {
   const { activeUnlocks = [] } = await chrome.storage.local.get('activeUnlocks');
   const now = Date.now();
   return activeUnlocks.filter((u) => u.expiresAtMs > now); // los vencidos se ignoran aunque no se hayan limpiado aún
-}
-
-/** día 0 = lunes ... 6 = domingo, igual que el resto del producto (no como Date.getDay() que empieza en domingo) */
-function currentDayIndexMondayFirst() {
-  const jsDay = new Date().getDay(); // 0 = domingo
-  return jsDay === 0 ? 6 : jsDay - 1;
-}
-
-function isWithinBlockedWindow(site) {
-  const window = site.schedule?.[currentDayIndexMondayFirst()];
-  if (!window) return false;
-  const now = new Date();
-  const currentHour = now.getHours() + now.getMinutes() / 60;
-  return currentHour >= window.startHour && currentHour < window.endHour;
 }
 
 function extensionUrl(path) {

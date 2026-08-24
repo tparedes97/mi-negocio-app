@@ -6,6 +6,8 @@
  * declarativeNetRequest.
  */
 
+import { isWithinBlockedWindow } from '@limen/shared/src/schedule';
+
 const domainInput = document.getElementById('input-domain');
 const siteListEl = document.getElementById('site-list');
 const continueBtn = document.getElementById('btn-continue');
@@ -18,6 +20,10 @@ const viewDone = document.getElementById('view-done');
 const dayTogglesEl = document.getElementById('day-toggles');
 const selectStart = document.getElementById('select-start');
 const selectEnd = document.getElementById('select-end');
+const reasonWhyEl = document.getElementById('reason-why');
+const reasonInsteadEl = document.getElementById('reason-instead');
+const reasonWhyErrorEl = document.getElementById('reason-why-error');
+const siteEyebrowEl = document.getElementById('step2-label');
 
 /** día 0 = lunes ... 6 = domingo, igual que background.js y el resto del producto */
 const DAY_KEYS = ['dayMon', 'dayTue', 'dayWed', 'dayThu', 'dayFri', 'daySat', 'daySun'];
@@ -34,11 +40,15 @@ document.getElementById('add-site-sub').textContent = chrome.i18n.getMessage('ad
 document.getElementById('confidential-text').textContent = chrome.i18n.getMessage('confidentialNote');
 continueBtn.textContent = chrome.i18n.getMessage('continueButton');
 addSiteBtn.setAttribute('aria-label', chrome.i18n.getMessage('addSiteBtnLabel'));
-document.getElementById('step2-label').textContent = chrome.i18n.getMessage('step2Label');
 document.getElementById('schedule-title').textContent = chrome.i18n.getMessage('scheduleTitle');
 document.getElementById('schedule-sub').textContent = chrome.i18n.getMessage('scheduleSub');
+document.getElementById('days-hours-label').textContent = chrome.i18n.getMessage('daysHoursLabel');
 document.getElementById('label-start').textContent = chrome.i18n.getMessage('startLabel');
 document.getElementById('label-end').textContent = chrome.i18n.getMessage('endLabel');
+document.getElementById('reason-why-label').textContent = chrome.i18n.getMessage('reasonWhyLabel');
+reasonWhyEl.placeholder = chrome.i18n.getMessage('reasonWhyPlaceholder');
+document.getElementById('reason-instead-label').textContent = chrome.i18n.getMessage('reasonInsteadLabel');
+reasonInsteadEl.placeholder = chrome.i18n.getMessage('reasonInsteadPlaceholder');
 document.getElementById('btn-save-schedule').textContent = chrome.i18n.getMessage('saveScheduleBtn');
 document.getElementById('btn-back-to-sites').textContent = chrome.i18n.getMessage('backToSitesBtn');
 document.getElementById('done-title').textContent = chrome.i18n.getMessage('doneTitle');
@@ -117,21 +127,70 @@ async function addCurrentDomain() {
   continueBtn.disabled = false;
 }
 
+// Sitios cuya "x" está en modo confirmación ("¿de verdad quieres
+// eliminarlo?") ahora mismo — se resetea cada vez que se vuelve a
+// renderizar la lista desde cero (ej. al reabrir el popup).
+const confirmingRemovalIds = new Set();
+
+/**
+ * Quitar (o editar) un sitio de la lista NUNCA debe ser posible mientras
+ * ese sitio está en su horario bloqueado — si lo fuera, bastaría con
+ * borrarlo de acá para saltarse todo el bloqueo sin pasar por blocked.html
+ * ni por el acompañante. Solo se puede tocar en sus horas libres, y
+ * todavía ahí pidiendo confirmación (no es un trámite de un solo clic).
+ */
 function renderSiteList(sites) {
-  siteListEl.innerHTML = sites.map((site) => `
-    <div class="site-pill" data-id="${site.id}">
-      <span><span class="dot"></span>${site.domain}</span>
-      <button data-remove="${site.id}" aria-label="${chrome.i18n.getMessage('removeSiteAriaLabel', [site.domain])}">✕</button>
-    </div>
-  `).join('');
+  siteListEl.innerHTML = sites.map((site) => {
+    const blockedNow = isWithinBlockedWindow(site);
+
+    if (blockedNow) {
+      return `
+        <div class="site-pill" data-id="${site.id}">
+          <span><span class="dot"></span>${site.domain}</span>
+          <span class="lock-ico" title="${chrome.i18n.getMessage('lockedWhileBlockedTooltip')}">🔒</span>
+        </div>`;
+    }
+
+    if (confirmingRemovalIds.has(site.id)) {
+      return `
+        <div class="site-pill confirming" data-id="${site.id}">
+          <span class="confirm-text">${chrome.i18n.getMessage('confirmRemoveText', [site.domain])}</span>
+          <div class="confirm-actions">
+            <button class="confirm-yes" data-confirm-remove="${site.id}">${chrome.i18n.getMessage('confirmRemoveYesBtn')}</button>
+            <button class="confirm-no" data-cancel-remove="${site.id}">${chrome.i18n.getMessage('confirmRemoveNoBtn')}</button>
+          </div>
+        </div>`;
+    }
+
+    return `
+      <div class="site-pill" data-id="${site.id}">
+        <span><span class="dot"></span>${site.domain}</span>
+        <button data-remove="${site.id}" aria-label="${chrome.i18n.getMessage('removeSiteAriaLabel', [site.domain])}">✕</button>
+      </div>`;
+  }).join('');
 
   siteListEl.querySelectorAll('button[data-remove]').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const id = btn.getAttribute('data-remove');
-      const sites = (await loadSites()).filter((s) => s.id !== id);
-      await saveSites(sites);
+    btn.addEventListener('click', () => {
+      confirmingRemovalIds.add(btn.getAttribute('data-remove'));
       renderSiteList(sites);
-      continueBtn.disabled = sites.length === 0;
+    });
+  });
+
+  siteListEl.querySelectorAll('button[data-cancel-remove]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      confirmingRemovalIds.delete(btn.getAttribute('data-cancel-remove'));
+      renderSiteList(sites);
+    });
+  });
+
+  siteListEl.querySelectorAll('button[data-confirm-remove]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-confirm-remove');
+      confirmingRemovalIds.delete(id);
+      const remaining = (await loadSites()).filter((s) => s.id !== id);
+      await saveSites(remaining);
+      renderSiteList(remaining);
+      continueBtn.disabled = remaining.length === 0;
     });
   });
 }
@@ -160,41 +219,101 @@ function renderDayToggles() {
   });
 }
 
-function populateHourSelects() {
+function populateHourSelects(startHour, endHour) {
   selectStart.innerHTML = Array.from({ length: 24 }, (_, h) => `<option value="${h}">${String(h).padStart(2, '0')}:00</option>`).join('');
   selectEnd.innerHTML = Array.from({ length: 24 }, (_, h) => `<option value="${h + 1}">${h + 1 === 24 ? '24:00' : String(h + 1).padStart(2, '0') + ':00'}</option>`).join('');
-  selectStart.value = '0';
-  selectEnd.value = '24'; // "hasta las 24:00" = todo el día
+  selectStart.value = String(startHour);
+  selectEnd.value = String(endHour);
 }
 
-/**
- * MVP: un solo horario aplicado a todos los sitios agregados en el paso 1
- * (configurar un horario distinto por sitio queda para una vuelta futura —
- * lo importante ahora es que el bloqueo funcione de verdad, cosa que antes
- * no pasaba porque schedule se guardaba siempre vacío y background.js
- * nunca encontraba una ventana activa).
- */
-async function saveSchedule() {
+// La configuración de horario + motivo es POR SITIO (así era en el diseño
+// original: cada sitio tiene su propia razón, no una compartida) — por eso
+// esto es una cola: si agregaste 3 sitios, se pregunta uno por uno.
+let scheduleQueue = [];
+let scheduleIndex = 0;
+
+function currentQueuedSite() {
+  return scheduleQueue[scheduleIndex];
+}
+
+function showScheduleStep() {
+  const site = currentQueuedSite();
+  siteEyebrowEl.textContent = site.domain;
+
+  // el horario y la ventana de días por defecto: los que ya tenía este
+  // sitio guardados (si vuelves atrás a editarlo) o "todos los días,
+  // todo el día" si es la primera vez.
+  const existingWindow = Object.values(site.schedule || {})[0];
+  activeDays = new Set(
+    Object.keys(site.schedule || {}).length
+      ? Object.keys(site.schedule).map(Number)
+      : [0, 1, 2, 3, 4, 5, 6]
+  );
+  renderDayToggles();
+  populateHourSelects(existingWindow?.startHour ?? 0, existingWindow?.endHour ?? 24);
+
+  reasonWhyEl.value = site.reasonWhy || '';
+  reasonInsteadEl.value = site.reasonInstead || '';
+  reasonWhyErrorEl.style.display = 'none';
+  reasonWhyEl.style.borderColor = '';
+
+  showView(viewSchedule);
+}
+
+async function saveCurrentScheduleStep() {
+  const reasonWhy = reasonWhyEl.value.trim();
+  if (!reasonWhy) {
+    // Piénsalo bien de verdad: sin al menos una razón escrita no se guarda
+    // el bloqueo — es la fricción intencional que hace que esto no sea un
+    // trámite en piloto automático.
+    reasonWhyErrorEl.textContent = chrome.i18n.getMessage('reasonWhyRequiredError');
+    reasonWhyErrorEl.style.display = 'block';
+    reasonWhyEl.style.borderColor = 'var(--danger, #B0503F)';
+    reasonWhyEl.focus();
+    return;
+  }
+
   const startHour = Number(selectStart.value);
   const endHour = Number(selectEnd.value);
   const window = { startHour, endHour };
   const schedule = {};
   activeDays.forEach((day) => { schedule[day] = window; });
 
+  const site = currentQueuedSite();
   const sites = await loadSites();
-  await saveSites(sites.map((s) => ({ ...s, schedule })));
-  showView(viewDone);
+  await saveSites(sites.map((s) => (s.id === site.id
+    ? { ...s, schedule, reasonWhy, reasonInstead: reasonInsteadEl.value.trim() }
+    : s)));
+
+  scheduleIndex++;
+  if (scheduleIndex < scheduleQueue.length) {
+    showScheduleStep();
+  } else {
+    showView(viewDone);
+  }
 }
 
-continueBtn.addEventListener('click', () => {
-  renderDayToggles();
-  populateHourSelects();
-  showView(viewSchedule);
+continueBtn.addEventListener('click', async () => {
+  scheduleQueue = await loadSites();
+  scheduleIndex = 0;
+  if (scheduleQueue.length === 0) return;
+  showScheduleStep();
 });
 
-document.getElementById('btn-back-to-sites').addEventListener('click', () => showView(viewAddSite));
-document.getElementById('btn-save-schedule').addEventListener('click', saveSchedule);
-document.getElementById('btn-edit-more').addEventListener('click', () => showView(viewAddSite));
+document.getElementById('btn-back-to-sites').addEventListener('click', () => {
+  if (scheduleIndex > 0) { scheduleIndex--; showScheduleStep(); return; }
+  showView(viewAddSite);
+});
+document.getElementById('btn-save-schedule').addEventListener('click', saveCurrentScheduleStep);
+reasonWhyEl.addEventListener('input', () => {
+  reasonWhyErrorEl.style.display = 'none';
+  reasonWhyEl.style.borderColor = '';
+});
+document.getElementById('btn-edit-more').addEventListener('click', async () => {
+  const sites = await loadSites();
+  renderSiteList(sites);
+  showView(viewAddSite);
+});
 
 (async function init() {
   const sites = await loadSites();
