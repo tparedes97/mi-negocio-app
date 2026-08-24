@@ -90,21 +90,52 @@ local — no hace falta forzarlo todo dentro de Replit si no anda bien.
   `LimenVpnService` detecta un intento de abrir un sitio bloqueado
   (evento `blockedAttempt`).
 - **Push** (`@capacitor/push-notifications`, Firebase Cloud Messaging):
-  el token se captura en `app.js` pero **todavía no se guarda en
-  Firestore** porque esta app no tiene login implementado — es el
-  siguiente paso natural (ver TODO en `app.js`). Para que el push
-  funcione hace falta además bajar `google-services.json` desde la
-  consola de Firebase (Configuración del proyecto → tus apps → agregar
-  app Android con el `applicationId` `app.limen.mobile`) y ponerlo en
-  `android/app/google-services.json` — sin ese archivo, `build.gradle` lo
-  detecta y sigue compilando, pero los pushes no van a andar.
+  el token se captura en `app.js` y ya se guarda en `users/{uid}.fcmToken`
+  (hay login real ahora — ver abajo). Falta todavía la Cloud Function que
+  use ese token para mandar el push cuando llega un mensaje de chat nuevo
+  o se confirma un pago. Para que el push funcione además hace falta bajar
+  `google-services.json` desde la consola de Firebase (Configuración del
+  proyecto → tus apps → agregar app Android con el `applicationId`
+  `app.limen.mobile`) y ponerlo en `android/app/google-services.json` —
+  sin ese archivo, `build.gradle` lo detecta y sigue compilando, pero los
+  pushes no van a andar.
+
+## Login y gestión de sitios (Firestore)
+
+La app ya tiene la misma funcionalidad que la extensión de Chrome y el
+panel web (`packages/dashboard`): login con Google, agregar/editar/quitar
+sitios bloqueados con horario y motivo por sitio, y el candado que impide
+tocar un sitio mientras está dentro de su horario bloqueado. Todo vive en
+`users/{uid}/blockedSites` (Firestore), sincronizado en vivo — la misma
+colección que usan la extensión y el panel web, así que agregar un sitio
+en cualquiera de los tres aparece en los otros dos.
+
+- El login usa `@capacitor-firebase/authentication` (Google Sign-In
+  nativo) en vez de `signInWithPopup`/`signInWithRedirect` de Firebase Web
+  — esos dos manejan mal los WebView de Android. El plugin nativo devuelve
+  un `idToken` que se canjea por una sesión de Firebase Auth normal, igual
+  que hace la extensión con `chrome.identity` (ver
+  `packages/extension/src/lib/firebase.js`).
+- `LimenVpnService` (Kotlin) no sabe nada de horarios — solo bloquea la
+  lista de dominios que le pasa `startBlocking()`, y es idempotente si ya
+  está corriendo (actualiza la lista en memoria sin reiniciar la VPN). El
+  filtrado por horario (qué sitio está bloqueado *ahora mismo*) vive en
+  `app.js`, igual que `syncBlockingRules()` en `background.js` de la
+  extensión: se recalcula al cambiar los sitios, cada minuto mientras la
+  app está abierta, y al volver del segundo plano.
+- **Requiere configuración nativa que no se hizo en este entorno** (sin
+  Android SDK/emulador — ver arriba): agregar `@capacitor-firebase/authentication`
+  necesita su propio paso de setup nativo (habilitar el proveedor Google
+  en la consola de Firebase, `google-services.json`, y en algunos casos
+  el SHA-1 de firma de la app registrado en Firebase). Seguir la
+  [documentación oficial del plugin](https://github.com/capawesome-team/capacitor-firebase/tree/main/packages/authentication)
+  antes de compilar.
 
 ## Pendiente / siguiente paso natural
 
-- Login (Google) para sincronizar `blockedSites`/`activeUnlocks` reales
-  desde Firestore en vez de la lista local de prueba.
-- Guardar el token FCM en `users/{uid}.fcmToken` y una Cloud Function que
-  mande el push cuando llega un mensaje de chat nuevo.
-- `google-services.json` real del proyecto `limen-3b8cf`.
+- Configurar el proveedor de Google en Firebase Auth + `google-services.json`
+  real del proyecto `limen-3b8cf`, y probar el login en un dispositivo real.
+- Cloud Function que use `users/{uid}.fcmToken` para mandar el push cuando
+  llega un mensaje de chat nuevo o se confirma un pago.
 - Ícono/splash screen reales (hoy usa los genéricos de Capacitor).
 - Probar el flujo de permiso de VPN y el parseo DNS en un dispositivo real.

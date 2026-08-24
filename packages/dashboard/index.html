@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Limen — Mi cuenta</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&display=swap');
+  :root{
+    --page-bg:#F6EFE2; --surface:#FFFCF5; --amber:#BE7A42; --amber-dim:#F1E1C7;
+    --sage:#6E8768; --sage-dim:#E4EBDA; --danger:#B0503F; --text:#3B2E22;
+    --text-muted:#8C7A63; --line:#E6D9C0;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--page-bg); font-family:'Inter', sans-serif; color:var(--text);
+    min-height:100vh;
+  }
+  .wrap{ max-width:520px; margin:0 auto; padding:32px 20px 80px; }
+  .brand{ font-family:'Source Serif 4', serif; font-size:26px; font-weight:600; margin-bottom:28px; }
+  .brand span{ color:var(--amber); }
+
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:18px;
+    padding:22px; margin-bottom:18px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--amber); margin-bottom:6px;
+  }
+  .title{ font-family:'Source Serif 4', serif; font-size:19px; font-weight:600; margin-bottom:6px; line-height:1.3; }
+  .sub{ font-size:13px; color:var(--text-muted); line-height:1.5; margin-bottom:14px; }
+  .field-label{ display:block; font-size:11.5px; font-weight:600; color:var(--text); margin-bottom:6px; }
+
+  input[type=text], select, textarea{
+    width:100%; background:#fff; border:1px solid var(--line); border-radius:12px;
+    padding:11px 13px; font-family:'Inter', sans-serif; font-size:13.5px; color:var(--text); outline:none;
+  }
+  textarea{ resize:none; min-height:56px; margin-bottom:14px; }
+
+  .input-row{ display:flex; gap:8px; margin-bottom:6px; }
+  .input-row input{ flex:1; min-width:0; }
+
+  .btn{
+    border:none; border-radius:999px; padding:12px 18px;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px; cursor:pointer;
+  }
+  .btn-block{ width:100%; }
+  .btn-primary{ background:var(--sage); color:#FBF9F1; }
+  .btn-primary:disabled{ opacity:.5; cursor:not-allowed; }
+  .btn-add{ flex-shrink:0; width:44px; background:var(--sage); color:#FBF9F1; font-size:20px; line-height:1; }
+  .btn-link{ background:none; border:none; color:var(--text-muted); font-size:12.5px; text-decoration:underline; cursor:pointer; }
+  .btn-google{
+    display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
+    background:#fff; border:1px solid var(--line); border-radius:999px; padding:12px 18px;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px; color:var(--text); cursor:pointer;
+  }
+
+  .field-error{ color:var(--danger); font-size:11.5px; margin-bottom:8px; line-height:1.4; }
+
+  .site-list{ display:flex; flex-direction:column; gap:8px; }
+  .site-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px;
+  }
+  .site-row .name{ font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:8px; }
+  .site-row .dot{ width:7px; height:7px; border-radius:50%; background:var(--amber); }
+  .site-row .meta{ font-size:11px; color:var(--text-muted); margin-top:2px; }
+  .site-row .actions{ display:flex; gap:6px; align-items:center; }
+  .site-row button{ background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:14px; }
+  .lock-ico{ font-size:12px; }
+
+  .site-row.confirming{ flex-direction:column; align-items:stretch; background:var(--amber-dim); border-color:var(--amber); }
+  .confirm-actions{ display:flex; gap:8px; margin-top:8px; }
+  .confirm-actions button{ flex:1; border:none; border-radius:8px; padding:8px 0; font-weight:600; font-size:12px; cursor:pointer; }
+  .confirm-yes{ background:var(--danger); color:#FBF9F1; }
+  .confirm-no{ background:#fff; color:var(--text); border:1px solid var(--line) !important; }
+
+  .day-toggle-row{ display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+  .day-toggle{
+    flex:1; min-width:38px; text-align:center; padding:9px 0; border-radius:10px; border:1px solid var(--line);
+    background:#fff; font-size:11.5px; font-weight:600; color:var(--text-muted); cursor:pointer; user-select:none;
+  }
+  .day-toggle.active{ background:var(--sage); border-color:var(--sage); color:#FBF9F1; }
+  .hour-row{ display:flex; gap:10px; margin-bottom:16px; }
+  .hour-field{ flex:1; display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--text-muted); }
+
+  .download-card{ text-align:center; }
+  .download-card .btn{ margin-top:6px; }
+
+  #login-error{ color:var(--danger); font-size:12.5px; margin-top:10px; text-align:center; }
+
+  .user-bar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .user-bar .email{ font-size:12.5px; color:var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">Limen<span>.</span></div>
+
+  <div id="login-screen">
+    <div class="card">
+      <div class="title">Entra a tu cuenta</div>
+      <div class="sub">Gestiona tus sitios bloqueados desde acá — se sincroniza en vivo con tu extensión.</div>
+      <button class="btn-google" id="btn-google-login">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.29-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+        Continuar con Google
+      </button>
+      <div id="login-error"></div>
+    </div>
+  </div>
+
+  <div id="app-shell" style="display:none;">
+    <div class="user-bar">
+      <span class="email" id="user-email"></span>
+      <button class="btn-link" id="btn-logout">Cerrar sesión</button>
+    </div>
+
+    <div class="card download-card">
+      <div class="eyebrow">Extensión de Chrome</div>
+      <div class="title">Bloquea desde tu navegador</div>
+      <div class="sub">Instala la extensión para que el bloqueo funcione mientras navegas — se conecta sola con esta misma cuenta.</div>
+      <a class="btn btn-primary btn-block" id="btn-download-extension" href="#" target="_blank" style="display:inline-block; text-decoration:none;">Descargar la extensión</a>
+    </div>
+
+    <div class="card">
+      <div class="title">Agregar sitio</div>
+      <div class="sub">Escribe el dominio (o pega el link completo) que quieres bloquear.</div>
+      <div class="input-row">
+        <input type="text" id="input-domain" placeholder="instagram.com" autocomplete="off">
+        <button type="button" id="btn-add-site" class="btn-add">+</button>
+      </div>
+      <p class="field-error" id="domain-error" style="display:none;"></p>
+    </div>
+
+    <div id="schedule-card" class="card" style="display:none;">
+      <div class="eyebrow" id="schedule-eyebrow"></div>
+      <div class="title">Antes de bloquear, piénsalo bien</div>
+      <div class="sub">Este horario será difícil de romper. Elígelo con intención.</div>
+
+      <label class="field-label">Horario bloqueado</label>
+      <div class="day-toggle-row" id="day-toggles"></div>
+      <div class="hour-row">
+        <label class="hour-field">Desde <select id="select-start"></select></label>
+        <label class="hour-field">Hasta <select id="select-end"></select></label>
+      </div>
+
+      <label class="field-label">¿Por qué eliges bloquear esto en este horario?</label>
+      <textarea id="reason-why" placeholder="Escribe tu razón..."></textarea>
+      <p class="field-error" id="reason-why-error" style="display:none;"></p>
+
+      <label class="field-label">¿Qué te gustaría hacer en su lugar?</label>
+      <textarea id="reason-instead" placeholder="Escribe qué harías en cambio..."></textarea>
+
+      <button class="btn btn-primary btn-block" id="btn-save-schedule">Guardar bloqueo</button>
+      <button class="btn-link" id="btn-cancel-schedule" style="display:block; text-align:center; margin-top:10px;">Cancelar</button>
+    </div>
+
+    <div class="card">
+      <div class="title">Tus sitios bloqueados</div>
+      <div id="site-list" class="site-list"><div class="sub">Cargando…</div></div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

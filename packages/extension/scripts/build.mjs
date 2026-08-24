@@ -13,7 +13,6 @@ mkdirSync(dist, { recursive: true });
 const buildOptions = {
   entryPoints: {
     background: path.join(root, 'src/background/background.js'),
-    popup: path.join(root, 'src/popup/popup.js'),
     blocked: path.join(root, 'src/blocked/blocked.js'),
   },
   outdir: dist,
@@ -26,9 +25,9 @@ const buildOptions = {
 
 function copyStatics() {
   cpSync(path.join(root, 'manifest.json'), path.join(dist, 'manifest.json'));
-  cpSync(path.join(root, 'src/popup/popup.html'), path.join(dist, 'popup.html'));
-  cpSync(path.join(root, 'src/popup/popup.css'), path.join(dist, 'popup.css'));
+  cpSync(path.join(root, 'src/shared.css'), path.join(dist, 'shared.css'));
   cpSync(path.join(root, 'src/blocked/blocked.html'), path.join(dist, 'blocked.html'));
+  cpSync(path.join(root, 'src/blocked/blocked.css'), path.join(dist, 'blocked.css'));
   if (existsSync(path.join(root, 'icons'))) {
     cpSync(path.join(root, 'icons'), path.join(dist, 'icons'), { recursive: true });
   }

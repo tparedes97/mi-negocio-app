@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Limen — bloqueado</title>
-<link rel="stylesheet" href="popup.css">
+<link rel="stylesheet" href="shared.css">
 <link rel="stylesheet" href="blocked.css">
 </head>
 <body class="blocked-page">
@@ -12,10 +12,11 @@
       <h1 class="brand">Limen<span>.</span></h1>
     </header>
     <main id="view-root">
-      <!-- popup.js y blocked.js comparten popup.css; blocked.css agrega
-           los estilos específicos del flujo de desbloqueo (chat, dona,
-           tarifas). Cada estado de UnlockAttemptState en
-           @limen/shared/src/types.ts tiene su función render* en blocked.js -->
+      <!-- blocked.js es toda la UI que le queda a la extensión — shared.css
+           trae los estilos base, blocked.css agrega los específicos del
+           flujo de desbloqueo (chat, dona, tarifas). Cada estado de
+           UnlockAttemptState en @limen/shared/src/types.ts tiene su
+           función render* en blocked.js -->
       <div class="loading-state" id="loading-state"></div>
     </main>
   </div>

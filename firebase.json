@@ -28,6 +28,11 @@
       "target": "checkout",
       "public": "packages/checkout",
       "ignore": ["package.json"]
+    },
+    {
+      "target": "dashboard",
+      "public": "packages/dashboard",
+      "ignore": ["package.json"]
     }
   ],
   "emulators": {

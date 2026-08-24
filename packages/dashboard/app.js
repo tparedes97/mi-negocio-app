@@ -1,56 +1,29 @@
-/**
- * App vanilla (sin bundler), igual que el resto del monorepo — Capacitor
- * inyecta `window.Capacitor` automáticamente al correr dentro del shell
- * nativo (lo hace `cap sync`, agregando el script runtime a index.html).
- * Los plugins se llaman vía Capacitor.Plugins.<Nombre>, tanto los
- * oficiales (PushNotifications, LocalNotifications, FirebaseAuthentication)
- * como el nuestro (LimenBlocker, ver android/.../LimenBlockerPlugin.kt).
- *
- * El SDK de Firebase (Auth/Firestore) sí se importa como módulo ES normal,
- * vía CDN — igual que packages/admin y packages/dashboard — porque corre
- * dentro del WebView como cualquier página web.
- *
- * ⚠️ No probado en un dispositivo/emulador real (no hay Android SDK en el
- * entorno donde se escribió esto — ver README.md). Revisar con cuidado,
- * sobre todo el login con Google, antes de confiar en esto en producción.
- */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
-  getAuth, GoogleAuthProvider, signInWithCredential, onAuthStateChanged, signOut,
+  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
-const db = getFirestore(firebaseApp);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-const { Capacitor } = window;
-const Plugins = Capacitor ? Capacitor.Plugins : {};
-const {
-  PushNotifications, LocalNotifications, LimenBlocker, FirebaseAuthentication, App: CapApp,
-} = Plugins;
-
-const statusDot = document.getElementById('vpn-status-dot');
-const statusLabel = document.getElementById('vpn-status-label');
-const toggleBtn = document.getElementById('btn-toggle-vpn');
-const sitesList = document.getElementById('sites-list');
-
-function renderStatus(active) {
-  statusDot.className = 'status-dot ' + (active ? 'on' : 'off');
-  statusLabel.textContent = active ? 'Bloqueo activado' : 'Bloqueo desactivado';
-  toggleBtn.textContent = active ? 'Desactivar bloqueo' : 'Activar bloqueo';
-  toggleBtn.className = 'btn ' + (active ? 'btn-danger' : 'btn-primary');
-}
+// Chrome Web Store asigna este ID apenas se sube el primer paquete (incluso
+// en borrador) — el link empieza a funcionar solo cuando Google aprueba la
+// publicación, no hace falta tocar este código en ese momento.
+const EXTENSION_STORE_URL = 'https://chromewebstore.google.com/detail/ckiogdenolblgafclplhpnfhompaogil';
+document.getElementById('btn-download-extension').href = EXTENSION_STORE_URL;
 
 // ---------------------------------------------------------------
-// Validación de dominios y ventana de bloqueo — copia intencional de
-// packages/shared/src/domain.js y schedule.js (esta página no tiene
-// bundler, así que no puede resolver ese import CommonJS directo). Si
-// cambias esta lógica, cámbiala también allá, en packages/extension y en
-// packages/dashboard.
+// Validación/normalización de dominios y ventana de bloqueo — copia
+// intencional de packages/shared/src/domain.js y schedule.js: esta página
+// se carga como <script type="module"> plano sin bundler (igual que
+// admin/companion-portal/checkout), así que no puede resolver el import
+// CommonJS de @limen/shared directamente. Si cambias esta lógica, cámbiala
+// también allá (y en packages/extension y packages/mobile-app).
 // ---------------------------------------------------------------
 function isValidDomain(value) {
   return /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$/i.test(value.trim());
@@ -81,39 +54,25 @@ function isWithinBlockedWindow(site) {
 }
 
 // ---------------------------------------------------------------
-// Login con Google — vía el plugin nativo (@capacitor-firebase/authentication),
-// no vía popup web: los WebView de Android no manejan bien signInWithPopup/
-// signInWithRedirect de Firebase. El plugin hace el flujo nativo de Google
-// Sign-In y devuelve un idToken que canjeamos por una sesión de Firebase
-// Auth — mismo patrón que ensureSignedIn() en packages/extension/src/lib/firebase.js
-// (ahí es chrome.identity + GoogleAuthProvider.credential(), acá es el
-// plugin nativo + lo mismo).
+// Login
 // ---------------------------------------------------------------
 document.getElementById('btn-google-login').addEventListener('click', async () => {
   const errorEl = document.getElementById('login-error');
   errorEl.textContent = '';
-
-  if (!FirebaseAuthentication) {
-    errorEl.textContent = 'El login nativo no está disponible en este entorno (¿corriendo en navegador en vez del dispositivo?).';
-    return;
-  }
-
   try {
-    const result = await FirebaseAuthentication.signInWithGoogle();
-    const idToken = result?.credential?.idToken;
-    if (!idToken) throw new Error('Google no devolvió un idToken.');
-    const credential = GoogleAuthProvider.credential(idToken, result.credential.accessToken);
-    await signInWithCredential(auth, credential);
+    await signInWithPopup(auth, new GoogleAuthProvider());
     // onAuthStateChanged se encarga de mostrar el app-shell
   } catch (err) {
     errorEl.textContent = 'No se pudo iniciar sesión. Intenta de nuevo.';
-    console.error('[limen-mobile] error de login', err);
+    console.error('[limen-dashboard] error de login', err);
   }
 });
 
+document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+
 let currentUser = null;
-let currentSites = [];
 let unsubscribeSites = null;
+let currentSites = [];
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
@@ -123,17 +82,14 @@ onAuthStateChanged(auth, (user) => {
   if (unsubscribeSites) { unsubscribeSites(); unsubscribeSites = null; }
   if (!user) return;
 
+  document.getElementById('user-email').textContent = user.email || '';
   unsubscribeSites = onSnapshot(collection(db, 'users', user.uid, 'blockedSites'), (snap) => {
     currentSites = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     renderSiteList();
-    applyBlockingIfActive();
   }, (err) => {
-    console.error('[limen-mobile] error escuchando blockedSites', err);
-    sitesList.innerHTML = 'No se pudo cargar tu lista: ' + (err.message || err.code);
+    console.error('[limen-dashboard] error escuchando blockedSites', err);
+    document.getElementById('site-list').innerHTML = '<div class="field-error">No se pudo cargar tu lista: ' + (err.message || err.code) + '</div>';
   });
-
-  initNotifications();
-  initBlockerEvents();
 });
 
 function sitesCollectionRef() {
@@ -141,126 +97,40 @@ function sitesCollectionRef() {
 }
 
 // ---------------------------------------------------------------
-// Bloqueo real: el plugin nativo (LimenVpnService) no sabe nada de
-// horarios, solo bloquea la lista de dominios que le pasemos mientras la
-// VPN está activa — LimenVpnService.startVpn() además es idempotente si ya
-// está corriendo (actualiza blockedDomains en memoria en vez de reiniciar
-// la conexión), así que es seguro volver a llamar startBlocking() seguido.
-// Por eso el filtrado por horario (qué sitio está bloqueado AHORA) vive
-// acá, en JS, igual que syncBlockingRules() en background.js de la
-// extensión — se recalcula cada vez que cambian los sitios, cada minuto
-// mientras la app está abierta, y al volver del segundo plano.
-// ---------------------------------------------------------------
-async function applyBlockingIfActive() {
-  if (!LimenBlocker) return;
-  const { active } = await LimenBlocker.getStatus();
-  if (!active) return;
-  const domainsToBlock = currentSites.filter(isWithinBlockedWindow).map((s) => s.domain);
-  await LimenBlocker.startBlocking({ domains: domainsToBlock });
-}
-
-setInterval(applyBlockingIfActive, 60 * 1000);
-
-toggleBtn.addEventListener('click', async () => {
-  if (!LimenBlocker) {
-    alert('El plugin nativo de bloqueo no está disponible en este entorno (¿corriendo en navegador en vez del dispositivo?).');
-    return;
-  }
-  const { active } = await LimenBlocker.getStatus();
-  if (active) {
-    await LimenBlocker.stopBlocking();
-    renderStatus(false);
-  } else {
-    const domainsToBlock = currentSites.filter(isWithinBlockedWindow).map((s) => s.domain);
-    const result = await LimenBlocker.startBlocking({ domains: domainsToBlock });
-    renderStatus(result.active);
-  }
-});
-
-async function initNotifications() {
-  if (!PushNotifications || !LocalNotifications) return;
-
-  await LocalNotifications.requestPermissions();
-
-  const pushPerm = await PushNotifications.requestPermissions();
-  if (pushPerm.receive !== 'granted') return;
-  await PushNotifications.register();
-
-  PushNotifications.addListener('registration', async (token) => {
-    // El backend (Cloud Functions) todavía no manda pushes con esto —
-    // guardarlo acá es la parte que le tocaba a esta app; falta la Cloud
-    // Function que lo use para avisar de mensajes de chat nuevos o
-    // confirmación de pago.
-    if (currentUser) {
-      await setDoc(doc(db, 'users', currentUser.uid), { fcmToken: token.value }, { merge: true });
-    }
-  });
-
-  PushNotifications.addListener('registrationError', (err) => {
-    console.error('[limen-mobile] error de registro push', err);
-  });
-}
-
-let blockerEventsInitialized = false;
-
-async function initBlockerEvents() {
-  if (!LimenBlocker || blockerEventsInitialized) return;
-  blockerEventsInitialized = true;
-
-  const { active } = await LimenBlocker.getStatus();
-  renderStatus(active);
-
-  // Evento emitido desde LimenVpnService cuando el usuario intenta abrir
-  // un dominio bloqueado — dispara una notificación local (el equivalente
-  // móvil de redirigir a blocked.html en la extensión).
-  LimenBlocker.addListener('blockedAttempt', async ({ domain }) => {
-    if (!LocalNotifications) return;
-    await LocalNotifications.schedule({
-      notifications: [{
-        id: Date.now() % 100000,
-        title: 'Limen',
-        body: `Intentaste abrir ${domain} — tocá para hablar con alguien o pagar el desbloqueo.`,
-      }],
-    });
-  });
-}
-
-// Al volver del segundo plano, recalcular al toque en vez de esperar hasta
-// el próximo minuto del setInterval.
-if (CapApp) {
-  CapApp.addListener('resume', applyBlockingIfActive);
-}
-
-// ---------------------------------------------------------------
-// Lista de sitios: candado mientras está bloqueado, confirmación al
-// quitar — mismas reglas que packages/extension y packages/dashboard: sin
-// esto, bastaría con borrar el sitio acá para saltarse todo el bloqueo.
+// Lista de sitios: candado mientras está bloqueado, confirmación al quitar
+// (mismas reglas que packages/extension/src/popup — ver commit que las
+// introdujo: sin esto, bastaría con borrar el sitio acá para saltarse todo
+// el bloqueo).
 // ---------------------------------------------------------------
 const confirmingRemovalIds = new Set();
-const DAY_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
 function scheduleSummary(site) {
   const days = Object.keys(site.schedule || {});
   if (!days.length) return '';
+  const DAY_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   const window = Object.values(site.schedule)[0];
   const dayList = days.map((d) => DAY_LABELS[Number(d)]).join(', ');
   return dayList + ' · ' + String(window.startHour).padStart(2, '0') + ':00–' + (window.endHour === 24 ? '24:00' : String(window.endHour).padStart(2, '0') + ':00');
 }
 
 function renderSiteList() {
+  const el = document.getElementById('site-list');
   if (!currentSites.length) {
-    sitesList.innerHTML = 'Todavía no agregaste ningún sitio.';
+    el.innerHTML = '<div class="sub">Todavía no agregaste ningún sitio.</div>';
     return;
   }
 
-  sitesList.innerHTML = currentSites.map((site) => {
+  el.innerHTML = currentSites.map((site) => {
     const blockedNow = isWithinBlockedWindow(site);
 
     if (blockedNow) {
       return `
         <div class="site-row">
-          <div><span>${site.domain}</span><div class="meta">${scheduleSummary(site)}</div></div>
-          <span class="lock-ico">🔒</span>
+          <div>
+            <div class="name"><span class="dot"></span>${site.domain}</div>
+            <div class="meta">${scheduleSummary(site)}</div>
+          </div>
+          <span class="lock-ico" title="No puedes editar ni quitar esto mientras está bloqueado. Solo puedes hacerlo en las horas libres de este sitio.">🔒</span>
         </div>`;
     }
 
@@ -277,28 +147,31 @@ function renderSiteList() {
 
     return `
       <div class="site-row">
-        <div><span>${site.domain}</span><div class="meta">${scheduleSummary(site)}</div></div>
+        <div>
+          <div class="name"><span class="dot"></span>${site.domain}</div>
+          <div class="meta">${scheduleSummary(site)}</div>
+        </div>
         <div class="actions">
-          <button data-edit="${site.id}">✎</button>
-          <button data-remove="${site.id}">✕</button>
+          <button data-edit="${site.id}" aria-label="Editar ${site.domain}">✎</button>
+          <button data-remove="${site.id}" aria-label="Quitar ${site.domain}">✕</button>
         </div>
       </div>`;
   }).join('');
 
-  sitesList.querySelectorAll('button[data-remove]').forEach((btn) => {
+  el.querySelectorAll('button[data-remove]').forEach((btn) => {
     btn.addEventListener('click', () => { confirmingRemovalIds.add(btn.dataset.remove); renderSiteList(); });
   });
-  sitesList.querySelectorAll('button[data-cancel-remove]').forEach((btn) => {
+  el.querySelectorAll('button[data-cancel-remove]').forEach((btn) => {
     btn.addEventListener('click', () => { confirmingRemovalIds.delete(btn.dataset.cancelRemove); renderSiteList(); });
   });
-  sitesList.querySelectorAll('button[data-confirm-remove]').forEach((btn) => {
+  el.querySelectorAll('button[data-confirm-remove]').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const id = btn.dataset.confirmRemove;
       confirmingRemovalIds.delete(id);
       await deleteDoc(doc(sitesCollectionRef(), id));
     });
   });
-  sitesList.querySelectorAll('button[data-edit]').forEach((btn) => {
+  el.querySelectorAll('button[data-edit]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const site = currentSites.find((s) => s.id === btn.dataset.edit);
       if (site && !isWithinBlockedWindow(site)) openScheduleCard(site);
@@ -340,9 +213,10 @@ document.getElementById('btn-add-site').addEventListener('click', addCurrentDoma
 domainInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addCurrentDomain(); });
 
 // ---------------------------------------------------------------
-// Horario + motivo por sitio (mismo diseño que packages/dashboard y el
-// popup retirado de la extensión — ver prototype-reference.html)
+// Horario + motivo (mismo diseño que el popup de la extensión — ver
+// prototype-reference.html, pantalla "Configurar horario")
 // ---------------------------------------------------------------
+const DAY_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 const scheduleCard = document.getElementById('schedule-card');
 const dayTogglesEl = document.getElementById('day-toggles');
 const selectStart = document.getElementById('select-start');

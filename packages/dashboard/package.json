@@ -1,0 +1,12 @@
+{
+  "name": "@limen/dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Panel web de usuario final: agregar/editar/quitar sitios bloqueados, sincronizado en vivo con la extensión vía Firestore (users/{uid}/blockedSites). Descarga de la extensión.",
+  "devDependencies": {
+    "serve": "^14.0.0"
+  },
+  "scripts": {
+    "dev": "serve . -l 4003"
+  }
+}

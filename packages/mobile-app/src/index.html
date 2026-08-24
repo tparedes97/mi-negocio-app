@@ -7,8 +7,8 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&display=swap');
   :root{
-    --page-bg:#F6EFE2; --surface:#FFFCF5; --amber:#BE7A42; --sage:#6E8768;
-    --danger:#B0503F; --text:#3B2E22; --text-muted:#8C7A63; --line:#E6D9C0;
+    --page-bg:#F6EFE2; --surface:#FFFCF5; --amber:#BE7A42; --amber-dim:#F1E1C7;
+    --sage:#6E8768; --danger:#B0503F; --text:#3B2E22; --text-muted:#8C7A63; --line:#E6D9C0;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
@@ -18,30 +18,101 @@
   .brand{ font-family:'Source Serif 4', serif; font-size:24px; margin:24px 0 6px; }
   .brand span{ color:var(--amber); }
   .card{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; margin-top:16px; }
+  .title{ font-family:'Source Serif 4', serif; font-size:18px; font-weight:600; margin-bottom:6px; }
+  .field-label{ display:block; font-size:11.5px; font-weight:600; color:var(--text); margin-bottom:6px; }
   .status-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:8px; }
   .status-dot.on{ background:var(--sage); }
   .status-dot.off{ background:var(--danger); }
+  input[type=text], select, textarea{
+    width:100%; background:#fff; border:1px solid var(--line); border-radius:12px;
+    padding:11px 13px; font-family:'Inter', sans-serif; font-size:13.5px; color:var(--text); outline:none;
+  }
+  textarea{ resize:none; min-height:56px; margin-bottom:12px; }
+  .input-row{ display:flex; gap:8px; margin-bottom:6px; }
+  .input-row input{ flex:1; min-width:0; }
   .btn{ border:none; border-radius:999px; padding:13px 20px; font-family:'Inter', sans-serif; font-weight:600; font-size:14px; cursor:pointer; width:100%; margin-top:10px; }
   .btn-primary{ background:var(--sage); color:#FBF9F1; }
+  .btn-primary:disabled{ opacity:.5; }
   .btn-danger{ background:var(--danger); color:#FBF1EE; }
+  .btn-add{ width:44px; flex-shrink:0; margin-top:0; background:var(--sage); color:#FBF9F1; border:none; border-radius:12px; font-size:20px; }
+  .btn-link{ background:none; border:none; color:var(--text-muted); font-size:12.5px; text-decoration:underline; cursor:pointer; width:100%; margin-top:8px; }
+  .btn-google{ display:flex; align-items:center; justify-content:center; gap:10px; background:#fff; border:1px solid var(--line); }
   .sub{ font-size:13px; color:var(--text-muted); line-height:1.5; margin-top:6px; }
+  .field-error{ color:var(--danger); font-size:11.5px; margin:4px 0 8px; }
   .site-row{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--line); font-size:14px; }
   .site-row:last-child{ border-bottom:none; }
+  .site-row .meta{ font-size:11px; color:var(--text-muted); }
+  .site-row .actions{ display:flex; gap:8px; }
+  .site-row button{ background:none; border:none; color:var(--text-muted); font-size:15px; }
+  .site-row.confirming{ flex-direction:column; align-items:stretch; background:var(--amber-dim); border-radius:10px; padding:10px; border-bottom:none; }
+  .confirm-actions{ display:flex; gap:8px; margin-top:8px; }
+  .confirm-actions button{ flex:1; border:none; border-radius:8px; padding:8px 0; font-weight:600; font-size:12px; }
+  .confirm-yes{ background:var(--danger); color:#FBF9F1; }
+  .confirm-no{ background:#fff; color:var(--text); border:1px solid var(--line) !important; }
+  .day-toggle-row{ display:flex; gap:5px; margin-bottom:12px; flex-wrap:wrap; }
+  .day-toggle{ flex:1; min-width:34px; text-align:center; padding:8px 0; border-radius:9px; border:1px solid var(--line); background:#fff; font-size:11px; font-weight:600; color:var(--text-muted); }
+  .day-toggle.active{ background:var(--sage); border-color:var(--sage); color:#FBF9F1; }
+  .hour-row{ display:flex; gap:10px; margin-bottom:14px; }
+  .hour-field{ flex:1; display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--text-muted); }
+  .lock-ico{ font-size:12px; }
 </style>
 </head>
 <body>
 
 <div class="brand">Limen<span>.</span></div>
 
-<div class="card">
-  <div><span id="vpn-status-dot" class="status-dot off"></span><b id="vpn-status-label">Bloqueo desactivado</b></div>
-  <div class="sub">El bloqueo funciona a través de una VPN local en tu teléfono — el tráfico nunca sale de tu dispositivo, solo se filtra ahí mismo.</div>
-  <button class="btn btn-primary" id="btn-toggle-vpn">Activar bloqueo</button>
+<div id="login-screen">
+  <div class="card">
+    <div class="title">Entra a tu cuenta</div>
+    <div class="sub">Inicia sesión para sincronizar tus sitios bloqueados.</div>
+    <button class="btn btn-google" id="btn-google-login">Continuar con Google</button>
+    <div id="login-error" class="field-error"></div>
+  </div>
 </div>
 
-<div class="card">
-  <b>Sitios bloqueados</b>
-  <div id="sites-list" class="sub">Cargando…</div>
+<div id="app-shell" style="display:none;">
+  <div class="card">
+    <div><span id="vpn-status-dot" class="status-dot off"></span><b id="vpn-status-label">Bloqueo desactivado</b></div>
+    <div class="sub">El bloqueo funciona a través de una VPN local en tu teléfono — el tráfico nunca sale de tu dispositivo, solo se filtra ahí mismo.</div>
+    <button class="btn btn-primary" id="btn-toggle-vpn">Activar bloqueo</button>
+  </div>
+
+  <div class="card">
+    <div class="title">Agregar sitio</div>
+    <div class="sub">Escribe el dominio (o pega el link completo).</div>
+    <div class="input-row">
+      <input type="text" id="input-domain" placeholder="instagram.com" autocomplete="off">
+      <button type="button" id="btn-add-site" class="btn-add">+</button>
+    </div>
+    <p class="field-error" id="domain-error" style="display:none;"></p>
+  </div>
+
+  <div id="schedule-card" class="card" style="display:none;">
+    <div class="title" id="schedule-eyebrow"></div>
+    <div class="sub">Antes de bloquear, piénsalo bien — este horario será difícil de romper.</div>
+
+    <label class="field-label">Horario bloqueado</label>
+    <div class="day-toggle-row" id="day-toggles"></div>
+    <div class="hour-row">
+      <label class="hour-field">Desde <select id="select-start"></select></label>
+      <label class="hour-field">Hasta <select id="select-end"></select></label>
+    </div>
+
+    <label class="field-label">¿Por qué eliges bloquear esto en este horario?</label>
+    <textarea id="reason-why" placeholder="Escribe tu razón..."></textarea>
+    <p class="field-error" id="reason-why-error" style="display:none;"></p>
+
+    <label class="field-label">¿Qué te gustaría hacer en su lugar?</label>
+    <textarea id="reason-instead" placeholder="Escribe qué harías en cambio..."></textarea>
+
+    <button class="btn btn-primary" id="btn-save-schedule">Guardar bloqueo</button>
+    <button class="btn-link" id="btn-cancel-schedule">Cancelar</button>
+  </div>
+
+  <div class="card">
+    <b>Sitios bloqueados</b>
+    <div id="sites-list" class="sub">Cargando…</div>
+  </div>
 </div>
 
 <script type="module" src="app.js"></script>
