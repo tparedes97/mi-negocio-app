@@ -9,37 +9,32 @@
 
 /* La pantalla de bloqueo siempre ocupa toda la ventana — en celular y
    en escritorio por igual. Nada de una tarjeta chica flotando en medio
-   de un fondo vacío ni corrida a un costado: el contenido llena el
-   alto completo, con un ancho legible centrado en pantallas anchas.
-   El "shell" en sí es la tarjeta blanca — mismo tratamiento que
-   .browser-frame/.laptop-frame en el panel web (fondo claro, borde,
-   sombra), no texto flotando directo sobre el fondo cálido. */
+   de un fondo vacío ni corrida a un costado.
+   Importante: esto NO es un mockup ilustrando un navegador (para eso
+   están .browser-frame/.laptop-frame en el panel web, que sí simulan
+   una ventana adentro de una página). Esta es la página real — un solo
+   color cálido con textura de grano, sin tarjeta blanca de por medio. */
 body.blocked-page{
   width:auto;
   min-height:100vh;
   display:flex;
   align-items:flex-start;
   justify-content:center;
-  background:var(--page-bg);
-  padding:28px;
+  background-color:var(--page-bg);
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/></svg>");
 }
 
 .blocked-shell{
   width:100%;
   max-width:640px;
-  min-height:calc(100vh - 56px);
-  padding:44px 40px 52px;
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:24px;
-  box-shadow:0 30px 70px -32px rgba(59,46,34,0.35);
+  min-height:100vh;
+  padding:48px 40px 56px;
 }
 .blocked-shell .app-header{ margin-bottom:24px; }
 .blocked-shell .brand{ font-size:26px; }
 
 @media (max-width:520px){
-  body.blocked-page{ padding:0; }
-  .blocked-shell{ min-height:100vh; padding:28px 22px 40px; border-radius:0; border:none; box-shadow:none; }
+  .blocked-shell{ padding:28px 22px 40px; }
 }
 
 .loading-state{ text-align:center; color:var(--text-muted); font-size:13px; padding:40px 0; }
