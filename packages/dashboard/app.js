@@ -473,6 +473,25 @@ function computeStreak(attempts) {
   return streak;
 }
 
+function computeBestStreak(attempts) {
+  const unlockedDays = unlockedDaySet(attempts);
+  const start = accountStartDate();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let best = 0;
+  let run = 0;
+  for (const d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+    if (unlockedDays.has(dayKey(d))) { run = 0; } else { run++; if (run > best) best = run; }
+  }
+  return best;
+}
+
+function mostTemptingDomain(attempts) {
+  const counts = {};
+  attempts.forEach((a) => { if (a.domain) counts[a.domain] = (counts[a.domain] || 0) + 1; });
+  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  return entries[0] || null;
+}
+
 function renderStreakDots(attempts) {
   const unlockedDays = unlockedDaySet(attempts);
   const start = accountStartDate();
@@ -497,13 +516,22 @@ function renderMetrics() {
   const start = accountStartDate();
   const daysSinceStart = Math.max(1, Math.round((new Date() - start) / 86400000) + 1);
   const streak = computeStreak(currentAttempts);
+  const bestStreak = computeBestStreak(currentAttempts);
 
   const streakBlock = `
     <div class="streak-card">
-      <div class="streak-num"><span class="fire">🔥</span>${streak}</div>
-      <div class="streak-label">${streak === 1 ? 'día cumplido seguido' : 'días cumplidos seguidos'} — sin pagar por saltarte un bloqueo</div>
+      <div class="streak-row">
+        <div class="streak-main">
+          <div class="streak-num"><span class="fire">🔥</span>${streak}</div>
+          <div class="streak-label">${streak === 1 ? 'día cumplido seguido' : 'días cumplidos seguidos'}</div>
+        </div>
+        <div class="streak-best">
+          <div class="streak-best-n">${bestStreak}</div>
+          <div class="streak-best-l">récord</div>
+        </div>
+      </div>
       <div class="streak-dots">${renderStreakDots(currentAttempts)}</div>
-      <div class="streak-since">Programando con Limen hace ${daysSinceStart} ${daysSinceStart === 1 ? 'día' : 'días'}.</div>
+      <div class="streak-since">Programando con Limen hace ${daysSinceStart} ${daysSinceStart === 1 ? 'día' : 'días'} — sin pagar por saltarte un bloqueo.</div>
     </div>`;
 
   if (!total) {
@@ -516,6 +544,8 @@ function renderMetrics() {
           <div class="metric-tile"><div class="n">4</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
           <div class="metric-tile"><div class="n">3</div><div class="l">Veces que te quedaste bloqueado</div></div>
           <div class="metric-tile"><div class="n">$8.00</div><div class="l">Gastado en desbloqueos (2 pagos)</div></div>
+          <div class="metric-tile"><div class="n">75%</div><div class="l">Tasa de éxito, sobre 4 decisiones tomadas</div></div>
+          <div class="metric-tile"><div class="n" style="font-size:19px;">instagram.com</div><div class="l">Tu sitio más tentador (3 intentos)</div></div>
         </div>
       </div>`;
     return;
@@ -525,6 +555,10 @@ function renderMetrics() {
   const resisted = currentAttempts.filter((a) => a.state === 'stayed_blocked').length;
   const unlocked = currentAttempts.filter((a) => a.state === 'unlocked').length;
   const spentCents = currentAttempts.reduce((sum, a) => sum + (a.state === 'unlocked' ? (a.feeAmountCents || 0) : 0), 0);
+  const donatedCents = currentAttempts.reduce((sum, a) => sum + (a.donationAmountCents || 0), 0);
+  const decided = resisted + unlocked;
+  const successRate = decided ? Math.round((resisted / decided) * 100) : null;
+  const topSite = mostTemptingDomain(currentAttempts);
 
   el.innerHTML = streakBlock + `
     <div class="metric-grid">
@@ -532,6 +566,9 @@ function renderMetrics() {
       <div class="metric-tile"><div class="n">${talked}</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
       <div class="metric-tile"><div class="n">${resisted}</div><div class="l">Veces que te quedaste bloqueado</div></div>
       <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">Gastado en desbloqueos (${unlocked} pagos)</div></div>
+      ${successRate !== null ? `<div class="metric-tile"><div class="n">${successRate}%</div><div class="l">Tasa de éxito, sobre ${decided} decisiones tomadas</div></div>` : ''}
+      ${topSite ? `<div class="metric-tile"><div class="n" style="font-size:19px;">${escapeHtmlDash(topSite[0])}</div><div class="l">Tu sitio más tentador (${topSite[1]} ${topSite[1] === 1 ? 'intento' : 'intentos'})</div></div>` : ''}
+      ${donatedCents ? `<div class="metric-tile"><div class="n">$${(donatedCents / 100).toFixed(2)}</div><div class="l">Donado a tu persona de apoyo</div></div>` : ''}
       <div class="metric-note">Hablar con tu persona de apoyo siempre es gratis — lo único que tiene costo es el desbloqueo temporal, y solo si lo confirmás.</div>
     </div>`;
 }
