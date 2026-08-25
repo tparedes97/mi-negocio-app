@@ -10,7 +10,10 @@
 /* La pantalla de bloqueo siempre ocupa toda la ventana — en celular y
    en escritorio por igual. Nada de una tarjeta chica flotando en medio
    de un fondo vacío ni corrida a un costado: el contenido llena el
-   alto completo, con un ancho legible centrado en pantallas anchas. */
+   alto completo, con un ancho legible centrado en pantallas anchas.
+   El "shell" en sí es la tarjeta blanca — mismo tratamiento que
+   .browser-frame/.laptop-frame en el panel web (fondo claro, borde,
+   sombra), no texto flotando directo sobre el fondo cálido. */
 body.blocked-page{
   width:auto;
   min-height:100vh;
@@ -18,22 +21,25 @@ body.blocked-page{
   align-items:flex-start;
   justify-content:center;
   background:var(--page-bg);
-  background-image:
-    radial-gradient(circle at 12% 8%, rgba(190,122,66,0.08), transparent 42%),
-    radial-gradient(circle at 88% 92%, rgba(110,135,104,0.08), transparent 42%);
+  padding:28px;
 }
 
 .blocked-shell{
   width:100%;
   max-width:640px;
-  min-height:100vh;
-  padding:48px 40px 56px;
+  min-height:calc(100vh - 56px);
+  padding:44px 40px 52px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:0 30px 70px -32px rgba(59,46,34,0.35);
 }
 .blocked-shell .app-header{ margin-bottom:24px; }
 .blocked-shell .brand{ font-size:26px; }
 
 @media (max-width:520px){
-  .blocked-shell{ padding:28px 22px 40px; }
+  body.blocked-page{ padding:0; }
+  .blocked-shell{ min-height:100vh; padding:28px 22px 40px; border-radius:0; border:none; box-shadow:none; }
 }
 
 .loading-state{ text-align:center; color:var(--text-muted); font-size:13px; padding:40px 0; }
