@@ -178,7 +178,7 @@
   }
   .feature-icon{
     width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(135deg, var(--amber-dim), #EAD9BC); color:var(--terracotta); margin-bottom:16px;
+    background:linear-gradient(135deg, var(--terracotta), var(--terracotta-deep)); color:#FBF3E7; margin-bottom:16px;
   }
   .feature-icon .icon{ width:21px; height:21px; }
   .feature-card h3{ font-size:16px; margin-bottom:8px; }
@@ -216,13 +216,24 @@
   .browser-frame{ background:#fff; border-radius:12px; overflow:hidden; box-shadow:var(--shadow-lift); border:1px solid var(--line); }
   .browser-chrome{ background:#EFE6D4; padding:9px 12px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--line); }
   .browser-chrome .dots{ display:flex; gap:5px; }
-  .browser-chrome .dots span{ width:8px; height:8px; border-radius:50%; background:#D8C9A8; }
+  .browser-chrome .dots span{ width:8px; height:8px; border-radius:50%; }
+  .browser-chrome .dots span:nth-child(1){ background:#EC6A5E; }
+  .browser-chrome .dots span:nth-child(2){ background:#F4BF4F; }
+  .browser-chrome .dots span:nth-child(3){ background:#61C454; }
   .browser-chrome .url{ flex:1; background:#fff; border-radius:6px; padding:4px 10px; font-size:10px; color:var(--text-muted); text-align:left; }
   .browser-frame .screen{ aspect-ratio:16/11.5; padding:16px; text-align:left; }
 
   .phone-frame{ background:#3B2E22; border-radius:34px; padding:6px; box-shadow:var(--shadow-lift); max-width:220px; margin:0 auto; }
   .phone-frame .screen{ background:var(--surface); border-radius:29px; overflow:hidden; aspect-ratio:9/18.5; padding:20px 12px 16px; text-align:left; position:relative; }
   .phone-frame .notch{ position:absolute; top:8px; left:50%; transform:translateX(-50%); width:30%; height:6px; background:#3B2E22; border-radius:999px; z-index:2; }
+  .phone-frame .screen::before{
+    content:'9:41'; position:absolute; top:8px; left:16px; font-size:9px; font-weight:700;
+    font-variant-numeric:tabular-nums; color:var(--text); z-index:3;
+  }
+  .phone-frame .screen::after{
+    content:''; position:absolute; top:9px; right:16px; width:16px; height:8px;
+    border:1px solid var(--text); border-radius:2px; z-index:3; opacity:.75;
+  }
 
   .mini-rail{ position:absolute; top:14px; right:14px; display:flex; flex-direction:column; gap:6px; }
   .mini-rail span{ width:18px; height:18px; border-radius:50%; background:var(--amber-dim); color:var(--terracotta); display:flex; align-items:center; justify-content:center; }
@@ -273,6 +284,11 @@
   .action-label{ text-align:center; font-size:12px; font-weight:700; color:var(--text-muted); margin-top:14px; }
 
   .chat-bubble{ background:#fff; border:1px solid var(--line); border-radius:9px; padding:7px 9px; font-size:9.5px; line-height:1.4; margin-bottom:6px; max-width:88%; }
+  .mini-chat-head{ display:flex; align-items:center; gap:7px; margin-bottom:8px; }
+  .mini-avatar{
+    width:20px; height:20px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    background:var(--sage-dim); color:#3E4E37; font-family:'Lora',serif; font-weight:600; font-size:10px;
+  }
   .chat-bubble.mine{ background:var(--sage-dim); margin-left:auto; }
   .fee-row{ display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid var(--line); border-radius:9px; padding:8px 10px; margin-bottom:6px; font-size:10px; }
   .fee-row .price{ font-weight:700; color:var(--terracotta); }
@@ -327,11 +343,12 @@
   .btn-amber{ background:linear-gradient(135deg, var(--amber), #A5652F); color:#FBF9F1; box-shadow:0 14px 28px -14px rgba(190,122,66,0.55); }
 
   /* ---- Footer ---- */
-  footer.site-footer{ background:#2C2118; color:rgba(251,243,231,0.7); padding:56px 24px 28px; }
+  footer.site-footer{ background:var(--terracotta-deep); color:rgba(251,243,231,0.7); padding:56px 24px 28px; }
   .footer-inner{ max-width:1160px; margin:0 auto; display:grid; grid-template-columns:1fr; gap:36px; }
   @media (min-width:700px){ .footer-inner{ grid-template-columns:repeat(2, 1fr); } }
   @media (min-width:1000px){ .footer-inner{ grid-template-columns:1.6fr 1fr 1fr 1fr 1.2fr; } }
   .footer-brand .brand{ color:#FBF3E7; }
+  .footer-brand .brand span{ color:#F3C892; }
   .footer-brand p{ font-size:13px; line-height:1.6; margin-top:12px; max-width:34ch; color:rgba(251,243,231,0.55); }
   .footer-social{ display:flex; gap:10px; margin-top:18px; }
   .footer-social a{
@@ -565,10 +582,12 @@
     <div class="hero-blob b2"></div>
     <div class="hero-blob b3"></div>
     <div class="icon-rail">
+      <span class="r"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg></span>
       <span class="r"><svg class="icon" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
       <span class="r"><svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
       <span class="r"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-      <span class="r"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+      <span class="r"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 2.5-3 4"/><circle cx="12" cy="17.5" r=".7" fill="currentColor" stroke="none"/></svg></span>
+      <span class="r"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.7"/><path d="M19.1 14.6a1.5 1.5 0 0 0 .3 1.65l.05.05a1.8 1.8 0 1 1-2.55 2.55l-.05-.05a1.5 1.5 0 0 0-1.65-.3 1.5 1.5 0 0 0-.9 1.37V20a1.8 1.8 0 0 1-3.6 0v-.08a1.5 1.5 0 0 0-.98-1.38 1.5 1.5 0 0 0-1.65.3l-.05.05a1.8 1.8 0 1 1-2.55-2.55l.05-.05a1.5 1.5 0 0 0 .3-1.65 1.5 1.5 0 0 0-1.37-.9H4a1.8 1.8 0 0 1 0-3.6h.08a1.5 1.5 0 0 0 1.38-.98 1.5 1.5 0 0 0-.3-1.65l-.05-.05A1.8 1.8 0 1 1 7.66 6.9l.05.05a1.5 1.5 0 0 0 1.65.3H9.4a1.5 1.5 0 0 0 .9-1.37V5.8a1.8 1.8 0 0 1 3.6 0v.08a1.5 1.5 0 0 0 .9 1.37 1.5 1.5 0 0 0 1.65-.3l.05-.05A1.8 1.8 0 1 1 19.05 9.5l-.05.05a1.5 1.5 0 0 0-.3 1.65v.08a1.5 1.5 0 0 0 1.37.9H20.2a1.8 1.8 0 0 1 0 3.6h-.08a1.5 1.5 0 0 0-1.37.9z"/></svg></span>
     </div>
     <div class="hero-photo-panel">
       <img src="assets/hero-photo.jpg" alt="Una persona celebrando haber cumplido una meta que se propuso" width="900" height="1200">
@@ -797,7 +816,10 @@
         <div class="phone-frame">
           <div class="screen">
             <div class="notch"></div>
-            <div class="mini-blocked-eyebrow" style="margin-top:10px;">Hablando con Lucía · 04:32</div>
+            <div class="mini-chat-head" style="margin-top:10px;">
+              <span class="mini-avatar">L</span>
+              <div class="mini-blocked-eyebrow" style="margin-top:0;">Hablando con Lucía · 04:32</div>
+            </div>
             <div class="chat-bubble">Hola, estoy acá para escucharte 🙂 ¿qué está pasando?</div>
             <div class="chat-bubble mine">Estoy con ganas de parar de trabajar</div>
             <div class="chat-bubble">Gracias por contarme. ¿Qué harías en su lugar?</div>
@@ -955,10 +977,12 @@
     </div>
     <div class="hero-seam top-hero-seam"></div>
     <div class="icon-rail">
+      <span class="r"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg></span>
       <span class="r"><svg class="icon" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
       <span class="r"><svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
       <span class="r"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-      <span class="r"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+      <span class="r"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 2.5-3 4"/><circle cx="12" cy="17.5" r=".7" fill="currentColor" stroke="none"/></svg></span>
+      <span class="r"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.7"/><path d="M19.1 14.6a1.5 1.5 0 0 0 .3 1.65l.05.05a1.8 1.8 0 1 1-2.55 2.55l-.05-.05a1.5 1.5 0 0 0-1.65-.3 1.5 1.5 0 0 0-.9 1.37V20a1.8 1.8 0 0 1-3.6 0v-.08a1.5 1.5 0 0 0-.98-1.38 1.5 1.5 0 0 0-1.65.3l-.05.05a1.8 1.8 0 1 1-2.55-2.55l.05-.05a1.5 1.5 0 0 0 .3-1.65 1.5 1.5 0 0 0-1.37-.9H4a1.8 1.8 0 0 1 0-3.6h.08a1.5 1.5 0 0 0 1.38-.98 1.5 1.5 0 0 0-.3-1.65l-.05-.05A1.8 1.8 0 1 1 7.66 6.9l.05.05a1.5 1.5 0 0 0 1.65.3H9.4a1.5 1.5 0 0 0 .9-1.37V5.8a1.8 1.8 0 0 1 3.6 0v.08a1.5 1.5 0 0 0 .9 1.37 1.5 1.5 0 0 0 1.65-.3l.05-.05A1.8 1.8 0 1 1 19.05 9.5l-.05.05a1.5 1.5 0 0 0-.3 1.65v.08a1.5 1.5 0 0 0 1.37.9H20.2a1.8 1.8 0 0 1 0 3.6h-.08a1.5 1.5 0 0 0-1.37.9z"/></svg></span>
     </div>
     <div class="top-hero-inner">
       <div class="hero-eyebrow">Tu cuenta</div>
