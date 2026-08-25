@@ -438,13 +438,86 @@ function renderChatsList() {
 // ---------------------------------------------------------------
 // Métricas — calculadas en el momento a partir de currentAttempts,
 // nada precomputado ni inventado.
+//
+// La racha se calcula desde la fecha real de creación de la cuenta
+// (auth currentUser.metadata.creationTime — la da Firebase gratis, sin
+// necesidad de guardar un campo aparte) y se rompe el día que hay un
+// intento con state === 'unlocked' (pagaste para saltarte el bloqueo).
 // ---------------------------------------------------------------
+function dayKey(date) { return date.toISOString().slice(0, 10); }
+
+function accountStartDate() {
+  const raw = currentUser?.metadata?.creationTime;
+  const d = raw ? new Date(raw) : new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function unlockedDaySet(attempts) {
+  return new Set(
+    attempts
+      .filter((a) => a.state === 'unlocked' && a.createdAt?.toDate)
+      .map((a) => dayKey(a.createdAt.toDate()))
+  );
+}
+
+function computeStreak(attempts) {
+  const unlockedDays = unlockedDaySet(attempts);
+  const start = accountStartDate();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let streak = 0;
+  for (const d = new Date(today); d >= start; d.setDate(d.getDate() - 1)) {
+    if (unlockedDays.has(dayKey(d))) break;
+    streak++;
+  }
+  return streak;
+}
+
+function renderStreakDots(attempts) {
+  const unlockedDays = unlockedDaySet(attempts);
+  const start = accountStartDate();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const daysSinceStart = Math.round((today - start) / 86400000) + 1;
+  const daysToShow = Math.min(14, daysSinceStart);
+
+  let dots = '';
+  for (let i = daysToShow - 1; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const held = !unlockedDays.has(dayKey(d));
+    const label = d.toLocaleDateString('es', { day: 'numeric', month: 'short' });
+    dots += `<span class="streak-dot ${held ? 'held' : 'broken'}" title="${label}${held ? ' · cumplido' : ' · desbloqueaste'}"></span>`;
+  }
+  return dots;
+}
+
 function renderMetrics() {
   const el = document.getElementById('metrics-grid');
   const total = currentAttempts.length;
 
+  const start = accountStartDate();
+  const daysSinceStart = Math.max(1, Math.round((new Date() - start) / 86400000) + 1);
+  const streak = computeStreak(currentAttempts);
+
+  const streakBlock = `
+    <div class="streak-card">
+      <div class="streak-num"><span class="fire">🔥</span>${streak}</div>
+      <div class="streak-label">${streak === 1 ? 'día cumplido seguido' : 'días cumplidos seguidos'} — sin pagar por saltarte un bloqueo</div>
+      <div class="streak-dots">${renderStreakDots(currentAttempts)}</div>
+      <div class="streak-since">Programando con Limen hace ${daysSinceStart} ${daysSinceStart === 1 ? 'día' : 'días'}.</div>
+    </div>`;
+
   if (!total) {
-    el.innerHTML = '<div class="sub">Todavía no hay datos — van a aparecer acá apenas tengas tu primer intento de desbloqueo.</div>';
+    el.innerHTML = streakBlock + `
+      <div class="metrics-preview">
+        <div class="eyebrow">Ejemplo — todavía no tenés datos propios</div>
+        <div class="sub">Así se va a ver esta sección apenas tengas tu primer intento de desbloqueo:</div>
+        <div class="metric-grid ghost">
+          <div class="metric-tile"><div class="n">6</div><div class="l">Intentos de desbloqueo</div></div>
+          <div class="metric-tile"><div class="n">4</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
+          <div class="metric-tile"><div class="n">3</div><div class="l">Veces que te quedaste bloqueado</div></div>
+          <div class="metric-tile"><div class="n">$8.00</div><div class="l">Gastado en desbloqueos (2 pagos)</div></div>
+        </div>
+      </div>`;
     return;
   }
 
@@ -453,11 +526,12 @@ function renderMetrics() {
   const unlocked = currentAttempts.filter((a) => a.state === 'unlocked').length;
   const spentCents = currentAttempts.reduce((sum, a) => sum + (a.state === 'unlocked' ? (a.feeAmountCents || 0) : 0), 0);
 
-  el.innerHTML = `
-    <div class="metric-tile"><div class="n">${total}</div><div class="l">Intentos de desbloqueo</div></div>
-    <div class="metric-tile"><div class="n">${talked}</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
-    <div class="metric-tile"><div class="n">${resisted}</div><div class="l">Veces que te quedaste bloqueado</div></div>
-    <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">Gastado en desbloqueos (${unlocked} pagos)</div></div>
-    <div class="metric-note">Hablar con tu persona de apoyo siempre es gratis — lo único que tiene costo es el desbloqueo temporal, y solo si lo confirmás.</div>
-  `;
+  el.innerHTML = streakBlock + `
+    <div class="metric-grid">
+      <div class="metric-tile"><div class="n">${total}</div><div class="l">Intentos de desbloqueo</div></div>
+      <div class="metric-tile"><div class="n">${talked}</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
+      <div class="metric-tile"><div class="n">${resisted}</div><div class="l">Veces que te quedaste bloqueado</div></div>
+      <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">Gastado en desbloqueos (${unlocked} pagos)</div></div>
+      <div class="metric-note">Hablar con tu persona de apoyo siempre es gratis — lo único que tiene costo es el desbloqueo temporal, y solo si lo confirmás.</div>
+    </div>`;
 }
