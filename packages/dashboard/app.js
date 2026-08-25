@@ -492,6 +492,102 @@ function mostTemptingDomain(attempts) {
   return entries[0] || null;
 }
 
+const MILESTONES = [
+  { days: 3, icon: '🌱' },
+  { days: 7, icon: '🔥' },
+  { days: 14, icon: '⚡' },
+  { days: 30, icon: '🏅' },
+  { days: 100, icon: '🏆' },
+];
+
+function renderMilestones(bestStreak) {
+  return `<div class="milestone-row">${MILESTONES.map((m) => `
+    <div class="milestone ${bestStreak >= m.days ? 'unlocked' : ''}" title="${bestStreak >= m.days ? 'Alcanzado' : `Te faltan ${m.days - bestStreak} días`}">
+      <div class="m-icon">${m.icon}</div>
+      <div class="m-n">${m.days} días</div>
+    </div>`).join('')}</div>`;
+}
+
+const WEEKDAY_LABELS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+function computePatternInsight(attempts) {
+  const withDate = attempts.filter((a) => a.createdAt?.toDate);
+  if (withDate.length < 3) return null;
+  const counts = {};
+  withDate.forEach((a) => {
+    const d = a.createdAt.toDate();
+    const key = d.getDay() + '-' + d.getHours();
+    counts[key] = (counts[key] || 0) + 1;
+  });
+  const [topKey, topCount] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+  const [day, hour] = topKey.split('-').map(Number);
+  return { day, hour, count: topCount, total: withDate.length };
+}
+
+function computeWeekCompare(attempts) {
+  const now = new Date();
+  const startThis = new Date(now); startThis.setDate(startThis.getDate() - 6); startThis.setHours(0, 0, 0, 0);
+  const startLast = new Date(startThis); startLast.setDate(startLast.getDate() - 7);
+  const endLast = new Date(startThis.getTime() - 1);
+
+  let thisWeekResisted = 0;
+  let lastWeekResisted = 0;
+  attempts.forEach((a) => {
+    if (!a.createdAt?.toDate || a.state !== 'stayed_blocked') return;
+    const d = a.createdAt.toDate();
+    if (d >= startThis && d <= now) thisWeekResisted++;
+    else if (d >= startLast && d <= endLast) lastWeekResisted++;
+  });
+  return { thisWeekResisted, lastWeekResisted };
+}
+
+let metricsChartInstance = null;
+
+function renderChart(attempts) {
+  const canvas = document.getElementById('metrics-chart');
+  if (!canvas || typeof Chart === 'undefined') return; // sin Chart.js (ej. sin internet) no rompe el resto del panel
+
+  const start = accountStartDate();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const daysSinceStart = Math.round((today - start) / 86400000) + 1;
+  const daysToShow = Math.min(14, daysSinceStart);
+
+  const labels = [];
+  const resistedData = [];
+  const unlockedData = [];
+  for (let i = daysToShow - 1; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    labels.push(d.toLocaleDateString('es', { weekday: 'short' }).replace('.', ''));
+    const key = dayKey(d);
+    const dayAttempts = attempts.filter((a) => a.createdAt?.toDate && dayKey(a.createdAt.toDate()) === key);
+    resistedData.push(dayAttempts.filter((a) => a.state === 'stayed_blocked').length);
+    unlockedData.push(dayAttempts.filter((a) => a.state === 'unlocked').length);
+  }
+
+  if (metricsChartInstance) metricsChartInstance.destroy();
+  metricsChartInstance = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Te quedaste bloqueado', data: resistedData, backgroundColor: '#8FAE84', borderRadius: 4, maxBarThickness: 22 },
+        { label: 'Desbloqueaste', data: unlockedData, backgroundColor: '#C97C5F', borderRadius: 4, maxBarThickness: 22 },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { color: 'rgba(251,243,231,.55)', font: { size: 10.5 } } },
+        y: { stacked: true, beginAtZero: true, ticks: { color: 'rgba(251,243,231,.4)', stepSize: 1, font: { size: 10.5 } }, grid: { color: 'rgba(251,243,231,.06)' } },
+      },
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { color: 'rgba(251,243,231,.7)', boxWidth: 10, font: { size: 11 }, padding: 12 } },
+      },
+    },
+  });
+}
+
 function renderStreakDots(attempts) {
   const unlockedDays = unlockedDaySet(attempts);
   const start = accountStartDate();
@@ -534,11 +630,13 @@ function renderMetrics() {
       <div class="streak-since">Programando con Limen hace ${daysSinceStart} ${daysSinceStart === 1 ? 'día' : 'días'} — sin pagar por saltarte un bloqueo.</div>
     </div>`;
 
+  const milestonesBlock = renderMilestones(bestStreak);
+
   if (!total) {
-    el.innerHTML = streakBlock + `
+    el.innerHTML = streakBlock + milestonesBlock + `
       <div class="metrics-preview">
         <div class="eyebrow">Ejemplo — todavía no tenés datos propios</div>
-        <div class="sub">Así se va a ver esta sección apenas tengas tu primer intento de desbloqueo:</div>
+        <div class="sub">Así se va a ver esta sección apenas tengas tu primer intento de desbloqueo, con gráfico de tu semana y todo:</div>
         <div class="metric-grid ghost">
           <div class="metric-tile"><div class="n">6</div><div class="l">Intentos de desbloqueo</div></div>
           <div class="metric-tile"><div class="n">4</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
@@ -559,8 +657,37 @@ function renderMetrics() {
   const decided = resisted + unlocked;
   const successRate = decided ? Math.round((resisted / decided) * 100) : null;
   const topSite = mostTemptingDomain(currentAttempts);
+  const pattern = computePatternInsight(currentAttempts);
+  const week = computeWeekCompare(currentAttempts);
+  const weekDelta = week.thisWeekResisted - week.lastWeekResisted;
 
-  el.innerHTML = streakBlock + `
+  const insightRow = `
+    <div class="insight-row">
+      <div class="insight-card">
+        <div class="k">Tu patrón</div>
+        ${pattern
+          ? `<p>Los <strong>${WEEKDAY_LABELS[pattern.day]} a las ${String(pattern.hour).padStart(2, '0')}:00</strong> es tu momento más difícil — ahí cayeron ${pattern.count} de tus ${pattern.total} intentos.</p>`
+          : '<p>Todavía no hay suficientes intentos para ver un patrón por día y hora — va a aparecer solo.</p>'}
+      </div>
+      <div class="insight-card">
+        <div class="k">Esta semana vs. la anterior</div>
+        <div class="big">
+          <span class="v">${week.thisWeekResisted}</span>
+          <span>días cumplidos esta semana</span>
+        </div>
+        <p style="margin-top:6px;">${
+          weekDelta > 0 ? `<span class="d up">▲ ${weekDelta} más</span> que la semana pasada (${week.lastWeekResisted}).`
+          : weekDelta < 0 ? `<span class="d down">▼ ${Math.abs(weekDelta)} menos</span> que la semana pasada (${week.lastWeekResisted}).`
+          : `Igual que la semana pasada (${week.lastWeekResisted}).`
+        }</p>
+      </div>
+    </div>`;
+
+  el.innerHTML = streakBlock + milestonesBlock + insightRow + `
+    <div class="chart-card">
+      <div class="k">Últimos días</div>
+      <div class="chart-wrap"><canvas id="metrics-chart"></canvas></div>
+    </div>
     <div class="metric-grid">
       <div class="metric-tile"><div class="n">${total}</div><div class="l">Intentos de desbloqueo</div></div>
       <div class="metric-tile"><div class="n">${talked}</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
@@ -571,4 +698,6 @@ function renderMetrics() {
       ${donatedCents ? `<div class="metric-tile"><div class="n">$${(donatedCents / 100).toFixed(2)}</div><div class="l">Donado a tu persona de apoyo</div></div>` : ''}
       <div class="metric-note">Hablar con tu persona de apoyo siempre es gratis — lo único que tiene costo es el desbloqueo temporal, y solo si lo confirmás.</div>
     </div>`;
+
+  renderChart(currentAttempts);
 }
