@@ -33,12 +33,185 @@ let unsubscribeAttempt = null;
 let unsubscribeChat = null;
 let unsubscribeMessages = null;
 let chatTimerInterval = null;
-let currentQuestionIndex = 0;
-const MOTIVATIONAL_QUESTIONS = [
-  chrome.i18n.getMessage('motivationalQuestion1'),
-  chrome.i18n.getMessage('motivationalQuestion2'),
-  chrome.i18n.getMessage('motivationalQuestion3'),
+// ---------------------------------------------------------------
+// Pools de frases — contenido provisto por la fundadora, en español
+// únicamente (no hay traducción al inglés todavía; si algún día hace
+// falta, se agrega como _locales/en igual que el resto de la copia).
+// Cada intento de desbloqueo saca su propia selección al azar.
+// ---------------------------------------------------------------
+const REFLECTION_QUESTIONS_POOL = [
+  'Si lo bloqueaste por una razón, recuerda cuál era antes de deshacerlo.',
+  'A veces volver a abrir una puerta no significa que hayas cambiado; significa que olvidaste por qué la cerraste.',
+  '¿Realmente quieres entrar, o solo quieres comprobar si todavía puedes?',
+  'Lo que estás buscando quizá no está al otro lado de ese bloqueo.',
+  'Tu decisión de ayer también merece ser escuchada.',
+  'Si bloquearlo te dio tranquilidad, ¿qué esperas encontrar al desbloquearlo?',
+  'No todo lo que extrañas merece volver a formar parte de tu vida.',
+  'Antes de desbloquearlo, pregúntate qué esperas que cambie esta vez.',
+  'A veces la curiosidad se disfraza de necesidad.',
+  'Lo bloqueaste cuando estabas intentando protegerte. ¿Qué cambió?',
+  'No confundas ganas con una buena decisión.',
+  'Quizá no necesitas volver. Quizá necesitas seguir adelante.',
+  '¿Quieres entrar porque realmente lo necesitas o porque lo extrañas?',
+  'Hay decisiones que duelen al principio y agradeces después.',
+  'Cerrar una puerta también puede ser una forma de cuidarte.',
+  'Si tu versión de hace unos días decidió bloquearlo, quizá tenía algo que decirte.',
+  'No necesitas tocar una herida para saber que todavía duele.',
+  '¿Vale la pena arriesgar tu tranquilidad por unos minutos de curiosidad?',
+  'A veces desbloquear no resuelve nada; simplemente reinicia el ciclo.',
+  'Lo conocido no siempre es lo conveniente.',
+  'Recuerda cómo te sentías cuando decidiste bloquearlo.',
+  'No todas las puertas que puedes abrir merecen ser abiertas.',
+  'Si esperas encontrar algo diferente, pregúntate si realmente ha cambiado algo.',
+  'Tu paz también es una razón válida.',
+  'Quizá este impulso pase. No tienes que actuar sobre él.',
+  'No tomes una decisión permanente para calmar una emoción momentánea.',
+  'Esperar también es una decisión.',
+  'Lo que te hizo bloquearlo sigue existiendo, aunque hoy lo recuerdes de otra manera.',
+  'A veces queremos regresar no porque estemos mejor, sino porque olvidamos lo mal que estábamos.',
+  '¿Qué perderías si lo desbloquearas? ¿Y qué ganarías?',
+  'No necesitas comprobar nuevamente algo que ya te hizo daño.',
+  'El impulso dura minutos. Las consecuencias pueden durar mucho más.',
+  'Tal vez no extrañas el sitio; extrañas cómo te sentías antes de necesitar bloquearlo.',
+  'Si necesitas una razón para desbloquearlo, quizá todavía no estás seguro.',
+  'No todo deseo merece convertirse en acción.',
+  'Antes de volver, recuerda por qué decidiste irte.',
+  'A veces avanzar significa resistir las ganas de mirar atrás.',
+  '¿Estás desbloqueando por elección o por impulso?',
+  'Tu tranquilidad de mañana puede depender de la decisión que tomes ahora.',
+  'No tienes que demostrarte que puedes volver. Ya sabes que puedes.',
+  'Puedes cambiar de opinión, pero también puedes darle otra oportunidad a la decisión que te protegió.',
+  'Quizá el verdadero progreso sea no volver a comprobar.',
+  'Hay cosas que parecen irresistibles hasta que esperas unos minutos.',
+  'Si desbloquearlo no cambia nada, ¿por qué hacerlo?',
+  'No necesitas una nueva experiencia para confirmar una vieja lección.',
+  'La pregunta no es "¿puedo desbloquearlo?", sino "¿me conviene hacerlo?"',
+  'A veces la mejor decisión no es la que más satisface tu curiosidad, sino la que protege tu paz.',
+  'Si llegaste hasta aquí, probablemente hubo una razón para bloquearlo.',
+  'Darte otra oportunidad también puede significar darte la oportunidad de no volver.',
+  'Antes de desbloquearlo: respira, espera un momento y pregúntate si tu yo de mañana te lo agradecerá.',
 ];
+
+function pickRandom(pool) {
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function pickRandomDistinct(pool, n) {
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n);
+}
+
+const TALK_INVITE_PHRASES = [
+  '¿Necesitas una mano para mantener la disciplina?',
+  '¿Quieres que alguien te acompañe un ratito?',
+  '¿Te vendría bien distraerte unos minutos?',
+  '¿Quieres hablar con alguien antes de tomar una decisión?',
+  '¿Necesitas un pequeño empujón para mantenerte firme?',
+  '¿Quieres que te acompañemos mientras pasa este impulso?',
+  '¿Te gustaría conversar un momento para despejar la mente?',
+  '¿Necesitas compañía para no caer en la tentación?',
+  '¿Quieres distraerte un rato antes de decidir?',
+  '¿Te vendría bien hablar de cualquier cosa por unos minutos?',
+  '¿Quieres que te ayudemos a pasar este momento?',
+  '¿Necesitas recordar por qué empezaste?',
+  '¿Quieres mantenerte firme un poquito más?',
+  '¿Te gustaría que alguien se quede contigo un momento?',
+  '¿Quieres cambiar de tema y distraerte un rato?',
+  '¿Necesitas un pequeño respiro antes de decidir?',
+  '¿Quieres hablar hasta que pase el impulso?',
+  '¿Te ayudaría tener compañía ahora mismo?',
+  '¿Quieres posponer la decisión y conversar un momento?',
+  '¿Necesitas que alguien te ayude a mantener el rumbo?',
+  '¿Quieres que te acompañemos durante estos próximos minutos?',
+  '¿Te gustaría distraerte antes de desbloquearlo?',
+  '¿Quieres darte unos minutos antes de cambiar de opinión?',
+  '¿Necesitas un poco de apoyo para mantener tu decisión?',
+  '¿Quieres que te acompañemos mientras decides?',
+  '¿Te apetece hablar de algo completamente diferente?',
+  '¿Quieres hacer tiempo hasta que pase este impulso?',
+  '¿Necesitas que alguien te recuerde por qué lo bloqueaste?',
+  '¿Quieres quedarte un ratito más antes de desbloquearlo?',
+  '¿Te vendría bien compañía ahora?',
+];
+
+const CELEBRATION_PHRASES = [
+  'El éxito es la suma de pequeños esfuerzos, repetidos día tras día. — Robert Collier',
+  'No importa cuán despacio vayas, siempre y cuando no te detengas. — Confucio',
+  'El futuro depende de lo que haces hoy. — Mahatma Gandhi',
+  'La disciplina es elegir entre lo que quieres ahora y lo que más quieres. — atribuida a Abraham Lincoln',
+  'No cuentes los días; haz que los días cuenten. — Muhammad Ali',
+  'Somos lo que hacemos repetidamente. — atribuida a Aristóteles',
+  'Nuestra mayor gloria no es no caer nunca, sino levantarnos cada vez que caemos. — atribuida a Confucio',
+  'Lo que haces cada día importa más que lo que haces de vez en cuando.',
+  'La perseverancia no es una carrera larga; son muchas carreras cortas, una tras otra. — Walter Elliot',
+  'La fuerza no viene de la capacidad física. Viene de una voluntad indomable. — Mahatma Gandhi',
+  'Lo hiciste. Esta vez elegiste por ti.',
+  '¿Ves? Sí podías.',
+  'Lo lograste. El impulso pasó y tú seguiste adelante.',
+  'Hoy ganaste una pequeña batalla contigo mismo.',
+  'No necesitabas ser más fuerte. Solo necesitabas aguantar un poquito más. Y lo hiciste.',
+  'Lo que acaba de pasar importa: elegiste no volver.',
+  'Esta vez no seguiste el impulso. Seguiste tu decisión.',
+  'Lo lograste incluso cuando tenías ganas de rendirte.',
+  'Quédate con esta sensación: pudiste hacerlo.',
+  'Acabas de demostrarte algo que quizá necesitabas recordar: sí puedes.',
+  'No fue suerte. Tomaste una decisión diferente.',
+  'Ese pequeño "no" que dijiste hoy puede significar mucho mañana.',
+  'Hoy te elegiste a ti.',
+  'Lo hiciste. Y nadie tuvo que hacerlo por ti.',
+  'Quizá parece pequeño, pero tú sabes lo difícil que fue.',
+  'Nadie vio este momento, pero tú sabes lo que acabas de conseguir.',
+  'No necesitas una gran victoria. Esta también cuenta.',
+  'El impulso quería una respuesta inmediata. Tú elegiste esperar.',
+  'Lo lograste. Ahora puedes seguir con tu día sabiendo que pudiste.',
+  'Guarda este momento para la próxima vez que dudes de ti.',
+  'Cada vez que eliges lo que realmente quieres sobre lo que quieres en este instante, te estás acercando a la persona que quieres ser.',
+  'La disciplina no siempre se siente como fuerza. A veces simplemente se siente como cerrar una página.',
+  'No cambiaste tu vida en cinco minutos. Pero sí cambiaste lo que hiciste durante esos cinco minutos.',
+  'Quizá mañana vuelvas a sentir el impulso. Cuando pase, recuerda que ya sabes que puedes dejarlo pasar.',
+  'No necesitas ganar para siempre. Solo necesitas ganar este momento.',
+  'Una decisión pequeña puede ser la primera señal de un cambio grande.',
+  'Hoy aprendiste que una emoción puede ser intensa sin tener que obedecerla.',
+  'No se trata de nunca tener ganas. Se trata de descubrir que no siempre tienes que hacer lo que tus ganas te dicen.',
+  'El orgullo que sientes ahora nació de una decisión que nadie más podía tomar por ti.',
+  'Quizá esto parezca pequeño para los demás. Pero tú sabes lo que significó.',
+];
+
+const COMPASSIONATE_PHRASES = [
+  'Está bien. De verdad. A veces simplemente cedemos. No tienes que castigarte por eso.',
+  'Bueno… pasó. Respira un poquito. Todavía puedes cerrar esto y seguir con tu día.',
+  'No te voy a juzgar. Solo fue un momento difícil.',
+  'Que hayas entrado no significa que hayas perdido. Todavía puedes decidir parar aquí.',
+  'No pasa nada si hoy te costó un poco más.',
+  'Sé que probablemente esperabas tener más fuerza esta vez. Pero no eres menos por haber cedido.',
+  'No tienes que sentirte mal contigo por esto. Mañana puedes volver a intentarlo.',
+  'Quizá hoy necesitabas un poco más de tiempo para estar listo. Y está bien.',
+  'No arruinaste nada. Una decisión que no salió como querías no borra todo lo demás.',
+  'Si te arrepentiste de haber entrado, todavía puedes cerrar la página. No tienes que quedarte.',
+  'No te quedes aquí solo porque ya entraste. Puedes irte ahora.',
+  'A veces sabemos exactamente qué queremos hacer… y aun así hacemos lo contrario. Somos humanos.',
+  'No tienes que explicarte ni justificarte. Solo respira y piensa qué quieres hacer ahora.',
+  'Quizá necesitabas comprobarlo una vez más. Ahora ya sabes cómo se siente.',
+  'No fue tu mejor momento. Eso es todo. No tiene que convertirse en algo más grande.',
+  'Mírate con un poquito de paciencia. Estás intentando cambiar algo y eso nunca es fácil.',
+  'No necesitas empezar de nuevo. Simplemente continúa desde aquí.',
+  'Si esto te hizo sentir mal, no te castigues por haberlo hecho. Úsalo para recordar por qué querías dejarlo.',
+  'Está bien tener días en los que cuesta más.',
+  'No tienes que ganar todas las veces. Solo tienes que seguir intentándolo.',
+  'Quizá hoy no pudiste resistir. Pero eso no significa que mañana tampoco puedas.',
+  'No eres débil. Tuviste un momento débil.',
+  'Lo que hiciste hace unos minutos no decide quién eres.',
+  'No necesitas sentir culpa para saber que quieres hacerlo diferente.',
+  'Puedes estar decepcionado contigo y aun así tratarte con cariño.',
+  'Ya pasó. No te quedes atrapado ahí.',
+  'Si necesitas un momento, tómalo. No tienes que decidir nada ahora.',
+  'Quizá hoy solo necesitabas que alguien te recordara que puedes volver a intentarlo.',
+  'No pasa nada. Cierra esto cuando estés listo y sigue.',
+  'Mañana nadie te va a preguntar si hoy fuiste perfecto. Solo importa que sigas cuidándote.',
+];
+
+let currentQuestionIndex = 0;
+const MOTIVATIONAL_QUESTIONS = pickRandomDistinct(REFLECTION_QUESTIONS_POOL, 3);
 const questionAnswers = ['', '', ''];
 
 // ---------------------------------------------------------------
@@ -134,8 +307,8 @@ function renderOfferedChat() {
   root.innerHTML =
     '<div class="center-block">' +
       '<div class="big-emoji">\u2609</div>' +
-      '<div class="title">' + escapeHtml(chrome.i18n.getMessage('offerChatTitle')) + '</div>' +
-      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('offerChatSub')) + '</div>' +
+      '<div class="title">' + escapeHtml(pickRandom(TALK_INVITE_PHRASES)) + '</div>' +
+      '<div class="sub">Conversa con alguien por unos minutos para despejarte \u2014 es gratis.</div>' +
     '</div>' +
     '<button class="btn btn-primary" id="btn-yes-chat">' + escapeHtml(chrome.i18n.getMessage('yesChatBtn')) + '</button>' +
     '<button class="btn-link" id="btn-no-chat">' + escapeHtml(chrome.i18n.getMessage('noChatBtn')) + '</button>';
@@ -305,19 +478,40 @@ function renderDonationPrompt() {
     '<div class="chip-row" id="donation-chips">' +
       DONATION_SUGGESTED_AMOUNTS_USD.map((amt) => '<div class="chip" data-amount="' + amt + '">$' + amt + '</div>').join('') +
     '</div>' +
+    '<div class="custom-amount-row">' +
+      '<span class="custom-amount-prefix">$</span>' +
+      '<input type="number" id="donation-custom" min="0" step="0.01" placeholder="Otro monto">' +
+    '</div>' +
     '<button class="btn btn-primary" id="btn-donate" disabled>' + escapeHtml(chrome.i18n.getMessage('donateBtn')) + '</button>' +
     '<button class="btn-link" id="btn-skip-donation">' + escapeHtml(chrome.i18n.getMessage('skipDonationBtn')) + '</button>';
 
   let selectedAmount = null;
+  const customInput = document.getElementById('donation-custom');
+  const donateBtn = document.getElementById('btn-donate');
+
   document.querySelectorAll('#donation-chips .chip').forEach((chip) => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('#donation-chips .chip').forEach((c) => c.classList.remove('selected'));
       chip.classList.add('selected');
+      customInput.value = '';
       selectedAmount = Number(chip.dataset.amount);
-      const btn = document.getElementById('btn-donate');
-      btn.disabled = false;
-      btn.textContent = chrome.i18n.getMessage('donateAmountBtn', [String(selectedAmount)]);
+      donateBtn.disabled = false;
+      donateBtn.textContent = chrome.i18n.getMessage('donateAmountBtn', [String(selectedAmount)]);
     });
+  });
+
+  customInput.addEventListener('input', () => {
+    const value = parseFloat(customInput.value);
+    if (!value || value <= 0) {
+      selectedAmount = null;
+      donateBtn.disabled = true;
+      donateBtn.textContent = escapeHtml(chrome.i18n.getMessage('donateBtn'));
+      return;
+    }
+    document.querySelectorAll('#donation-chips .chip').forEach((c) => c.classList.remove('selected'));
+    selectedAmount = value;
+    donateBtn.disabled = false;
+    donateBtn.textContent = chrome.i18n.getMessage('donateAmountBtn', [value.toFixed(2)]);
   });
 
   document.getElementById('btn-donate').addEventListener('click', async () => {
@@ -325,7 +519,7 @@ function renderDonationPrompt() {
     const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
     const { data } = await createCheckoutSession({
       kind: 'donation',
-      amountCents: selectedAmount * 100,
+      amountCents: Math.round(selectedAmount * 100),
       metadata: { chatId: attempt.chatId || null, companionId: attempt.companionId || null },
     });
     window.open(data.url, '_blank'); // El checkout SIEMPRE en pestaña externa, nunca dentro de la extensión
@@ -365,11 +559,38 @@ function renderFinalConfirmation() {
 
 function renderStayedBlocked() {
   root.innerHTML =
-    '<div class="center-block">' +
-      '<div class="big-emoji">\ud83c\udf3f</div>' +
+    '<div class="celebrate-block">' +
+      '<div class="confetti-layer" id="confetti-layer"></div>' +
+      '<div class="trophy-wrap">' +
+        '<span class="sparkle sparkle-1">\u2728</span>' +
+        '<span class="trophy">\ud83c\udfc6</span>' +
+        '<span class="sparkle sparkle-2">\ud83c\udf89</span>' +
+      '</div>' +
+      '<div class="celebrate-faces">\ud83d\ude04 \ud83d\ude4c \ud83c\udf8a</div>' +
       '<div class="title">' + escapeHtml(chrome.i18n.getMessage('stayedBlockedTitle')) + '</div>' +
-      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('stayedBlockedSub')) + '</div>' +
+      '<div class="sub">' + escapeHtml(pickRandom(CELEBRATION_PHRASES)) + '</div>' +
     '</div>';
+
+  spawnConfetti();
+}
+
+const CONFETTI_COLORS = ['#B0503F', '#BE7A42', '#6E8768', '#D9A441', '#3E4E37'];
+
+function spawnConfetti() {
+  const layer = document.getElementById('confetti-layer');
+  if (!layer) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  for (let i = 0; i < 36; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+    piece.style.animationDuration = (1.8 + Math.random() * 1.4) + 's';
+    piece.style.animationDelay = (Math.random() * 0.6) + 's';
+    piece.style.transform = 'rotate(' + Math.floor(Math.random() * 360) + 'deg)';
+    layer.appendChild(piece);
+  }
 }
 
 // ---------------------------------------------------------------
@@ -442,7 +663,7 @@ function renderUnlocked() {
     '<div class="center-block">' +
       '<div class="big-emoji">\u2713</div>' +
       '<div class="title">' + escapeHtml(chrome.i18n.getMessage('unlockedTitle', [domain])) + '</div>' +
-      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('unlockedSub')) + '</div>' +
+      '<div class="sub">' + escapeHtml(pickRandom(COMPASSIONATE_PHRASES)) + '</div>' +
     '</div>';
 }
 
