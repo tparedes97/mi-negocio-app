@@ -395,7 +395,7 @@ function renderChatMessages(containerEl, messages) {
   }
   containerEl.innerHTML = messages.map((m) => `
     <div class="chat-msg ${m.from === 'user' ? 'user' : ''}">
-      <div class="who">${m.from === 'user' ? 'Vos' : 'Tu acompañante'}</div>
+      <div class="who">${m.from === 'user' ? 'Vos' : 'Tu persona de apoyo'}</div>
       ${escapeHtmlDash(m.text || '')}
     </div>`).join('');
 }
@@ -455,9 +455,9 @@ function renderMetrics() {
 
   el.innerHTML = `
     <div class="metric-tile"><div class="n">${total}</div><div class="l">Intentos de desbloqueo</div></div>
-    <div class="metric-tile"><div class="n">${talked}</div><div class="l">Veces que hablaste con un acompañante</div></div>
+    <div class="metric-tile"><div class="n">${talked}</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
     <div class="metric-tile"><div class="n">${resisted}</div><div class="l">Veces que te quedaste bloqueado</div></div>
     <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">Gastado en desbloqueos (${unlocked} pagos)</div></div>
-    <div class="metric-note">Hablar con tu acompañante siempre es gratis — lo único que tiene costo es el desbloqueo temporal, y solo si lo confirmás.</div>
+    <div class="metric-note">Hablar con tu persona de apoyo siempre es gratis — lo único que tiene costo es el desbloqueo temporal, y solo si lo confirmás.</div>
   `;
 }
