@@ -7,11 +7,15 @@
   --danger-dim:#F3DDD6;
 }
 
+/* La pantalla de bloqueo siempre ocupa toda la ventana — en celular y
+   en escritorio por igual. Nada de una tarjeta chica flotando en medio
+   de un fondo vacío ni corrida a un costado: el contenido llena el
+   alto completo, con un ancho legible centrado en pantallas anchas. */
 body.blocked-page{
   width:auto;
   min-height:100vh;
   display:flex;
-  align-items:center;
+  align-items:flex-start;
   justify-content:center;
   background:var(--page-bg);
   background-image:
@@ -19,15 +23,17 @@ body.blocked-page{
     radial-gradient(circle at 88% 92%, rgba(110,135,104,0.08), transparent 42%);
 }
 
-.blocked-shell{ width:420px; max-width:100%; padding:32px; }
-.blocked-shell .app-header{ margin-bottom:20px; }
-.blocked-shell .brand{ font-size:24px; }
+.blocked-shell{
+  width:100%;
+  max-width:640px;
+  min-height:100vh;
+  padding:48px 40px 56px;
+}
+.blocked-shell .app-header{ margin-bottom:24px; }
+.blocked-shell .brand{ font-size:26px; }
 
-/* En pantallas de celular, esto pasa a ocupar toda la pantalla —
-   nada de quedar como una tarjeta chica corrida a un costado. */
 @media (max-width:520px){
-  body.blocked-page{ align-items:flex-start; }
-  .blocked-shell{ width:100%; min-height:100vh; padding:28px 22px 40px; }
+  .blocked-shell{ padding:28px 22px 40px; }
 }
 
 .loading-state{ text-align:center; color:var(--text-muted); font-size:13px; padding:40px 0; }
