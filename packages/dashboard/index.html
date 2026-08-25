@@ -383,16 +383,28 @@
       radial-gradient(60% 80% at 0% 100%, rgba(110,135,104,0.45), transparent 55%),
       linear-gradient(135deg, #C2793F 0%, #9A3412 62%, #7C2D12 100%);
   }
+  /* La foto es panorámica (1408×656) — el mismo recorte "de cerca" del
+     hero principal depende de que la columna sea casi cuadrada, no
+     ancha y baja. Sin este alto mínimo, a este ancho de columna se ve
+     casi toda la foto (puños incluidos) en vez de encuadrar la cara. */
+  @media (min-width:860px){ .top-hero{ min-height:560px; } }
   .top-hero-inner{ position:relative; z-index:1; max-width:960px; margin:0 auto; }
   @media (min-width:860px){ .top-hero-inner{ max-width:480px; margin:0; } }
   .top-hero-photo{ display:none; }
   @media (min-width:860px){ .top-hero-photo{ display:block; } }
-  .top-hero-photo img{ object-position:center 18%; }
   .top-hero-seam{ display:none; }
   @media (min-width:860px){ .top-hero-seam{ display:block; } }
   .top-hero .brand{ margin-bottom:0; text-align:left; color:#FBF3E7; }
   .top-hero .brand span{ color:#F3C892; }
   .top-hero-tagline{ font-size:15px; color:rgba(251,243,231,0.82); margin-top:10px; max-width:38ch; line-height:1.6; }
+  /* Misma foto que el hero mobile, para que el banner post-login no se
+     quede sin imagen en pantallas chicas — exactamente el mismo trato
+     que .hero-photo-mobile, solo que aquí no hay texto debajo. */
+  .top-hero-photo-mobile{ width:100%; max-width:340px; border-radius:20px; overflow:hidden; position:relative; margin-top:20px; }
+  @media (min-width:860px){ .top-hero-photo-mobile{ display:none; } }
+  .top-hero-photo-mobile img{ display:block; width:100%; aspect-ratio:4/5; object-fit:cover; object-position:center 14%; }
+  .top-hero-photo-mobile::after{ content:''; position:absolute; inset:0; background:linear-gradient(0deg, rgba(30,14,4,0.55), rgba(30,14,4,0) 55%); }
+  .top-hero-photo-mobile .hero-photo-quote{ left:16px; right:16px; bottom:18px; text-align:left; font-size:13px; }
   .user-bar{ display:flex; align-items:center; justify-content:space-between; margin-top:30px; padding-top:20px; border-top:1px solid rgba(251,243,231,0.2); }
   .user-bar .email{ font-size:13px; color:rgba(251,243,231,0.85); }
   .user-bar .btn-link{ color:rgba(251,243,231,0.85); }
@@ -974,6 +986,10 @@
     <div class="hero-blob b3"></div>
     <div class="hero-photo-panel top-hero-photo">
       <img src="assets/hero-photo.jpg" alt="" width="900" height="1200">
+      <div class="hero-photo-quote">
+        "No es que tengamos poco tiempo, sino que perdemos mucho."
+        <cite>— Séneca</cite>
+      </div>
     </div>
     <div class="hero-seam top-hero-seam"></div>
     <div class="icon-rail">
@@ -988,6 +1004,13 @@
       <div class="hero-eyebrow">Tu cuenta</div>
       <div class="brand">Limen<span>.</span></div>
       <div class="top-hero-tagline">Tu espacio para decidir con calma qué bloquear, cuándo, y por qué.</div>
+      <div class="top-hero-photo-mobile">
+        <img src="assets/hero-photo.jpg" alt="" width="480" height="600">
+        <div class="hero-photo-quote">
+          "No es que tengamos poco tiempo, sino que perdemos mucho."
+          <cite>— Séneca</cite>
+        </div>
+      </div>
       <div class="user-bar">
         <span class="email" id="user-email"></span>
         <button class="btn-link" id="btn-logout">Cerrar sesión</button>
