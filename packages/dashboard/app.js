@@ -6,10 +6,14 @@ import {
   getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, limit, getDocs,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
+import { t, LANG, applyStaticTranslations } from './i18n.js';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+document.documentElement.lang = LANG;
+applyStaticTranslations();
 
 // Chrome Web Store asigna este ID apenas se sube el primer paquete (incluso
 // en borrador) — el link empieza a funcionar solo cuando Google aprueba la
@@ -65,7 +69,7 @@ async function handleGoogleLogin() {
     await signInWithPopup(auth, new GoogleAuthProvider());
     // onAuthStateChanged se encarga de mostrar el app-shell
   } catch (err) {
-    errorEl.textContent = 'No se pudo iniciar sesión. Intenta de nuevo.';
+    errorEl.textContent = t('login.error');
     console.error('[limen-dashboard] error de login', err);
   }
 }
@@ -146,7 +150,7 @@ const ICON_CLOSE = '<svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/>
 function scheduleSummary(site) {
   const days = Object.keys(site.schedule || {});
   if (!days.length) return '';
-  const DAY_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  const DAY_LABELS = [t('days.mon'), t('days.tue'), t('days.wed'), t('days.thu'), t('days.fri'), t('days.sat'), t('days.sun')];
   const window = Object.values(site.schedule)[0];
   const dayList = days.map((d) => DAY_LABELS[Number(d)]).join(', ');
   return dayList + ' · ' + String(window.startHour).padStart(2, '0') + ':00–' + (window.endHour === 24 ? '24:00' : String(window.endHour).padStart(2, '0') + ':00');
@@ -155,7 +159,7 @@ function scheduleSummary(site) {
 function renderSiteList() {
   const el = document.getElementById('site-list');
   if (!currentSites.length) {
-    el.innerHTML = '<div class="sub">Todavía no agregaste ningún sitio.</div>';
+    el.innerHTML = `<div class="sub">${t('sites.empty')}</div>`;
     return;
   }
 
@@ -169,17 +173,17 @@ function renderSiteList() {
             <div class="name"><span class="dot"></span>${site.domain}</div>
             <div class="meta">${scheduleSummary(site)}</div>
           </div>
-          <span class="lock-badge" title="No puedes editar ni quitar esto mientras está bloqueado. Solo puedes hacerlo en las horas libres de este sitio.">${ICON_LOCK}</span>
+          <span class="lock-badge" title="${t('sites.lockTooltip')}">${ICON_LOCK}</span>
         </div>`;
     }
 
     if (confirmingRemovalIds.has(site.id)) {
       return `
         <div class="site-row confirming">
-          <b>¿Eliminar el bloqueo de ${site.domain}?</b>
+          <b>${t('sites.confirmRemove', { domain: site.domain })}</b>
           <div class="confirm-actions">
-            <button class="confirm-yes" data-confirm-remove="${site.id}">Sí, eliminar</button>
-            <button class="confirm-no" data-cancel-remove="${site.id}">No</button>
+            <button class="confirm-yes" data-confirm-remove="${site.id}">${t('sites.confirmYes')}</button>
+            <button class="confirm-no" data-cancel-remove="${site.id}">${t('sites.confirmNo')}</button>
           </div>
         </div>`;
     }
@@ -191,8 +195,8 @@ function renderSiteList() {
           <div class="meta">${scheduleSummary(site)}</div>
         </div>
         <div class="actions">
-          <button data-edit="${site.id}" aria-label="Editar ${site.domain}">${ICON_EDIT}</button>
-          <button data-remove="${site.id}" aria-label="Quitar ${site.domain}">${ICON_CLOSE}</button>
+          <button data-edit="${site.id}" aria-label="${t('sites.editAria', { domain: site.domain })}">${ICON_EDIT}</button>
+          <button data-remove="${site.id}" aria-label="${t('sites.removeAria', { domain: site.domain })}">${ICON_CLOSE}</button>
         </div>
       </div>`;
   }).join('');
@@ -235,7 +239,7 @@ domainInput.addEventListener('input', clearDomainError);
 async function addCurrentDomain() {
   const value = normalizeDomain(domainInput.value);
   if (!value || !isValidDomain(value)) {
-    showDomainError('Eso no parece un sitio válido. Escribe solo el dominio, por ejemplo instagram.com (sin "https://").');
+    showDomainError(t('addSite.invalidDomain'));
     return;
   }
   clearDomainError();
@@ -255,7 +259,7 @@ domainInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addCurre
 // Horario + motivo (mismo diseño que el popup de la extensión — ver
 // prototype-reference.html, pantalla "Configurar horario")
 // ---------------------------------------------------------------
-const DAY_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+const DAY_LABELS = [t('days.mon'), t('days.tue'), t('days.wed'), t('days.thu'), t('days.fri'), t('days.sat'), t('days.sun')];
 const scheduleCard = document.getElementById('schedule-card');
 const dayTogglesEl = document.getElementById('day-toggles');
 const selectStart = document.getElementById('select-start');
@@ -320,7 +324,7 @@ reasonWhyEl.addEventListener('input', () => {
 document.getElementById('btn-save-schedule').addEventListener('click', async () => {
   const reasonWhy = reasonWhyEl.value.trim();
   if (!reasonWhy) {
-    reasonWhyErrorEl.textContent = 'Cuéntanos aunque sea brevemente por qué — ayuda a que la decisión pese más.';
+    reasonWhyErrorEl.textContent = t('schedule.whyRequired');
     reasonWhyErrorEl.style.display = 'block';
     reasonWhyEl.style.borderColor = 'var(--danger)';
     reasonWhyEl.focus();
@@ -347,14 +351,14 @@ document.getElementById('btn-save-schedule').addEventListener('click', async () 
 // cada conversación se cargan recién al expandir, desde chats/{chatId}/messages.
 // ---------------------------------------------------------------
 const ATTEMPT_STATE_LABELS = {
-  motivational_questions: 'Pensándolo',
-  offered_chat: 'Le ofrecieron hablar',
-  queued: 'Esperando a alguien',
-  donation_prompt: 'Terminó de hablar',
-  final_confirmation: 'Decidiendo',
-  fee_selection: 'Eligiendo desbloqueo',
-  stayed_blocked: 'Se quedó bloqueado',
-  unlocked: 'Desbloqueó',
+  motivational_questions: () => t('state.motivational_questions'),
+  offered_chat: () => t('state.offered_chat'),
+  queued: () => t('state.queued'),
+  donation_prompt: () => t('state.donation_prompt'),
+  final_confirmation: () => t('state.final_confirmation'),
+  fee_selection: () => t('state.fee_selection'),
+  stayed_blocked: () => t('state.stayed_blocked'),
+  unlocked: () => t('state.unlocked'),
 };
 
 function attemptStateBadgeClass(state) {
@@ -364,18 +368,18 @@ function attemptStateBadgeClass(state) {
 }
 
 function formatAttemptWhen(createdAt) {
-  if (!createdAt?.toDate) return 'Justo ahora';
-  return createdAt.toDate().toLocaleString('es', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  if (!createdAt?.toDate) return t('chats.justNow');
+  return createdAt.toDate().toLocaleString(LANG, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 }
 
 const loadedChatMessages = new Map();
 
 async function toggleChatMessages(chatId, containerEl, toggleBtn) {
   const isOpen = containerEl.classList.toggle('open');
-  toggleBtn.textContent = isOpen ? 'Ocultar conversación ▲' : 'Ver conversación ▼';
+  toggleBtn.textContent = isOpen ? t('chats.hideConversation') : t('chats.viewConversation');
   if (!isOpen || loadedChatMessages.has(chatId)) return;
 
-  containerEl.innerHTML = '<div class="sub">Cargando mensajes…</div>';
+  containerEl.innerHTML = `<div class="sub">${t('chats.loadingMessages')}</div>`;
   try {
     const messagesQuery = query(collection(db, 'chats', chatId, 'messages'), orderBy('sentAt', 'asc'));
     const snap = await getDocs(messagesQuery);
@@ -384,18 +388,18 @@ async function toggleChatMessages(chatId, containerEl, toggleBtn) {
     renderChatMessages(containerEl, messages);
   } catch (err) {
     console.error('[limen-dashboard] error cargando mensajes del chat', err);
-    containerEl.innerHTML = '<div class="field-error">No se pudo cargar la conversación.</div>';
+    containerEl.innerHTML = `<div class="field-error">${t('chats.errorLoad')}</div>`;
   }
 }
 
 function renderChatMessages(containerEl, messages) {
   if (!messages.length) {
-    containerEl.innerHTML = '<div class="sub">No hubo mensajes en esta conversación.</div>';
+    containerEl.innerHTML = `<div class="sub">${t('chats.noMessages')}</div>`;
     return;
   }
   containerEl.innerHTML = messages.map((m) => `
     <div class="chat-msg ${m.from === 'user' ? 'user' : ''}">
-      <div class="who">${m.from === 'user' ? 'Vos' : 'Tu persona de apoyo'}</div>
+      <div class="who">${m.from === 'user' ? t('chats.you') : t('chats.yourSupport')}</div>
       ${escapeHtmlDash(m.text || '')}
     </div>`).join('');
 }
@@ -407,7 +411,7 @@ function escapeHtmlDash(str) {
 function renderChatsList() {
   const el = document.getElementById('chats-list');
   if (!currentAttempts.length) {
-    el.innerHTML = '<div class="sub">Todavía no tuviste ningún intento de desbloqueo — buena señal.</div>';
+    el.innerHTML = `<div class="sub">${t('chats.empty')}</div>`;
     return;
   }
 
@@ -418,10 +422,10 @@ function renderChatsList() {
           <div class="chat-attempt-domain"><span class="m-dot" style="width:6px;height:6px;border-radius:50%;background:var(--amber);"></span>${escapeHtmlDash(a.domain || '')}</div>
           <div class="chat-attempt-when">${formatAttemptWhen(a.createdAt)}</div>
         </div>
-        <span class="chat-state-badge ${attemptStateBadgeClass(a.state)}">${ATTEMPT_STATE_LABELS[a.state] || a.state}</span>
+        <span class="chat-state-badge ${attemptStateBadgeClass(a.state)}">${ATTEMPT_STATE_LABELS[a.state] ? ATTEMPT_STATE_LABELS[a.state]() : a.state}</span>
       </div>
       ${a.chatId ? `
-        <button class="chat-toggle-messages" data-toggle-chat="${a.chatId}">Ver conversación ▼</button>
+        <button class="chat-toggle-messages" data-toggle-chat="${a.chatId}">${t('chats.viewConversation')}</button>
         <div class="chat-messages" data-messages="${a.chatId}"></div>
       ` : ''}
     </div>`).join('');
@@ -502,13 +506,13 @@ const MILESTONES = [
 
 function renderMilestones(bestStreak) {
   return `<div class="milestone-row">${MILESTONES.map((m) => `
-    <div class="milestone ${bestStreak >= m.days ? 'unlocked' : ''}" title="${bestStreak >= m.days ? 'Alcanzado' : `Te faltan ${m.days - bestStreak} días`}">
+    <div class="milestone ${bestStreak >= m.days ? 'unlocked' : ''}" title="${bestStreak >= m.days ? t('milestone.reached') : t('milestone.remaining', { n: m.days - bestStreak })}">
       <div class="m-icon">${m.icon}</div>
-      <div class="m-n">${m.days} días</div>
+      <div class="m-n">${t('milestone.days', { n: m.days })}</div>
     </div>`).join('')}</div>`;
 }
 
-const WEEKDAY_LABELS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const WEEKDAY_LABELS = [t('weekday.0'), t('weekday.1'), t('weekday.2'), t('weekday.3'), t('weekday.4'), t('weekday.5'), t('weekday.6')];
 
 function computePatternInsight(attempts) {
   const withDate = attempts.filter((a) => a.createdAt?.toDate);
@@ -557,7 +561,7 @@ function renderChart(attempts) {
   const unlockedData = [];
   for (let i = daysToShow - 1; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
-    labels.push(d.toLocaleDateString('es', { weekday: 'short' }).replace('.', ''));
+    labels.push(d.toLocaleDateString(LANG, { weekday: 'short' }).replace('.', ''));
     const key = dayKey(d);
     const dayAttempts = attempts.filter((a) => a.createdAt?.toDate && dayKey(a.createdAt.toDate()) === key);
     resistedData.push(dayAttempts.filter((a) => a.state === 'stayed_blocked').length);
@@ -570,8 +574,8 @@ function renderChart(attempts) {
     data: {
       labels,
       datasets: [
-        { label: 'Te quedaste bloqueado', data: resistedData, backgroundColor: '#8FAE84', borderRadius: 4, maxBarThickness: 22 },
-        { label: 'Desbloqueaste', data: unlockedData, backgroundColor: '#C97C5F', borderRadius: 4, maxBarThickness: 22 },
+        { label: t('chart.legendResisted'), data: resistedData, backgroundColor: '#8FAE84', borderRadius: 4, maxBarThickness: 22 },
+        { label: t('chart.legendUnlocked'), data: unlockedData, backgroundColor: '#C97C5F', borderRadius: 4, maxBarThickness: 22 },
       ],
     },
     options: {
@@ -599,8 +603,8 @@ function renderStreakDots(attempts) {
   for (let i = daysToShow - 1; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
     const held = !unlockedDays.has(dayKey(d));
-    const label = d.toLocaleDateString('es', { day: 'numeric', month: 'short' });
-    dots += `<span class="streak-dot ${held ? 'held' : 'broken'}" title="${label}${held ? ' · cumplido' : ' · desbloqueaste'}"></span>`;
+    const label = d.toLocaleDateString(LANG, { day: 'numeric', month: 'short' });
+    dots += `<span class="streak-dot ${held ? 'held' : 'broken'}" title="${label} · ${held ? t('streak.dotHeld') : t('streak.dotBroken')}"></span>`;
   }
   return dots;
 }
@@ -619,15 +623,15 @@ function renderMetrics() {
       <div class="streak-row">
         <div class="streak-main">
           <div class="streak-num"><span class="fire">🔥</span>${streak}</div>
-          <div class="streak-label">${streak === 1 ? 'día cumplido seguido' : 'días cumplidos seguidos'}</div>
+          <div class="streak-label">${streak === 1 ? t('streak.dayOne') : t('streak.dayMany')}</div>
         </div>
         <div class="streak-best">
           <div class="streak-best-n">${bestStreak}</div>
-          <div class="streak-best-l">récord</div>
+          <div class="streak-best-l">${t('streak.record')}</div>
         </div>
       </div>
       <div class="streak-dots">${renderStreakDots(currentAttempts)}</div>
-      <div class="streak-since">Programando con Limen hace ${daysSinceStart} ${daysSinceStart === 1 ? 'día' : 'días'} — sin pagar por saltarte un bloqueo.</div>
+      <div class="streak-since">${t(daysSinceStart === 1 ? 'streak.sinceOne' : 'streak.sinceMany', { n: daysSinceStart })}</div>
     </div>`;
 
   const milestonesBlock = renderMilestones(bestStreak);
@@ -635,15 +639,15 @@ function renderMetrics() {
   if (!total) {
     el.innerHTML = streakBlock + milestonesBlock + `
       <div class="metrics-preview">
-        <div class="eyebrow">Ejemplo — todavía no tenés datos propios</div>
-        <div class="sub">Así se va a ver esta sección apenas tengas tu primer intento de desbloqueo, con gráfico de tu semana y todo:</div>
+        <div class="eyebrow">${t('metrics.exampleEyebrow')}</div>
+        <div class="sub">${t('metrics.exampleSub')}</div>
         <div class="metric-grid ghost">
-          <div class="metric-tile"><div class="n">6</div><div class="l">Intentos de desbloqueo</div></div>
-          <div class="metric-tile"><div class="n">4</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
-          <div class="metric-tile"><div class="n">3</div><div class="l">Veces que te quedaste bloqueado</div></div>
-          <div class="metric-tile"><div class="n">$8.00</div><div class="l">Gastado en desbloqueos (2 pagos)</div></div>
-          <div class="metric-tile"><div class="n">75%</div><div class="l">Tasa de éxito, sobre 4 decisiones tomadas</div></div>
-          <div class="metric-tile"><div class="n" style="font-size:19px;">instagram.com</div><div class="l">Tu sitio más tentador (3 intentos)</div></div>
+          <div class="metric-tile"><div class="n">6</div><div class="l">${t('metrics.example.attempts')}</div></div>
+          <div class="metric-tile"><div class="n">4</div><div class="l">${t('metrics.example.talked')}</div></div>
+          <div class="metric-tile"><div class="n">3</div><div class="l">${t('metrics.example.resisted')}</div></div>
+          <div class="metric-tile"><div class="n">$8.00</div><div class="l">${t('metrics.example.spent')}</div></div>
+          <div class="metric-tile"><div class="n">75%</div><div class="l">${t('metrics.example.successRate')}</div></div>
+          <div class="metric-tile"><div class="n" style="font-size:19px;">instagram.com</div><div class="l">${t('metrics.example.topSite')}</div></div>
         </div>
       </div>`;
     return;
@@ -664,39 +668,39 @@ function renderMetrics() {
   const insightRow = `
     <div class="insight-row">
       <div class="insight-card">
-        <div class="k">Tu patrón</div>
+        <div class="k">${t('insight.pattern')}</div>
         ${pattern
-          ? `<p>Los <strong>${WEEKDAY_LABELS[pattern.day]} a las ${String(pattern.hour).padStart(2, '0')}:00</strong> es tu momento más difícil — ahí cayeron ${pattern.count} de tus ${pattern.total} intentos.</p>`
-          : '<p>Todavía no hay suficientes intentos para ver un patrón por día y hora — va a aparecer solo.</p>'}
+          ? `<p>${t('insight.patternText', { weekday: WEEKDAY_LABELS[pattern.day], hour: String(pattern.hour).padStart(2, '0'), count: pattern.count, total: pattern.total })}</p>`
+          : `<p>${t('insight.patternEmpty')}</p>`}
       </div>
       <div class="insight-card">
-        <div class="k">Esta semana vs. la anterior</div>
+        <div class="k">${t('insight.weekCompare')}</div>
         <div class="big">
           <span class="v">${week.thisWeekResisted}</span>
-          <span>días cumplidos esta semana</span>
+          <span>${t('insight.daysThisWeek')}</span>
         </div>
         <p style="margin-top:6px;">${
-          weekDelta > 0 ? `<span class="d up">▲ ${weekDelta} más</span> que la semana pasada (${week.lastWeekResisted}).`
-          : weekDelta < 0 ? `<span class="d down">▼ ${Math.abs(weekDelta)} menos</span> que la semana pasada (${week.lastWeekResisted}).`
-          : `Igual que la semana pasada (${week.lastWeekResisted}).`
+          weekDelta > 0 ? `<span class="d up">${t('insight.moreThanLastWeek', { n: weekDelta, m: week.lastWeekResisted })}`
+          : weekDelta < 0 ? `<span class="d down">${t('insight.lessThanLastWeek', { n: Math.abs(weekDelta), m: week.lastWeekResisted })}`
+          : t('insight.sameAsLastWeek', { m: week.lastWeekResisted })
         }</p>
       </div>
     </div>`;
 
   el.innerHTML = streakBlock + milestonesBlock + insightRow + `
     <div class="chart-card">
-      <div class="k">Últimos días</div>
+      <div class="k">${t('chart.title')}</div>
       <div class="chart-wrap"><canvas id="metrics-chart"></canvas></div>
     </div>
     <div class="metric-grid">
-      <div class="metric-tile"><div class="n">${total}</div><div class="l">Intentos de desbloqueo</div></div>
-      <div class="metric-tile"><div class="n">${talked}</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
-      <div class="metric-tile"><div class="n">${resisted}</div><div class="l">Veces que te quedaste bloqueado</div></div>
-      <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">Gastado en desbloqueos (${unlocked} pagos)</div></div>
-      ${successRate !== null ? `<div class="metric-tile"><div class="n">${successRate}%</div><div class="l">Tasa de éxito, sobre ${decided} decisiones tomadas</div></div>` : ''}
-      ${topSite ? `<div class="metric-tile"><div class="n" style="font-size:19px;">${escapeHtmlDash(topSite[0])}</div><div class="l">Tu sitio más tentador (${topSite[1]} ${topSite[1] === 1 ? 'intento' : 'intentos'})</div></div>` : ''}
-      ${donatedCents ? `<div class="metric-tile"><div class="n">$${(donatedCents / 100).toFixed(2)}</div><div class="l">Donado a tu persona de apoyo</div></div>` : ''}
-      <div class="metric-note">Hablar con tu persona de apoyo siempre es gratis — lo único que tiene costo es el desbloqueo temporal, y solo si lo confirmás.</div>
+      <div class="metric-tile"><div class="n">${total}</div><div class="l">${t('metrics.attempts')}</div></div>
+      <div class="metric-tile"><div class="n">${talked}</div><div class="l">${t('metrics.talked')}</div></div>
+      <div class="metric-tile"><div class="n">${resisted}</div><div class="l">${t('metrics.resisted')}</div></div>
+      <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">${t('metrics.spent', { n: unlocked })}</div></div>
+      ${successRate !== null ? `<div class="metric-tile"><div class="n">${successRate}%</div><div class="l">${t('metrics.successRate', { n: decided })}</div></div>` : ''}
+      ${topSite ? `<div class="metric-tile"><div class="n" style="font-size:19px;">${escapeHtmlDash(topSite[0])}</div><div class="l">${t(topSite[1] === 1 ? 'metrics.topSiteOne' : 'metrics.topSiteMany', { n: topSite[1] })}</div></div>` : ''}
+      ${donatedCents ? `<div class="metric-tile"><div class="n">$${(donatedCents / 100).toFixed(2)}</div><div class="l">${t('metrics.donated')}</div></div>` : ''}
+      <div class="metric-note">${t('metrics.freeNote')}</div>
     </div>`;
 
   renderChart(currentAttempts);
