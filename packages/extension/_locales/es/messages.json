@@ -66,7 +66,8 @@
   "stillWantBtn": { "message": "Aún quiero seguir" },
 
   "offerChatTitle": { "message": "¿Deseas hablar con alguien antes de continuar?" },
-  "offerChatSub": { "message": "Una persona real — no un bot — puede acompañarte 5 minutos antes de que decidas, sin costo." },
+  "offerChatSub": { "message": "Conversa con alguien por unos minutos para despejarte — es gratis." },
+  "donationCustomPlaceholder": { "message": "Otro monto" },
   "yesChatBtn": { "message": "Sí, quiero hablar 5 min" },
   "noChatBtn": { "message": "No, continuar sin hablar" },
 

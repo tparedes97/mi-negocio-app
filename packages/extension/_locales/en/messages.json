@@ -66,7 +66,8 @@
   "stillWantBtn": { "message": "I still want to continue" },
 
   "offerChatTitle": { "message": "Do you want to talk to someone before continuing?" },
-  "offerChatSub": { "message": "A real person — not a bot — can be with you for 5 minutes before you decide, at no cost." },
+  "offerChatSub": { "message": "Talk to someone for a few minutes to clear your head — it's free." },
+  "donationCustomPlaceholder": { "message": "Other amount" },
   "yesChatBtn": { "message": "Yes, I want to talk for 5 min" },
   "noChatBtn": { "message": "No, continue without talking" },
 

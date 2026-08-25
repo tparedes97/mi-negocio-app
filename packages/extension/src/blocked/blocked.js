@@ -34,12 +34,13 @@ let unsubscribeChat = null;
 let unsubscribeMessages = null;
 let chatTimerInterval = null;
 // ---------------------------------------------------------------
-// Pools de frases — contenido provisto por la fundadora, en español
-// únicamente (no hay traducción al inglés todavía; si algún día hace
-// falta, se agrega como _locales/en igual que el resto de la copia).
-// Cada intento de desbloqueo saca su propia selección al azar.
+// Pools de frases — contenido provisto por la fundadora. Cada intento
+// de desbloqueo saca su propia selección al azar. Existen en español e
+// inglés (no traducciones literales — se buscó el mismo tono cálido en
+// cada idioma, ajustando alguna palabra donde hacía falta); se elige el
+// pool según chrome.i18n.getUILanguage(), igual que el resto de la copia.
 // ---------------------------------------------------------------
-const REFLECTION_QUESTIONS_POOL = [
+const REFLECTION_QUESTIONS_POOL_ES = [
   'Si lo bloqueaste por una razón, recuerda cuál era antes de deshacerlo.',
   'A veces volver a abrir una puerta no significa que hayas cambiado; significa que olvidaste por qué la cerraste.',
   '¿Realmente quieres entrar, o solo quieres comprobar si todavía puedes?',
@@ -92,6 +93,59 @@ const REFLECTION_QUESTIONS_POOL = [
   'Antes de desbloquearlo: respira, espera un momento y pregúntate si tu yo de mañana te lo agradecerá.',
 ];
 
+const REFLECTION_QUESTIONS_POOL_EN = [
+  "If you blocked it for a reason, remember what that reason was before you undo it.",
+  "Sometimes reopening a door doesn't mean you've changed — it means you forgot why you closed it.",
+  "Do you really want in, or do you just want to check if you still can?",
+  "What you're looking for probably isn't on the other side of that block.",
+  "Yesterday's decision deserves to be heard too.",
+  "If blocking it gave you peace of mind, what are you hoping to find by unblocking it?",
+  "Not everything you miss deserves to be part of your life again.",
+  "Before you unblock it, ask yourself what you expect to be different this time.",
+  "Sometimes curiosity disguises itself as need.",
+  "You blocked it when you were trying to protect yourself. What's changed?",
+  "Don't confuse wanting it with it being a good decision.",
+  "Maybe you don't need to go back. Maybe you need to keep moving forward.",
+  "Do you want in because you really need it, or because you miss it?",
+  "Some decisions hurt at first and you're grateful for them later.",
+  "Closing a door can also be a way of taking care of yourself.",
+  "If the version of you from a few days ago decided to block it, maybe they had something to tell you.",
+  "You don't need to touch a wound to know it still hurts.",
+  "Is it worth risking your peace of mind for a few minutes of curiosity?",
+  "Sometimes unblocking doesn't solve anything — it just restarts the cycle.",
+  "Familiar isn't always the same as good for you.",
+  "Remember how you felt when you decided to block it.",
+  "Not every door you can open deserves to be opened.",
+  "If you're hoping to find something different, ask yourself if anything has actually changed.",
+  "Your peace of mind is a valid reason too.",
+  "This urge might just pass. You don't have to act on it.",
+  "Don't make a permanent decision to calm a passing feeling.",
+  "Waiting is a decision too.",
+  "Whatever made you block it is still true, even if you remember it differently today.",
+  "Sometimes we want to go back not because we're doing better, but because we forgot how bad it felt.",
+  "What would you lose by unblocking it? And what would you actually gain?",
+  "You don't need to double-check something that already hurt you.",
+  "The urge lasts minutes. The consequences can last a lot longer.",
+  "Maybe you don't miss the site — you miss how you felt before you needed to block it.",
+  "If you need a reason to unblock it, maybe you're still not sure.",
+  "Not every craving deserves to become an action.",
+  "Before you go back, remember why you decided to leave.",
+  "Sometimes moving forward means resisting the urge to look back.",
+  "Are you unblocking by choice, or by impulse?",
+  "Tomorrow's peace of mind might depend on the decision you make right now.",
+  "You don't need to prove to yourself that you can go back. You already know you can.",
+  "You can change your mind — but you can also give the decision that protected you another chance.",
+  "Maybe real progress is not needing to check again.",
+  "Some things only feel irresistible until you wait a few minutes.",
+  "If unblocking it wouldn't actually change anything, why do it?",
+  "You don't need a new experience to confirm a lesson you already learned.",
+  "The question isn't \"can I unblock it?\" — it's \"is this actually good for me?\"",
+  "Sometimes the best decision isn't the one that satisfies your curiosity — it's the one that protects your peace.",
+  "If you got this far, there was probably a real reason you blocked it.",
+  "Giving yourself another chance can also mean giving yourself the chance not to go back.",
+  "Before you unblock it: breathe, wait a moment, and ask yourself if tomorrow's you will thank you for this.",
+];
+
 function pickRandom(pool) {
   return pool[Math.floor(Math.random() * pool.length)];
 }
@@ -101,7 +155,7 @@ function pickRandomDistinct(pool, n) {
   return shuffled.slice(0, n);
 }
 
-const TALK_INVITE_PHRASES = [
+const TALK_INVITE_PHRASES_ES = [
   '¿Necesitas una mano para mantener la disciplina?',
   '¿Quieres que alguien te acompañe un ratito?',
   '¿Te vendría bien distraerte unos minutos?',
@@ -134,7 +188,40 @@ const TALK_INVITE_PHRASES = [
   '¿Te vendría bien compañía ahora?',
 ];
 
-const CELEBRATION_PHRASES = [
+const TALK_INVITE_PHRASES_EN = [
+  "Could you use a hand staying on track?",
+  "Want someone to keep you company for a bit?",
+  "Could a few minutes of distraction help right now?",
+  "Want to talk to someone before you decide?",
+  "Need a little push to stay strong?",
+  "Want us to stay with you while this urge passes?",
+  "Would talking for a moment help clear your head?",
+  "Could you use some company so you don't give in?",
+  "Want to get distracted for a bit before deciding?",
+  "Would it help to talk about anything else for a few minutes?",
+  "Want some help getting through this moment?",
+  "Need a reminder of why you started?",
+  "Want to hold the line a little longer?",
+  "Would you like someone to sit with you for a moment?",
+  "Want to change the subject and get distracted for a while?",
+  "Need a small breather before you decide?",
+  "Want to talk until the urge passes?",
+  "Would some company help right now?",
+  "Want to put the decision on hold and talk for a moment?",
+  "Need someone to help you stay the course?",
+  "Want us to stick with you for the next few minutes?",
+  "Would a distraction help before you unblock it?",
+  "Want to give yourself a few minutes before changing your mind?",
+  "Could you use some support to stick with your decision?",
+  "Want us to stay with you while you decide?",
+  "Feel like talking about something completely different?",
+  "Want to run out the clock until this urge fades?",
+  "Need someone to remind you why you blocked it?",
+  "Want to sit with it a little longer before you unblock it?",
+  "Could you use some company right now?",
+];
+
+const CELEBRATION_PHRASES_ES = [
   'El éxito es la suma de pequeños esfuerzos, repetidos día tras día. — Robert Collier',
   'No importa cuán despacio vayas, siempre y cuando no te detengas. — Confucio',
   'El futuro depende de lo que haces hoy. — Mahatma Gandhi',
@@ -177,7 +264,50 @@ const CELEBRATION_PHRASES = [
   'Quizá esto parezca pequeño para los demás. Pero tú sabes lo que significó.',
 ];
 
-const COMPASSIONATE_PHRASES = [
+const CELEBRATION_PHRASES_EN = [
+  "Success is the sum of small efforts, repeated day in and day out. — Robert Collier",
+  "It does not matter how slowly you go, as long as you do not stop. — Confucius",
+  "The future depends on what you do today. — Mahatma Gandhi",
+  "Discipline is choosing between what you want now and what you want most. — attributed to Abraham Lincoln",
+  "Don't count the days, make the days count. — Muhammad Ali",
+  "We are what we repeatedly do. — attributed to Aristotle",
+  "Our greatest glory is not in never falling, but in rising every time we fall. — attributed to Confucius",
+  "What you do every day matters more than what you do once in a while.",
+  "Perseverance is not a long race; it is many short races one after the other. — Walter Elliot",
+  "Strength does not come from physical capacity. It comes from an indomitable will. — Mahatma Gandhi",
+  "You did it. This time, you chose for yourself.",
+  "See? You really could.",
+  "You made it. The urge passed, and you kept going.",
+  "Today you won a small battle with yourself.",
+  "You didn't need to be stronger. You just needed to hold on a little longer. And you did.",
+  "What just happened matters: you chose not to go back.",
+  "This time you didn't follow the urge. You followed your decision.",
+  "You made it, even when part of you wanted to give up.",
+  "Hold onto this feeling: you were able to do it.",
+  "You just proved something you might've needed to remember: you can do this.",
+  "It wasn't luck. You made a different choice.",
+  "That small \"no\" you said today can mean a lot tomorrow.",
+  "Today you chose yourself.",
+  "You did it. And no one had to do it for you.",
+  "It might look small from the outside, but you know how hard it was.",
+  "No one saw this moment, but you know what you just pulled off.",
+  "You don't need a huge win. This one counts too.",
+  "The urge wanted an answer right now. You chose to wait.",
+  "You made it. Now you get to go on with your day knowing you could.",
+  "Keep this moment close for the next time you doubt yourself.",
+  "Every time you choose what you really want over what you want right this second, you get a little closer to the person you're trying to become.",
+  "Discipline doesn't always feel like strength. Sometimes it just feels like closing a tab.",
+  "You didn't change your whole life in five minutes. But you did change what you did with those five minutes.",
+  "You might feel this same urge again tomorrow. When you do, remember — you already know you can let it pass.",
+  "You don't need to win forever. You just need to win this moment.",
+  "A small decision can be the first sign of a much bigger change.",
+  "Today you learned that a feeling can be intense without you having to obey it.",
+  "It's not about never wanting to. It's about discovering you don't always have to do what that wanting tells you.",
+  "The pride you feel right now came from a decision no one else could have made for you.",
+  "This might look small to everyone else. But you know what it meant.",
+];
+
+const COMPASSIONATE_PHRASES_ES = [
   'Está bien. De verdad. A veces simplemente cedemos. No tienes que castigarte por eso.',
   'Bueno… pasó. Respira un poquito. Todavía puedes cerrar esto y seguir con tu día.',
   'No te voy a juzgar. Solo fue un momento difícil.',
@@ -209,6 +339,48 @@ const COMPASSIONATE_PHRASES = [
   'No pasa nada. Cierra esto cuando estés listo y sigue.',
   'Mañana nadie te va a preguntar si hoy fuiste perfecto. Solo importa que sigas cuidándote.',
 ];
+
+const COMPASSIONATE_PHRASES_EN = [
+  "It's okay. Really. Sometimes we just give in. You don't have to punish yourself for it.",
+  "Okay... it happened. Take a breath. You can still close this and go on with your day.",
+  "No judgment here. It was just a hard moment.",
+  "Coming in here doesn't mean you've lost. You can still decide to stop right here.",
+  "It's alright if today was just a little harder.",
+  "I know you were probably hoping to be stronger this time. But giving in doesn't make you any less.",
+  "You don't have to feel bad about this. Tomorrow you get to try again.",
+  "Maybe today you just needed a bit more time to be ready. And that's okay.",
+  "You didn't ruin anything. One decision that didn't go the way you wanted doesn't erase everything else.",
+  "If you regret coming in, you can still close the page. You don't have to stay.",
+  "Don't stay just because you already came in. You can leave now.",
+  "Sometimes we know exactly what we want to do... and we do the opposite anyway. We're human.",
+  "You don't have to explain or justify yourself. Just breathe, and think about what you want to do now.",
+  "Maybe you needed to check one more time. Now you know how it feels.",
+  "This wasn't your best moment. That's all it is. It doesn't have to become something bigger.",
+  "Give yourself a little patience. You're trying to change something, and that's never easy.",
+  "You don't need to start over. Just keep going from here.",
+  "If this left you feeling bad, don't punish yourself for it. Use it to remember why you wanted to leave it behind.",
+  "It's okay to have days that are just harder.",
+  "You don't have to win every time. You just have to keep trying.",
+  "Maybe today you couldn't resist. That doesn't mean tomorrow you won't be able to.",
+  "You're not weak. You just had a weak moment.",
+  "What you did a few minutes ago doesn't decide who you are.",
+  "You don't need to feel guilty to know you want to do this differently.",
+  "You can be disappointed in yourself and still be kind to yourself.",
+  "It's already over. Don't stay stuck there.",
+  "If you need a moment, take it. You don't have to decide anything right now.",
+  "Maybe today you just needed someone to remind you that you get to try again.",
+  "It's alright. Close this whenever you're ready, and keep going.",
+  "Tomorrow, no one's going to ask if you were perfect today. All that matters is that you keep taking care of yourself.",
+];
+
+// getUILanguage() devuelve algo como "en-US" o "es-PE" — solo nos
+// importa el idioma base para elegir el pool.
+const IS_ENGLISH_UI = chrome.i18n.getUILanguage().toLowerCase().startsWith('en');
+
+const REFLECTION_QUESTIONS_POOL = IS_ENGLISH_UI ? REFLECTION_QUESTIONS_POOL_EN : REFLECTION_QUESTIONS_POOL_ES;
+const TALK_INVITE_PHRASES = IS_ENGLISH_UI ? TALK_INVITE_PHRASES_EN : TALK_INVITE_PHRASES_ES;
+const CELEBRATION_PHRASES = IS_ENGLISH_UI ? CELEBRATION_PHRASES_EN : CELEBRATION_PHRASES_ES;
+const COMPASSIONATE_PHRASES = IS_ENGLISH_UI ? COMPASSIONATE_PHRASES_EN : COMPASSIONATE_PHRASES_ES;
 
 let currentQuestionIndex = 0;
 const MOTIVATIONAL_QUESTIONS = pickRandomDistinct(REFLECTION_QUESTIONS_POOL, 3);
@@ -308,7 +480,7 @@ function renderOfferedChat() {
     '<div class="center-block">' +
       '<div class="big-emoji">\u2609</div>' +
       '<div class="title">' + escapeHtml(pickRandom(TALK_INVITE_PHRASES)) + '</div>' +
-      '<div class="sub">Conversa con alguien por unos minutos para despejarte \u2014 es gratis.</div>' +
+      '<div class="sub">' + escapeHtml(chrome.i18n.getMessage('offerChatSub')) + '</div>' +
     '</div>' +
     '<button class="btn btn-primary" id="btn-yes-chat">' + escapeHtml(chrome.i18n.getMessage('yesChatBtn')) + '</button>' +
     '<button class="btn-link" id="btn-no-chat">' + escapeHtml(chrome.i18n.getMessage('noChatBtn')) + '</button>';
@@ -480,7 +652,7 @@ function renderDonationPrompt() {
     '</div>' +
     '<div class="custom-amount-row">' +
       '<span class="custom-amount-prefix">$</span>' +
-      '<input type="number" id="donation-custom" min="0" step="0.01" placeholder="Otro monto">' +
+      '<input type="number" id="donation-custom" min="0" step="0.01" placeholder="' + escapeHtml(chrome.i18n.getMessage('donationCustomPlaceholder')) + '">' +
     '</div>' +
     '<button class="btn btn-primary" id="btn-donate" disabled>' + escapeHtml(chrome.i18n.getMessage('donateBtn')) + '</button>' +
     '<button class="btn-link" id="btn-skip-donation">' + escapeHtml(chrome.i18n.getMessage('skipDonationBtn')) + '</button>';
