@@ -19,7 +19,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithCredential, onAuthStateChanged, signOut,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
-  getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot,
+  getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, limit,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 
@@ -113,7 +113,9 @@ document.getElementById('btn-google-login').addEventListener('click', async () =
 
 let currentUser = null;
 let currentSites = [];
+let currentAttempts = [];
 let unsubscribeSites = null;
+let unsubscribeAttempts = null;
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
@@ -121,19 +123,49 @@ onAuthStateChanged(auth, (user) => {
   document.getElementById('app-shell').style.display = user ? 'block' : 'none';
 
   if (unsubscribeSites) { unsubscribeSites(); unsubscribeSites = null; }
+  if (unsubscribeAttempts) { unsubscribeAttempts(); unsubscribeAttempts = null; }
   if (!user) return;
 
   unsubscribeSites = onSnapshot(collection(db, 'users', user.uid, 'blockedSites'), (snap) => {
     currentSites = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     renderSiteList();
     applyBlockingIfActive();
+    renderMetrics();
   }, (err) => {
     console.error('[limen-mobile] error escuchando blockedSites', err);
     sitesList.innerHTML = 'No se pudo cargar tu lista: ' + (err.message || err.code);
   });
 
+  // Mismos intentos de desbloqueo que ve el panel web (packages/dashboard) —
+  // los crea la extensión de Chrome cuando alguien entra a un sitio
+  // bloqueado, pero como es la misma cuenta de Firebase, las métricas acá
+  // salen exactamente iguales, sin importar desde qué dispositivo se generaron.
+  const attemptsQuery = query(collection(db, 'users', user.uid, 'unlockAttempts'), orderBy('createdAt', 'desc'), limit(50));
+  unsubscribeAttempts = onSnapshot(attemptsQuery, (snap) => {
+    currentAttempts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    renderMetrics();
+  }, (err) => {
+    console.error('[limen-mobile] error escuchando unlockAttempts', err);
+    document.getElementById('metrics-grid').innerHTML = 'No se pudieron cargar tus métricas.';
+  });
+
   initNotifications();
   initBlockerEvents();
+});
+
+// ---------------------------------------------------------------
+// Pestañas (Bloqueos / Métricas) — mismo mecanismo que packages/dashboard.
+// ---------------------------------------------------------------
+document.querySelectorAll('.app-tab').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.app-tab').forEach((b) => {
+      b.classList.toggle('active', b === btn);
+      b.setAttribute('aria-selected', String(b === btn));
+    });
+    document.querySelectorAll('.tab-panel').forEach((panel) => {
+      panel.style.display = panel.id === 'tab-' + btn.dataset.tab ? 'block' : 'none';
+    });
+  });
 });
 
 function sitesCollectionRef() {
@@ -427,3 +459,265 @@ document.getElementById('btn-save-schedule').addEventListener('click', async () 
   scheduleCard.style.display = 'none';
   editingSite = null;
 });
+
+// ---------------------------------------------------------------
+// Métricas — mismas cuentas que packages/dashboard/app.js (copia
+// intencional, ver nota de normalizeDomain más arriba sobre por qué esta
+// página no puede importar el módulo compartido directo). Si cambias el
+// cálculo de una métrica, cámbialo también allá para que no se desalineen.
+// ---------------------------------------------------------------
+function escapeHtmlDash(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function dayKey(date) { return date.toISOString().slice(0, 10); }
+
+function accountStartDate() {
+  const raw = currentUser?.metadata?.creationTime;
+  const d = raw ? new Date(raw) : new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function unlockedDaySet(attempts) {
+  return new Set(
+    attempts.filter((a) => a.state === 'unlocked' && a.createdAt?.toDate).map((a) => dayKey(a.createdAt.toDate()))
+  );
+}
+
+function computeStreak(attempts) {
+  const unlockedDays = unlockedDaySet(attempts);
+  const start = accountStartDate();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let streak = 0;
+  for (const d = new Date(today); d >= start; d.setDate(d.getDate() - 1)) {
+    if (unlockedDays.has(dayKey(d))) break;
+    streak++;
+  }
+  return streak;
+}
+
+function computeBestStreak(attempts) {
+  const unlockedDays = unlockedDaySet(attempts);
+  const start = accountStartDate();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let best = 0;
+  let run = 0;
+  for (const d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+    if (unlockedDays.has(dayKey(d))) { run = 0; } else { run++; if (run > best) best = run; }
+  }
+  return best;
+}
+
+function mostTemptingDomain(attempts) {
+  const counts = {};
+  attempts.forEach((a) => { if (a.domain) counts[a.domain] = (counts[a.domain] || 0) + 1; });
+  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  return entries[0] || null;
+}
+
+function computeBestResistedSite(attempts) {
+  const byDomain = {};
+  attempts.forEach((a) => {
+    if (!a.domain || (a.state !== 'stayed_blocked' && a.state !== 'unlocked')) return;
+    if (!byDomain[a.domain]) byDomain[a.domain] = { resisted: 0, decided: 0 };
+    byDomain[a.domain].decided++;
+    if (a.state === 'stayed_blocked') byDomain[a.domain].resisted++;
+  });
+  const entries = Object.entries(byDomain).filter(([, v]) => v.decided >= 2);
+  if (!entries.length) return null;
+  entries.sort((a, b) => (b[1].resisted / b[1].decided) - (a[1].resisted / a[1].decided));
+  const [domain, v] = entries[0];
+  return { domain, rate: Math.round((v.resisted / v.decided) * 100), decided: v.decided };
+}
+
+const MILESTONES = [
+  { days: 3, icon: '🌱' }, { days: 7, icon: '🔥' }, { days: 14, icon: '⚡' }, { days: 30, icon: '🏅' }, { days: 100, icon: '🏆' },
+];
+
+function renderMilestones(bestStreak) {
+  return `<div class="milestone-row">${MILESTONES.map((m) => `
+    <div class="milestone ${bestStreak >= m.days ? 'unlocked' : ''}">
+      <div class="m-icon">${m.icon}</div><div class="m-n">${m.days} días</div>
+    </div>`).join('')}</div>`;
+}
+
+const WEEKDAY_LABELS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+function computePatternInsight(attempts) {
+  const withDate = attempts.filter((a) => a.createdAt?.toDate);
+  if (withDate.length < 3) return null;
+  const counts = {};
+  withDate.forEach((a) => {
+    const d = a.createdAt.toDate();
+    const key = d.getDay() + '-' + d.getHours();
+    counts[key] = (counts[key] || 0) + 1;
+  });
+  const [topKey, topCount] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+  const [day, hour] = topKey.split('-').map(Number);
+  return { day, hour, count: topCount, total: withDate.length };
+}
+
+function computeWeekCompare(attempts) {
+  const now = new Date();
+  const startThis = new Date(now); startThis.setDate(startThis.getDate() - 6); startThis.setHours(0, 0, 0, 0);
+  const startLast = new Date(startThis); startLast.setDate(startLast.getDate() - 7);
+  const endLast = new Date(startThis.getTime() - 1);
+  let thisWeekResisted = 0, lastWeekResisted = 0;
+  attempts.forEach((a) => {
+    if (!a.createdAt?.toDate || a.state !== 'stayed_blocked') return;
+    const d = a.createdAt.toDate();
+    if (d >= startThis && d <= now) thisWeekResisted++;
+    else if (d >= startLast && d <= endLast) lastWeekResisted++;
+  });
+  return { thisWeekResisted, lastWeekResisted };
+}
+
+function computeMonthCompare(attempts) {
+  const now = new Date();
+  const startThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const endLastMonth = new Date(startThisMonth.getTime() - 1);
+  let thisMonthResisted = 0, lastMonthResisted = 0;
+  attempts.forEach((a) => {
+    if (!a.createdAt?.toDate || a.state !== 'stayed_blocked') return;
+    const d = a.createdAt.toDate();
+    if (d >= startThisMonth && d <= now) thisMonthResisted++;
+    else if (d >= startLastMonth && d <= endLastMonth) lastMonthResisted++;
+  });
+  return { thisMonthResisted, lastMonthResisted };
+}
+
+function computeWeeklyFrequency(attempts) {
+  const start = accountStartDate();
+  const weeks = Math.max(1, (new Date() - start) / (7 * 86400000));
+  return attempts.length / weeks;
+}
+
+function renderChartBars(attempts) {
+  const start = accountStartDate();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const daysSinceStart = Math.round((today - start) / 86400000) + 1;
+  const daysToShow = Math.min(14, daysSinceStart);
+  const maxCount = Math.max(1, ...Array.from({ length: daysToShow }, (_, i) => {
+    const d = new Date(today); d.setDate(d.getDate() - (daysToShow - 1 - i));
+    const key = dayKey(d);
+    return attempts.filter((a) => a.createdAt?.toDate && dayKey(a.createdAt.toDate()) === key).length;
+  }));
+
+  let bars = '';
+  for (let i = daysToShow - 1; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const key = dayKey(d);
+    const dayAttempts = attempts.filter((a) => a.createdAt?.toDate && dayKey(a.createdAt.toDate()) === key);
+    const count = dayAttempts.length;
+    const heightPct = Math.round((count / maxCount) * 100);
+    bars += `<div class="bar" style="height:${Math.max(heightPct, count ? 8 : 2)}%"></div>`;
+  }
+  return bars;
+}
+
+function renderMetrics() {
+  const el = document.getElementById('metrics-grid');
+  if (!currentUser) return;
+  const total = currentAttempts.length;
+
+  const start = accountStartDate();
+  const daysSinceStart = Math.max(1, Math.round((new Date() - start) / 86400000) + 1);
+  const streak = computeStreak(currentAttempts);
+  const bestStreak = computeBestStreak(currentAttempts);
+
+  const streakBlock = `
+    <div class="streak-card">
+      <div class="streak-row">
+        <div>
+          <div class="streak-num">🔥 ${streak}</div>
+          <div class="streak-label">${streak === 1 ? 'día cumplido seguido' : 'días cumplidos seguidos'}</div>
+        </div>
+        <div class="streak-best">
+          <div class="streak-best-n">${bestStreak}</div>
+          <div class="streak-best-l">récord</div>
+        </div>
+      </div>
+      <div class="streak-since">Programando con Limen hace ${daysSinceStart} ${daysSinceStart === 1 ? 'día' : 'días'} — sin pagar por saltarte un bloqueo.</div>
+    </div>`;
+
+  const milestonesBlock = renderMilestones(bestStreak);
+
+  if (!total) {
+    el.innerHTML = streakBlock + milestonesBlock + `
+      <div class="insight-card">
+        <div class="k">Ejemplo — todavía no tenés datos propios</div>
+        <p>Así se va a ver esta sección apenas tengas tu primer intento de desbloqueo.</p>
+      </div>`;
+    return;
+  }
+
+  const talked = currentAttempts.filter((a) => a.chatId).length;
+  const resisted = currentAttempts.filter((a) => a.state === 'stayed_blocked').length;
+  const unlocked = currentAttempts.filter((a) => a.state === 'unlocked').length;
+  const spentCents = currentAttempts.reduce((sum, a) => sum + (a.state === 'unlocked' ? (a.feeAmountCents || 0) : 0), 0);
+  const donatedCents = currentAttempts.reduce((sum, a) => sum + (a.donationAmountCents || 0), 0);
+  const decided = resisted + unlocked;
+  const successRate = decided ? Math.round((resisted / decided) * 100) : null;
+  const topSite = mostTemptingDomain(currentAttempts);
+  const bestSite = computeBestResistedSite(currentAttempts);
+  const pattern = computePatternInsight(currentAttempts);
+  const week = computeWeekCompare(currentAttempts);
+  const weekDelta = week.thisWeekResisted - week.lastWeekResisted;
+  const month = computeMonthCompare(currentAttempts);
+  const monthDelta = month.thisMonthResisted - month.lastMonthResisted;
+  const weeklyFrequency = computeWeeklyFrequency(currentAttempts);
+  const talkRate = total ? Math.round((talked / total) * 100) : null;
+
+  const insightsBlock = `
+    <div class="insight-card">
+      <div class="k">Tu patrón</div>
+      ${pattern
+        ? `<p>Los <b>${WEEKDAY_LABELS[pattern.day]} a las ${String(pattern.hour).padStart(2, '0')}:00</b> es tu momento más difícil — ahí cayeron ${pattern.count} de tus ${pattern.total} intentos.</p>`
+        : `<p>Todavía no hay suficientes intentos para ver un patrón por día y hora.</p>`}
+    </div>
+    <div class="insight-card">
+      <div class="k">Esta semana vs. la anterior</div>
+      <div class="big"><span class="v">${week.thisWeekResisted}</span><span>días cumplidos esta semana</span></div>
+      <p style="margin-top:4px;">${
+        weekDelta > 0 ? `<span class="d up">▲ ${weekDelta} más</span> que la semana pasada (${week.lastWeekResisted}).`
+        : weekDelta < 0 ? `<span class="d down">▼ ${Math.abs(weekDelta)} menos</span> que la semana pasada (${week.lastWeekResisted}).`
+        : `Igual que la semana pasada (${week.lastWeekResisted}).`
+      }</p>
+    </div>
+    <div class="insight-card">
+      <div class="k">Este mes vs. el anterior</div>
+      <div class="big"><span class="v">${month.thisMonthResisted}</span><span>días cumplidos este mes</span></div>
+      <p style="margin-top:4px;">${
+        monthDelta > 0 ? `<span class="d up">▲ ${monthDelta} más</span> que el mes pasado (${month.lastMonthResisted}).`
+        : monthDelta < 0 ? `<span class="d down">▼ ${Math.abs(monthDelta)} menos</span> que el mes pasado (${month.lastMonthResisted}).`
+        : `Igual que el mes pasado (${month.lastMonthResisted}).`
+      }</p>
+    </div>
+    ${talkRate !== null ? `
+    <div class="insight-card">
+      <div class="k">Cuánto hablas</div>
+      <div class="big"><span class="v">${talkRate}%</span></div>
+      <p style="margin-top:4px;">Hablaste con alguien en ${talked} de tus ${total} intentos.</p>
+    </div>` : ''}`;
+
+  el.innerHTML = streakBlock + milestonesBlock + insightsBlock + `
+    <div class="chart-card">
+      <div class="k">Últimos días</div>
+      <div class="chart-bars">${renderChartBars(currentAttempts)}</div>
+    </div>
+    <div class="metric-grid">
+      <div class="metric-tile"><div class="n">${total}</div><div class="l">Intentos de desbloqueo</div></div>
+      <div class="metric-tile"><div class="n">${weeklyFrequency.toFixed(1)}</div><div class="l">Intentos por semana, en promedio</div></div>
+      <div class="metric-tile"><div class="n">${talked}</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
+      <div class="metric-tile"><div class="n">${resisted}</div><div class="l">Veces que te quedaste bloqueado</div></div>
+      <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">Gastado en desbloqueos (${unlocked} pagos)</div></div>
+      ${successRate !== null ? `<div class="metric-tile"><div class="n">${successRate}%</div><div class="l">Tasa de éxito, sobre ${decided} decisiones tomadas</div></div>` : ''}
+      ${topSite ? `<div class="metric-tile"><div class="n" style="font-size:15px;">${escapeHtmlDash(topSite[0])}</div><div class="l">Tu sitio más tentador (${topSite[1]} ${topSite[1] === 1 ? 'intento' : 'intentos'})</div></div>` : ''}
+      ${bestSite ? `<div class="metric-tile"><div class="n" style="font-size:15px;">${escapeHtmlDash(bestSite.domain)}</div><div class="l">Tu sitio con mejor tasa de éxito (${bestSite.rate}% sobre ${bestSite.decided})</div></div>` : ''}
+      <div class="metric-tile"><div class="n">${currentSites.length}</div><div class="l">${currentSites.length === 1 ? 'Sitio bajo protección' : 'Sitios bajo protección'}</div></div>
+      ${donatedCents ? `<div class="metric-tile"><div class="n">$${(donatedCents / 100).toFixed(2)}</div><div class="l">Donado a tu persona de apoyo</div></div>` : ''}
+      <div class="metric-note">Hablar con tu persona de apoyo siempre es gratis.</div>
+    </div>`;
+}
