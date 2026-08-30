@@ -126,11 +126,12 @@ onAuthStateChanged(auth, (user) => {
   if (unsubscribeAttempts) { unsubscribeAttempts(); unsubscribeAttempts = null; }
   if (!user) return;
 
+  document.getElementById('settings-email').textContent = user.email || '';
+
   unsubscribeSites = onSnapshot(collection(db, 'users', user.uid, 'blockedSites'), (snap) => {
     currentSites = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     renderSiteList();
     applyBlockingIfActive();
-    renderMetrics();
   }, (err) => {
     console.error('[limen-mobile] error escuchando blockedSites', err);
     sitesList.innerHTML = 'No se pudo cargar tu lista: ' + (err.message || err.code);
@@ -140,18 +141,22 @@ onAuthStateChanged(auth, (user) => {
   // los crea la extensión de Chrome cuando alguien entra a un sitio
   // bloqueado, pero como es la misma cuenta de Firebase, las métricas acá
   // salen exactamente iguales, sin importar desde qué dispositivo se generaron.
-  const attemptsQuery = query(collection(db, 'users', user.uid, 'unlockAttempts'), orderBy('createdAt', 'desc'), limit(50));
+  const attemptsQuery = query(collection(db, 'users', user.uid, 'unlockAttempts'), orderBy('createdAt', 'desc'), limit(200));
   unsubscribeAttempts = onSnapshot(attemptsQuery, (snap) => {
     currentAttempts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    renderMetrics();
+    renderChatsList();
+    renderPremiumMetrics();
   }, (err) => {
     console.error('[limen-mobile] error escuchando unlockAttempts', err);
-    document.getElementById('metrics-grid').innerHTML = 'No se pudieron cargar tus métricas.';
+    document.getElementById('chats-list').textContent = 'No se pudo cargar tu historial.';
   });
 
   initNotifications();
   initBlockerEvents();
 });
+
+document.getElementById('lp-period')?.addEventListener('change', renderPremiumMetrics);
+document.getElementById('btn-settings-logout')?.addEventListener('click', () => signOut(auth));
 
 // ---------------------------------------------------------------
 // Pestañas (Bloqueos / Métricas) — mismo mecanismo que packages/dashboard.
@@ -509,40 +514,12 @@ function computeBestStreak(attempts) {
   return best;
 }
 
-function mostTemptingDomain(attempts) {
-  const counts = {};
-  attempts.forEach((a) => { if (a.domain) counts[a.domain] = (counts[a.domain] || 0) + 1; });
-  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-  return entries[0] || null;
-}
-
-function computeBestResistedSite(attempts) {
-  const byDomain = {};
-  attempts.forEach((a) => {
-    if (!a.domain || (a.state !== 'stayed_blocked' && a.state !== 'unlocked')) return;
-    if (!byDomain[a.domain]) byDomain[a.domain] = { resisted: 0, decided: 0 };
-    byDomain[a.domain].decided++;
-    if (a.state === 'stayed_blocked') byDomain[a.domain].resisted++;
-  });
-  const entries = Object.entries(byDomain).filter(([, v]) => v.decided >= 2);
-  if (!entries.length) return null;
-  entries.sort((a, b) => (b[1].resisted / b[1].decided) - (a[1].resisted / a[1].decided));
-  const [domain, v] = entries[0];
-  return { domain, rate: Math.round((v.resisted / v.decided) * 100), decided: v.decided };
-}
-
 const MILESTONES = [
   { days: 3, icon: '🌱' }, { days: 7, icon: '🔥' }, { days: 14, icon: '⚡' }, { days: 30, icon: '🏅' }, { days: 100, icon: '🏆' },
 ];
 
-function renderMilestones(bestStreak) {
-  return `<div class="milestone-row">${MILESTONES.map((m) => `
-    <div class="milestone ${bestStreak >= m.days ? 'unlocked' : ''}">
-      <div class="m-icon">${m.icon}</div><div class="m-n">${m.days} días</div>
-    </div>`).join('')}</div>`;
-}
-
 const WEEKDAY_LABELS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const DOW_SHORT = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
 function computePatternInsight(attempts) {
   const withDate = attempts.filter((a) => a.createdAt?.toDate);
@@ -558,166 +535,215 @@ function computePatternInsight(attempts) {
   return { day, hour, count: topCount, total: withDate.length };
 }
 
-function computeWeekCompare(attempts) {
-  const now = new Date();
-  const startThis = new Date(now); startThis.setDate(startThis.getDate() - 6); startThis.setHours(0, 0, 0, 0);
-  const startLast = new Date(startThis); startLast.setDate(startLast.getDate() - 7);
-  const endLast = new Date(startThis.getTime() - 1);
-  let thisWeekResisted = 0, lastWeekResisted = 0;
-  attempts.forEach((a) => {
-    if (!a.createdAt?.toDate || a.state !== 'stayed_blocked') return;
+// ---------------------------------------------------------------
+// Panel premium de métricas — mismo cálculo y mismo orden de contenido
+// que packages/dashboard/app.js (KPIs, evolución, heatmap, sitios,
+// acompañamiento, efectividad, hitos, insight). Acá el gráfico de
+// evolución es CSS puro (3 mini sparklines) en vez de Chart.js, para no
+// sumarle una dependencia externa al WebView de la app nativa.
+// ---------------------------------------------------------------
+function attemptsWithinDays(attempts, days) {
+  const since = new Date(); since.setHours(0, 0, 0, 0); since.setDate(since.getDate() - (days - 1));
+  return attempts.filter((a) => a.createdAt?.toDate && a.createdAt.toDate() >= since);
+}
+
+function computeChallengingSites(attempts, max = 5) {
+  const byDomain = {};
+  attempts.forEach((a) => { if (a.domain) byDomain[a.domain] = (byDomain[a.domain] || 0) + 1; });
+  const entries = Object.entries(byDomain).sort((a, b) => b[1] - a[1]).slice(0, max);
+  const top = entries[0]?.[1] || 1;
+  return entries.map(([domain, count]) => ({ domain, count, pct: Math.round((count / top) * 100) }));
+}
+
+function computeSupportComparison(attempts) {
+  const decided = attempts.filter((a) => a.state === 'stayed_blocked' || a.state === 'unlocked');
+  const withChat = decided.filter((a) => a.chatId);
+  const withoutChat = decided.filter((a) => !a.chatId);
+  if (withChat.length < 2 || withoutChat.length < 2) return null;
+  const rate = (list) => Math.round((list.filter((a) => a.state === 'stayed_blocked').length / list.length) * 100);
+  return {
+    withChatRate: rate(withChat), withChatCount: withChat.length,
+    withoutChatRate: rate(withoutChat), withoutChatCount: withoutChat.length,
+  };
+}
+
+function computeHeatmap(attempts) {
+  const withDate = attempts.filter((a) => a.createdAt?.toDate);
+  const BLOCKS = 6;
+  const grid = Array.from({ length: BLOCKS }, () => Array(7).fill(0));
+  withDate.forEach((a) => {
     const d = a.createdAt.toDate();
-    if (d >= startThis && d <= now) thisWeekResisted++;
-    else if (d >= startLast && d <= endLast) lastWeekResisted++;
+    const dow = (d.getDay() + 6) % 7;
+    const block = Math.floor(d.getHours() / 4);
+    grid[block][dow]++;
   });
-  return { thisWeekResisted, lastWeekResisted };
+  const max = Math.max(1, ...grid.flat());
+  return { grid, max };
 }
 
-function computeMonthCompare(attempts) {
-  const now = new Date();
-  const startThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const startLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const endLastMonth = new Date(startThisMonth.getTime() - 1);
-  let thisMonthResisted = 0, lastMonthResisted = 0;
-  attempts.forEach((a) => {
-    if (!a.createdAt?.toDate || a.state !== 'stayed_blocked') return;
-    const d = a.createdAt.toDate();
-    if (d >= startThisMonth && d <= now) thisMonthResisted++;
-    else if (d >= startLastMonth && d <= endLastMonth) lastMonthResisted++;
-  });
-  return { thisMonthResisted, lastMonthResisted };
-}
-
-function computeWeeklyFrequency(attempts) {
-  const start = accountStartDate();
-  const weeks = Math.max(1, (new Date() - start) / (7 * 86400000));
-  return attempts.length / weeks;
-}
-
-function renderChartBars(attempts) {
-  const start = accountStartDate();
+function computeEvolution(attempts, days) {
   const today = new Date(); today.setHours(0, 0, 0, 0);
-  const daysSinceStart = Math.round((today - start) / 86400000) + 1;
-  const daysToShow = Math.min(14, daysSinceStart);
-  const maxCount = Math.max(1, ...Array.from({ length: daysToShow }, (_, i) => {
-    const d = new Date(today); d.setDate(d.getDate() - (daysToShow - 1 - i));
-    const key = dayKey(d);
-    return attempts.filter((a) => a.createdAt?.toDate && dayKey(a.createdAt.toDate()) === key).length;
-  }));
-
-  let bars = '';
-  for (let i = daysToShow - 1; i >= 0; i--) {
+  const attemptsData = [], resistedData = [], unlockedData = [];
+  for (let i = days - 1; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
     const key = dayKey(d);
     const dayAttempts = attempts.filter((a) => a.createdAt?.toDate && dayKey(a.createdAt.toDate()) === key);
-    const count = dayAttempts.length;
-    const heightPct = Math.round((count / maxCount) * 100);
-    bars += `<div class="bar" style="height:${Math.max(heightPct, count ? 8 : 2)}%"></div>`;
+    attemptsData.push(dayAttempts.length);
+    resistedData.push(dayAttempts.filter((a) => a.state === 'stayed_blocked').length);
+    unlockedData.push(dayAttempts.filter((a) => a.state === 'unlocked').length);
   }
-  return bars;
+  return { attemptsData, resistedData, unlockedData };
 }
 
-function renderMetrics() {
-  const el = document.getElementById('metrics-grid');
-  if (!currentUser) return;
-  const total = currentAttempts.length;
+function renderMiniBars(elId, data, color) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const max = Math.max(1, ...data);
+  el.innerHTML = data.map((v) => `<i style="height:${v ? Math.max(Math.round((v / max) * 100), 10) : 2}%;background:${color}"></i>`).join('');
+}
 
-  const start = accountStartDate();
-  const daysSinceStart = Math.max(1, Math.round((new Date() - start) / 86400000) + 1);
-  const streak = computeStreak(currentAttempts);
-  const bestStreak = computeBestStreak(currentAttempts);
+function renderHeatmap(heatmap) {
+  const el = document.getElementById('lp-heatmap');
+  if (!el) return;
+  const BLOCK_LABELS = ['00', '04', '08', '12', '16', '20'];
+  let html = '<div class="dow"></div>' + DOW_SHORT.map((l) => `<div class="dow">${l}</div>`).join('');
+  heatmap.grid.forEach((row, i) => {
+    html += `<div class="label">${BLOCK_LABELS[i]}</div>`;
+    row.forEach((count) => {
+      const intensity = count / heatmap.max;
+      html += `<div class="cell" style="background:${count ? `rgba(190,122,66,${(0.15 + intensity * 0.75).toFixed(2)})` : ''}"></div>`;
+    });
+  });
+  el.innerHTML = html;
+}
 
-  const streakBlock = `
-    <div class="streak-card">
-      <div class="streak-row">
-        <div>
-          <div class="streak-num">🔥 ${streak}</div>
-          <div class="streak-label">${streak === 1 ? 'día cumplido seguido' : 'días cumplidos seguidos'}</div>
-        </div>
-        <div class="streak-best">
-          <div class="streak-best-n">${bestStreak}</div>
-          <div class="streak-best-l">récord</div>
-        </div>
+function renderChallengingSites(sites) {
+  const el = document.getElementById('lp-sites');
+  if (!el) return;
+  if (!sites.length) { el.innerHTML = `<p class="lp-callout">Todavía no hay suficientes intentos para ver tus sitios más desafiantes.</p>`; return; }
+  el.innerHTML = sites.map((s) => `
+    <div class="lp-site">
+      <div class="lp-site-row"><span>${escapeHtmlDash(s.domain)}</span><small>${s.count} ${s.count === 1 ? 'intento' : 'intentos'}</small></div>
+      <div class="lp-bar"><i style="width:${s.pct}%"></i></div>
+    </div>`).join('');
+}
+
+function renderSupportComparison(support) {
+  const el = document.getElementById('lp-support');
+  if (!el) return;
+  if (!support) { el.innerHTML = `<p class="lp-callout">Todavía no hay suficientes datos para comparar tus decisiones con y sin conversación.</p>`; return; }
+  el.innerHTML = `
+    <div class="lp-support">
+      <div class="lp-donut" style="--v:${support.withChatRate}%">${support.withChatRate}%</div>
+      <div class="lp-support-stats">
+        <div class="lp-support-stat"><b>${support.withChatRate}%</b><small>Con conversación (${support.withChatCount})</small></div>
+        <div class="lp-support-stat"><b>${support.withoutChatRate}%</b><small>Sin conversación (${support.withoutChatCount})</small></div>
       </div>
-      <div class="streak-since">Programando con Limen hace ${daysSinceStart} ${daysSinceStart === 1 ? 'día' : 'días'} — sin pagar por saltarte un bloqueo.</div>
     </div>`;
+}
 
-  const milestonesBlock = renderMilestones(bestStreak);
+function renderPremiumMilestones(bestStreak) {
+  const el = document.getElementById('lp-milestones');
+  if (!el) return;
+  el.innerHTML = MILESTONES.map((m) => {
+    const reached = bestStreak >= m.days;
+    return `<div class="lp-milestone ${reached ? 'ok' : ''}"><span>${m.icon} ${m.days} días</span><span>${reached ? 'Alcanzado' : `Te faltan ${m.days - bestStreak} días`}</span></div>`;
+  }).join('');
+}
 
-  if (!total) {
-    el.innerHTML = streakBlock + milestonesBlock + `
-      <div class="insight-card">
-        <div class="k">Ejemplo — todavía no tenés datos propios</div>
-        <p>Así se va a ver esta sección apenas tengas tu primer intento de desbloqueo.</p>
-      </div>`;
+function renderInsight(pattern) {
+  const titleEl = document.getElementById('lp-insight-title');
+  const textEl = document.getElementById('lp-insight-text');
+  if (!titleEl || !textEl) return;
+  if (!pattern) {
+    titleEl.textContent = 'Estamos conociendo tus patrones.';
+    textEl.textContent = 'A medida que uses Limen, van a aparecer insights basados en tus propios momentos difíciles.';
     return;
   }
+  const weekday = WEEKDAY_LABELS[pattern.day];
+  const hour = String(pattern.hour).padStart(2, '0');
+  titleEl.textContent = `${weekday} a las ${hour}:00 es tu momento más difícil`;
+  textEl.textContent = `Los ${weekday} a las ${hour}:00 es tu momento más difícil — ahí cayeron ${pattern.count} de tus ${pattern.total} intentos.`;
+}
 
-  const talked = currentAttempts.filter((a) => a.chatId).length;
-  const resisted = currentAttempts.filter((a) => a.state === 'stayed_blocked').length;
-  const unlocked = currentAttempts.filter((a) => a.state === 'unlocked').length;
-  const spentCents = currentAttempts.reduce((sum, a) => sum + (a.state === 'unlocked' ? (a.feeAmountCents || 0) : 0), 0);
-  const donatedCents = currentAttempts.reduce((sum, a) => sum + (a.donationAmountCents || 0), 0);
+function renderPremiumMetrics() {
+  if (!document.getElementById('lp-success')) return; // pestaña Métricas nunca abierta todavía
+  const days = Number(document.getElementById('lp-period')?.value || 30);
+  const periodAttempts = attemptsWithinDays(currentAttempts, days);
+
+  const streak = computeStreak(currentAttempts);
+  const bestStreak = computeBestStreak(currentAttempts);
+  document.getElementById('lp-streak').textContent = streak;
+  document.getElementById('lp-best').textContent = `Mejor: ${bestStreak}`;
+
+  const resisted = periodAttempts.filter((a) => a.state === 'stayed_blocked').length;
+  const unlocked = periodAttempts.filter((a) => a.state === 'unlocked').length;
   const decided = resisted + unlocked;
   const successRate = decided ? Math.round((resisted / decided) * 100) : null;
-  const topSite = mostTemptingDomain(currentAttempts);
-  const bestSite = computeBestResistedSite(currentAttempts);
-  const pattern = computePatternInsight(currentAttempts);
-  const week = computeWeekCompare(currentAttempts);
-  const weekDelta = week.thisWeekResisted - week.lastWeekResisted;
-  const month = computeMonthCompare(currentAttempts);
-  const monthDelta = month.thisMonthResisted - month.lastMonthResisted;
-  const weeklyFrequency = computeWeeklyFrequency(currentAttempts);
-  const talkRate = total ? Math.round((talked / total) * 100) : null;
 
-  const insightsBlock = `
-    <div class="insight-card">
-      <div class="k">Tu patrón</div>
-      ${pattern
-        ? `<p>Los <b>${WEEKDAY_LABELS[pattern.day]} a las ${String(pattern.hour).padStart(2, '0')}:00</b> es tu momento más difícil — ahí cayeron ${pattern.count} de tus ${pattern.total} intentos.</p>`
-        : `<p>Todavía no hay suficientes intentos para ver un patrón por día y hora.</p>`}
-    </div>
-    <div class="insight-card">
-      <div class="k">Esta semana vs. la anterior</div>
-      <div class="big"><span class="v">${week.thisWeekResisted}</span><span>días cumplidos esta semana</span></div>
-      <p style="margin-top:4px;">${
-        weekDelta > 0 ? `<span class="d up">▲ ${weekDelta} más</span> que la semana pasada (${week.lastWeekResisted}).`
-        : weekDelta < 0 ? `<span class="d down">▼ ${Math.abs(weekDelta)} menos</span> que la semana pasada (${week.lastWeekResisted}).`
-        : `Igual que la semana pasada (${week.lastWeekResisted}).`
-      }</p>
-    </div>
-    <div class="insight-card">
-      <div class="k">Este mes vs. el anterior</div>
-      <div class="big"><span class="v">${month.thisMonthResisted}</span><span>días cumplidos este mes</span></div>
-      <p style="margin-top:4px;">${
-        monthDelta > 0 ? `<span class="d up">▲ ${monthDelta} más</span> que el mes pasado (${month.lastMonthResisted}).`
-        : monthDelta < 0 ? `<span class="d down">▼ ${Math.abs(monthDelta)} menos</span> que el mes pasado (${month.lastMonthResisted}).`
-        : `Igual que el mes pasado (${month.lastMonthResisted}).`
-      }</p>
-    </div>
-    ${talkRate !== null ? `
-    <div class="insight-card">
-      <div class="k">Cuánto hablas</div>
-      <div class="big"><span class="v">${talkRate}%</span></div>
-      <p style="margin-top:4px;">Hablaste con alguien en ${talked} de tus ${total} intentos.</p>
-    </div>` : ''}`;
+  document.getElementById('lp-success').textContent = successRate !== null ? successRate + '%' : '—';
+  document.getElementById('lp-success-note').textContent = decided ? `Sobre ${decided} decisiones tomadas` : 'Aún sin decisiones tomadas';
+  document.getElementById('lp-attempts').textContent = periodAttempts.length;
+  document.getElementById('lp-attempts-note').textContent = `Últimos ${days} días`;
+  document.getElementById('lp-unlocked').textContent = unlocked;
 
-  el.innerHTML = streakBlock + milestonesBlock + insightsBlock + `
-    <div class="chart-card">
-      <div class="k">Últimos días</div>
-      <div class="chart-bars">${renderChartBars(currentAttempts)}</div>
-    </div>
-    <div class="metric-grid">
-      <div class="metric-tile"><div class="n">${total}</div><div class="l">Intentos de desbloqueo</div></div>
-      <div class="metric-tile"><div class="n">${weeklyFrequency.toFixed(1)}</div><div class="l">Intentos por semana, en promedio</div></div>
-      <div class="metric-tile"><div class="n">${talked}</div><div class="l">Veces que hablaste con una persona de apoyo</div></div>
-      <div class="metric-tile"><div class="n">${resisted}</div><div class="l">Veces que te quedaste bloqueado</div></div>
-      <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">Gastado en desbloqueos (${unlocked} pagos)</div></div>
-      ${successRate !== null ? `<div class="metric-tile"><div class="n">${successRate}%</div><div class="l">Tasa de éxito, sobre ${decided} decisiones tomadas</div></div>` : ''}
-      ${topSite ? `<div class="metric-tile"><div class="n" style="font-size:15px;">${escapeHtmlDash(topSite[0])}</div><div class="l">Tu sitio más tentador (${topSite[1]} ${topSite[1] === 1 ? 'intento' : 'intentos'})</div></div>` : ''}
-      ${bestSite ? `<div class="metric-tile"><div class="n" style="font-size:15px;">${escapeHtmlDash(bestSite.domain)}</div><div class="l">Tu sitio con mejor tasa de éxito (${bestSite.rate}% sobre ${bestSite.decided})</div></div>` : ''}
-      <div class="metric-tile"><div class="n">${currentSites.length}</div><div class="l">${currentSites.length === 1 ? 'Sitio bajo protección' : 'Sitios bajo protección'}</div></div>
-      ${donatedCents ? `<div class="metric-tile"><div class="n">$${(donatedCents / 100).toFixed(2)}</div><div class="l">Donado a tu persona de apoyo</div></div>` : ''}
-      <div class="metric-note">Hablar con tu persona de apoyo siempre es gratis.</div>
-    </div>`;
+  renderPremiumMilestones(bestStreak);
+
+  const evolution = computeEvolution(periodAttempts, days);
+  renderMiniBars('lp-mini-attempts', evolution.attemptsData, 'rgba(190,122,66,.55)');
+  renderMiniBars('lp-mini-resisted', evolution.resistedData, 'var(--sage)');
+  renderMiniBars('lp-mini-unlocked', evolution.unlockedData, 'var(--danger)');
+
+  const heatmap = computeHeatmap(periodAttempts);
+  renderHeatmap(heatmap);
+
+  const pattern = computePatternInsight(periodAttempts);
+  document.getElementById('lp-pattern').textContent = pattern
+    ? `Los ${WEEKDAY_LABELS[pattern.day]} a las ${String(pattern.hour).padStart(2, '0')}:00 es tu momento más difícil — ahí cayeron ${pattern.count} de tus ${pattern.total} intentos.`
+    : 'Estamos aprendiendo de tus patrones.';
+  renderInsight(pattern);
+
+  renderChallengingSites(computeChallengingSites(periodAttempts));
+  renderSupportComparison(computeSupportComparison(periodAttempts));
+
+  const effectivenessEl = document.getElementById('lp-effectiveness');
+  const effectTextEl = document.getElementById('lp-effect-text');
+  const effectProgressEl = document.getElementById('lp-effect-progress');
+  if (successRate !== null) {
+    effectivenessEl.textContent = successRate + '%';
+    effectTextEl.textContent = `Sobre ${decided} decisiones tomadas en este período.`;
+    effectProgressEl.style.width = successRate + '%';
+  } else {
+    effectivenessEl.textContent = '—%';
+    effectTextEl.textContent = 'Aún no hay suficientes decisiones para calcular tu efectividad.';
+    effectProgressEl.style.width = '0%';
+  }
+}
+
+// ---------------------------------------------------------------
+// Chats — mismo historial que packages/dashboard (users/{uid}/unlockAttempts)
+// ---------------------------------------------------------------
+function attemptStateLabel(state) {
+  if (state === 'stayed_blocked') return 'Te quedaste bloqueado';
+  if (state === 'unlocked') return 'Desbloqueaste';
+  return 'En curso';
+}
+
+function formatAttemptWhen(createdAt) {
+  if (!createdAt?.toDate) return '';
+  return createdAt.toDate().toLocaleString('es', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+function renderChatsList() {
+  const el = document.getElementById('chats-list');
+  if (!el) return;
+  if (!currentAttempts.length) { el.textContent = 'Todavía no tenés intentos de desbloqueo registrados.'; return; }
+  el.innerHTML = currentAttempts.map((a) => `
+    <div class="site-row" style="flex-direction:column; align-items:stretch;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span>${escapeHtmlDash(a.domain || '')}</span>
+        <small>${attemptStateLabel(a.state)}</small>
+      </div>
+      <div class="meta">${formatAttemptWhen(a.createdAt)}</div>
+    </div>`).join('');
 }

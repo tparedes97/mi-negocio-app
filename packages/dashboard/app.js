@@ -492,13 +492,6 @@ function computeBestStreak(attempts) {
   return best;
 }
 
-function mostTemptingDomain(attempts) {
-  const counts = {};
-  attempts.forEach((a) => { if (a.domain) counts[a.domain] = (counts[a.domain] || 0) + 1; });
-  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-  return entries[0] || null;
-}
-
 const MILESTONES = [
   { days: 3, icon: '🌱' },
   { days: 7, icon: '🔥' },
@@ -522,61 +515,6 @@ function computePatternInsight(attempts) {
   const [topKey, topCount] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
   const [day, hour] = topKey.split('-').map(Number);
   return { day, hour, count: topCount, total: withDate.length };
-}
-
-function computeWeekCompare(attempts) {
-  const now = new Date();
-  const startThis = new Date(now); startThis.setDate(startThis.getDate() - 6); startThis.setHours(0, 0, 0, 0);
-  const startLast = new Date(startThis); startLast.setDate(startLast.getDate() - 7);
-  const endLast = new Date(startThis.getTime() - 1);
-
-  let thisWeekResisted = 0;
-  let lastWeekResisted = 0;
-  attempts.forEach((a) => {
-    if (!a.createdAt?.toDate || a.state !== 'stayed_blocked') return;
-    const d = a.createdAt.toDate();
-    if (d >= startThis && d <= now) thisWeekResisted++;
-    else if (d >= startLast && d <= endLast) lastWeekResisted++;
-  });
-  return { thisWeekResisted, lastWeekResisted };
-}
-
-function computeMonthCompare(attempts) {
-  const now = new Date();
-  const startThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const startLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const endLastMonth = new Date(startThisMonth.getTime() - 1);
-
-  let thisMonthResisted = 0;
-  let lastMonthResisted = 0;
-  attempts.forEach((a) => {
-    if (!a.createdAt?.toDate || a.state !== 'stayed_blocked') return;
-    const d = a.createdAt.toDate();
-    if (d >= startThisMonth && d <= now) thisMonthResisted++;
-    else if (d >= startLastMonth && d <= endLastMonth) lastMonthResisted++;
-  });
-  return { thisMonthResisted, lastMonthResisted };
-}
-
-function computeWeeklyFrequency(attempts) {
-  const start = accountStartDate();
-  const weeks = Math.max(1, (new Date() - start) / (7 * 86400000));
-  return attempts.length / weeks;
-}
-
-function computeBestResistedSite(attempts) {
-  const byDomain = {};
-  attempts.forEach((a) => {
-    if (!a.domain || (a.state !== 'stayed_blocked' && a.state !== 'unlocked')) return;
-    if (!byDomain[a.domain]) byDomain[a.domain] = { resisted: 0, decided: 0 };
-    byDomain[a.domain].decided++;
-    if (a.state === 'stayed_blocked') byDomain[a.domain].resisted++;
-  });
-  const entries = Object.entries(byDomain).filter(([, v]) => v.decided >= 2);
-  if (!entries.length) return null;
-  entries.sort((a, b) => (b[1].resisted / b[1].decided) - (a[1].resisted / a[1].decided));
-  const [domain, v] = entries[0];
-  return { domain, rate: Math.round((v.resisted / v.decided) * 100), decided: v.decided };
 }
 
 // ---------------------------------------------------------------

@@ -64,40 +64,74 @@
   }
   .app-tab.active{ background:var(--amber); border-color:var(--amber); color:#FBF9F1; }
 
-  .streak-card{ background:linear-gradient(135deg, var(--amber), #9C6636); color:#FBF9F1; border-radius:16px; padding:18px; margin-top:16px; }
-  .streak-row{ display:flex; align-items:center; justify-content:space-between; }
-  .streak-num{ font-family:'Source Serif 4', serif; font-size:28px; font-weight:600; display:flex; align-items:center; gap:6px; }
-  .streak-label{ font-size:11.5px; opacity:.85; margin-top:2px; }
-  .streak-best{ text-align:right; }
-  .streak-best-n{ font-family:'Source Serif 4', serif; font-size:20px; font-weight:600; }
-  .streak-best-l{ font-size:10px; opacity:.8; text-transform:uppercase; letter-spacing:.06em; }
-  .streak-since{ font-size:11px; opacity:.75; margin-top:12px; text-align:center; }
+  /* Panel premium de métricas — reusa los tokens de esta misma app
+     (--amber hace de acento principal, no hay --terracotta acá), mismo
+     orden de contenido que packages/dashboard: KPIs, evolución, heatmap,
+     sitios, acompañamiento, efectividad, hitos, insight. */
+  .lp-dashboard{ margin-top:2px; }
+  .lp-kicker{ font-size:9.5px; letter-spacing:.14em; font-weight:800; color:var(--amber); }
+  .lp-dashboard h1{ font-family:'Source Serif 4', serif; font-size:25px; font-weight:600; margin:6px 0 4px; }
+  .lp-tagline{ font-size:12px; color:var(--text-muted); margin-bottom:14px; }
+  .lp-period{
+    width:100%; height:42px; border:1px solid var(--line); border-radius:12px; background:var(--surface);
+    padding:0 13px; color:var(--text); font-family:'Inter',sans-serif; font-weight:600; font-size:12.5px; margin-bottom:16px;
+  }
 
-  .milestone-row{ display:flex; gap:8px; margin-top:14px; overflow-x:auto; padding-bottom:2px; }
-  .milestone{ flex:0 0 auto; min-width:64px; text-align:center; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 6px; }
-  .milestone.unlocked{ background:var(--amber-dim); border-color:var(--amber); }
-  .milestone .m-icon{ font-size:18px; filter:grayscale(1) opacity(.45); }
-  .milestone.unlocked .m-icon{ filter:none; }
-  .milestone .m-n{ font-size:9.5px; color:var(--text-muted); margin-top:6px; font-weight:600; }
+  .lp-kpis{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .lp-kpi{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px; }
+  .lp-kpi.wide{ grid-column:1/-1; }
+  .lp-kpi>span{ font-size:11px; color:var(--text-muted); }
+  .lp-kpi b{ display:block; font-family:'Source Serif 4', serif; font-size:22px; font-weight:600; margin:8px 0 4px; color:var(--amber); }
+  .lp-kpi small{ font-size:9.5px; color:var(--sage); }
 
-  .insight-card{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 15px; margin-top:12px; }
-  .insight-card .k{ font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--amber); font-weight:700; margin-bottom:6px; }
-  .insight-card p{ font-size:12.5px; color:var(--text-muted); line-height:1.5; }
-  .insight-card .big{ display:flex; align-items:baseline; gap:6px; font-size:12px; color:var(--text-muted); }
-  .insight-card .big .v{ font-family:'Source Serif 4', serif; font-size:21px; color:var(--text); }
-  .insight-card .d.up{ color:var(--sage); font-weight:700; }
-  .insight-card .d.down{ color:var(--danger); font-weight:700; }
+  .lp-card{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:14px; }
+  .lp-card-head{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+  .lp-card h2{ font-family:'Source Serif 4', serif; font-size:16px; font-weight:600; margin:0 0 4px; }
+  .lp-badge{ font-size:8.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--amber); background:var(--amber-dim); padding:4px 7px; border-radius:99px; flex-shrink:0; }
+  .lp-sub{ font-size:11.5px; color:var(--text-muted); line-height:1.5; }
+  .lp-legend{ font-size:9px; color:var(--text-muted); margin:12px 0 2px; display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
+  .lp-dot{ width:6px; height:6px; border-radius:50%; display:inline-block; }
+  .lp-dot.a{ background:rgba(190,122,66,.4); }
+  .lp-dot.b{ background:var(--sage); }
+  .lp-dot.c{ background:var(--danger); }
 
-  .chart-card{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 15px 10px; margin-top:12px; }
-  .chart-card .k{ font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--amber); font-weight:700; margin-bottom:10px; }
-  .chart-bars{ display:flex; align-items:flex-end; gap:4px; height:90px; }
-  .chart-bars .bar{ flex:1; background:linear-gradient(180deg, var(--amber), #9C6636); border-radius:3px 3px 0 0; min-height:2px; }
+  .lp-mini-row{ display:flex; align-items:center; gap:8px; margin-top:10px; }
+  .lp-mini-bars{ flex:1; display:flex; align-items:flex-end; gap:2px; height:32px; }
+  .lp-mini-bars i{ flex:1; border-radius:2px 2px 0 0; min-height:2px; display:block; }
 
-  .metric-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
-  .metric-tile{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:13px; }
-  .metric-tile .n{ font-family:'Source Serif 4', serif; font-size:19px; font-weight:600; color:var(--amber); }
-  .metric-tile .l{ font-size:10.5px; color:var(--text-muted); margin-top:3px; line-height:1.35; }
-  .metric-note{ grid-column:1 / -1; background:var(--amber-dim); border-radius:10px; padding:10px 12px; font-size:11px; color:var(--text-muted); text-align:center; }
+  .lp-heatmap{ display:grid; grid-template-columns:18px repeat(7,1fr); gap:3px; margin-top:14px; }
+  .lp-heatmap .dow{ font-size:8px; color:var(--text-muted); text-align:center; }
+  .lp-heatmap .label{ font-size:7.5px; color:var(--text-muted); display:flex; align-items:center; }
+  .lp-heatmap .cell{ aspect-ratio:1; border-radius:3px; background:var(--line); }
+  .lp-callout{ margin-top:11px; padding:9px 10px; background:var(--amber-dim); border-radius:9px; color:#7A4420; font-size:10px; line-height:1.4; }
+
+  .lp-site{ margin-top:12px; }
+  .lp-site:first-child{ margin-top:14px; }
+  .lp-site-row{ display:flex; justify-content:space-between; font-size:10.5px; }
+  .lp-site-row small{ color:var(--text-muted); }
+  .lp-bar, .lp-progress{ height:5px; background:var(--line); border-radius:99px; overflow:hidden; margin-top:4px; }
+  .lp-bar i, .lp-progress i{ display:block; height:100%; background:var(--amber); border-radius:99px; }
+
+  .lp-support{ display:flex; align-items:center; gap:16px; margin-top:14px; flex-wrap:wrap; }
+  .lp-donut{
+    width:76px; height:76px; border-radius:50%; flex-shrink:0;
+    background:conic-gradient(var(--amber) var(--v), var(--line) 0);
+    display:grid; place-items:center; font-family:'Source Serif 4',serif; font-weight:600; font-size:16px;
+  }
+  .lp-support-stats{ display:flex; gap:14px; }
+  .lp-support-stat b{ font-family:'Source Serif 4',serif; font-weight:600; font-size:16px; display:block; }
+  .lp-support-stat small{ font-size:9px; color:var(--text-muted); }
+
+  .lp-effect{ display:block; font-family:'Source Serif 4',serif; font-weight:600; font-size:36px; color:var(--amber); margin:10px 0 5px; }
+  .lp-progress{ margin-top:14px; }
+
+  .lp-milestone{ display:flex; justify-content:space-between; font-size:10px; margin-top:9px; color:var(--text-muted); }
+  .lp-milestone.ok{ color:var(--sage); font-weight:700; }
+
+  .lp-insight{ margin-top:14px; padding:16px; background:var(--amber-dim); border-radius:14px; }
+  .lp-insight strong{ font-size:8.5px; letter-spacing:.12em; color:#9C5A2E; }
+  .lp-insight h2{ font-family:'Source Serif 4',serif; font-size:15px; font-weight:600; margin:6px 0; }
+  .lp-insight p{ font-size:10.5px; color:#6d5545; margin:0; line-height:1.4; }
 </style>
 </head>
 <body>
@@ -116,7 +150,9 @@
 <div id="app-shell" style="display:none;">
   <div class="app-tabs" role="tablist">
     <button class="app-tab active" data-tab="bloqueos" role="tab" aria-selected="true">Bloqueos</button>
+    <button class="app-tab" data-tab="chats" role="tab" aria-selected="false">Chats</button>
     <button class="app-tab" data-tab="metricas" role="tab" aria-selected="false">Métricas</button>
+    <button class="app-tab" data-tab="ajustes" role="tab" aria-selected="false">Ajustes</button>
   </div>
 
   <div id="tab-bloqueos" class="tab-panel">
@@ -164,8 +200,94 @@
     </div>
   </div>
 
+  <div id="tab-chats" class="tab-panel" style="display:none;">
+    <div class="card">
+      <div class="title">Tus conversaciones</div>
+      <div class="sub">Cada vez que un sitio bloqueado te tentó, y qué pasó — hables o no con una persona de apoyo.</div>
+      <div id="chats-list" class="sub" style="margin-top:12px;">Cargando…</div>
+    </div>
+  </div>
+
   <div id="tab-metricas" class="tab-panel" style="display:none;">
-    <div id="metrics-grid" class="sub" style="margin-top:16px;">Cargando…</div>
+    <div class="lp-dashboard">
+      <span class="lp-kicker">LIMEN PREMIUM</span>
+      <h1>Métricas</h1>
+      <div class="lp-tagline">Tu progreso, no tu perfección.</div>
+
+      <select id="lp-period" class="lp-period">
+        <option value="30">Últimos 30 días</option>
+        <option value="14">Últimos 14 días</option>
+      </select>
+
+      <div class="lp-kpis">
+        <article class="lp-kpi wide"><span>Decisiones alineadas</span><b id="lp-success">—</b><small id="lp-success-note"></small></article>
+        <article class="lp-kpi"><span>Tiempo protegido</span><b id="lp-protected">—</b><small>Disponible cuando registremos la duración</small></article>
+        <article class="lp-kpi"><span>Racha actual</span><b id="lp-streak">—</b><small id="lp-best"></small></article>
+        <article class="lp-kpi"><span>Intentos</span><b id="lp-attempts">0</b><small id="lp-attempts-note"></small></article>
+        <article class="lp-kpi"><span>Desbloqueos</span><b id="lp-unlocked">0</b><small>Decisiones abiertas</small></article>
+      </div>
+
+      <article class="lp-card">
+        <div class="lp-card-head"><h2>Tu evolución</h2><span class="lp-badge">Premium</span></div>
+        <p class="lp-sub">Cómo están cambiando tus decisiones.</p>
+        <div class="lp-legend"><span class="lp-dot a"></span><span>Intentos</span><span class="lp-dot b"></span><span>Decisiones alineadas</span><span class="lp-dot c"></span><span>Desbloqueos</span></div>
+        <div class="lp-mini-row"><span class="lp-dot a"></span><div class="lp-mini-bars" id="lp-mini-attempts"></div></div>
+        <div class="lp-mini-row"><span class="lp-dot b"></span><div class="lp-mini-bars" id="lp-mini-resisted"></div></div>
+        <div class="lp-mini-row"><span class="lp-dot c"></span><div class="lp-mini-bars" id="lp-mini-unlocked"></div></div>
+      </article>
+
+      <article class="lp-card">
+        <h2>Tus momentos de mayor tentación</h2>
+        <p class="lp-sub">Basado en tus intentos registrados.</p>
+        <div id="lp-heatmap" class="lp-heatmap"></div>
+        <div id="lp-pattern" class="lp-callout">Estamos aprendiendo de tus patrones.</div>
+      </article>
+
+      <article class="lp-card">
+        <h2>Tus sitios más desafiantes</h2>
+        <p class="lp-sub">Donde más necesitas a Limen.</p>
+        <div id="lp-sites"></div>
+      </article>
+
+      <article class="lp-card">
+        <h2>El acompañamiento hace diferencia</h2>
+        <p class="lp-sub">Tus decisiones con y sin conversación.</p>
+        <div id="lp-support"></div>
+      </article>
+
+      <article class="lp-card">
+        <h2>Efectividad de Limen</h2>
+        <p class="lp-sub">Qué ocurre cuando decides mantener tu bloqueo.</p>
+        <b class="lp-effect" id="lp-effectiveness">—%</b>
+        <p id="lp-effect-text" class="lp-sub"></p>
+        <div class="lp-progress"><i id="lp-effect-progress"></i></div>
+      </article>
+
+      <article class="lp-card">
+        <h2>Tus hitos</h2>
+        <p class="lp-sub">Cada decisión cuenta.</p>
+        <div id="lp-milestones"></div>
+      </article>
+
+      <div class="lp-insight">
+        <strong>✦ INSIGHT DE LIMEN</strong>
+        <h2 id="lp-insight-title">Estamos conociendo tus patrones.</h2>
+        <p id="lp-insight-text">A medida que uses Limen, van a aparecer insights basados en tus propios momentos difíciles.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-ajustes" class="tab-panel" style="display:none;">
+    <div class="card">
+      <div class="title">Cuenta</div>
+      <div class="sub" id="settings-email" style="margin-top:6px;"></div>
+      <div class="sub">Plan actual: Gratis</div>
+      <button type="button" class="btn-link" id="btn-settings-logout">Cerrar sesión</button>
+    </div>
+    <div class="card">
+      <div class="title">Idioma</div>
+      <div class="sub">Limen usa el idioma de tu dispositivo automáticamente.</div>
+    </div>
   </div>
 </div>
 
