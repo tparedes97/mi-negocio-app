@@ -917,7 +917,8 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
   margin-bottom:8px;
 }
 #app-shell #tab-chats::before{content:'Acompañamiento'}
-#app-shell #tab-metricas::before{content:'Tu progreso'}
+#app-shell #tab-metricas::before{display:none}
+#app-shell #tab-ajustes::before{content:'Tu espacio Limen'}
 
 #app-shell .grid-2{
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -1065,9 +1066,10 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
   #app-shell .top-hero-tagline{display:none!important}
   #app-shell .user-bar{position:absolute;right:18px;top:11px;margin:0;padding:0;border:0;display:flex;align-items:center;gap:10px}
   #app-shell .user-bar .email{display:none}
-  #app-shell .app-tabs{margin-top:13px;display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+  #app-shell .app-tabs{margin-top:13px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
   #app-shell .app-tab{text-align:center;padding:9px 5px;font-size:11px}
   #app-shell .app-tab::before{display:none}
+  #app-shell .sidebar-premium{display:none!important}
   #app-shell .tab-panel{padding:28px 16px 50px!important}
   #app-shell .grid-2{grid-template-columns:1fr!important}
 }
@@ -1082,6 +1084,130 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
 }
 @media(prefers-reduced-motion:reduce){#app-shell *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
+/* ---------------------------------------------------------------
+   Panel premium de métricas (Limen Premium) — reusa los mismos tokens
+   de marca que el resto del panel (--terracotta, --sage, --amber, etc.),
+   solo agrega layout propio bajo .lp-dashboard. Breakpoints pedidos:
+   escritorio >=1200px, tablet 768-1199px, celular <768px.
+--------------------------------------------------------------- */
+#app-shell .sidebar-premium{
+  margin-top:22px; padding:16px 15px; border-radius:14px;
+  background:linear-gradient(135deg, rgba(243,200,146,.16), rgba(190,122,66,.08));
+  border:1px solid rgba(243,200,146,.35);
+  display:flex; flex-direction:column; gap:4px;
+}
+#app-shell .sidebar-premium strong{ font-family:'Lora',serif; font-size:13px; color:#F3C892; }
+#app-shell .sidebar-premium span{ font-size:11px; color:rgba(251,243,231,0.65); line-height:1.4; margin-bottom:4px; }
+#app-shell .sidebar-premium .btn-link{ text-align:left; color:#F3C892; font-size:11.5px; margin-top:2px; padding:0; text-decoration:underline; }
+
+.lp-dashboard{ box-sizing:border-box; color:var(--text); font-family:'Inter',sans-serif; }
+.lp-dashboard *{ box-sizing:border-box; }
+.lp-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:22px; }
+.lp-kicker{ font-size:10px; letter-spacing:.16em; font-weight:800; color:var(--terracotta); }
+.lp-head h1{ font:600 clamp(26px,3vw,36px)/1.1 'Lora',serif; margin:7px 0; color:var(--text); }
+.lp-head p{ color:var(--text-muted); font-size:12.5px; margin:0; line-height:1.5; }
+.lp-actions select{
+  height:40px; border:1px solid var(--line); border-radius:10px; background:var(--surface);
+  padding:0 13px; color:var(--text); font-weight:650; font-size:11.5px; font-family:'Inter',sans-serif;
+}
+
+.lp-kpis{ display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:14px; }
+.lp-kpi, .lp-card, .lp-insight, .lp-premium{
+  background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:0 10px 30px rgba(87,57,38,.06);
+}
+.lp-kpi{ padding:16px; }
+.lp-kpi>span{ font-size:11px; color:var(--text-muted); }
+.lp-kpi b{ display:block; font:600 clamp(22px,2.4vw,30px)/1.1 'Lora',serif; margin:10px 0 5px; color:var(--terracotta); }
+.lp-kpi small{ font-size:9.5px; color:var(--sage); }
+
+.lp-grid{ display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:14px; }
+.lp-card{ padding:18px; min-width:0; }
+.lp-card.wide{ grid-column:span 1; }
+.lp-card header{ display:flex; justify-content:space-between; gap:10px; }
+.lp-card header span{
+  font-size:9px; text-transform:uppercase; letter-spacing:.08em; color:var(--terracotta);
+  background:var(--amber-dim); padding:5px 7px; border-radius:99px; align-self:flex-start;
+}
+.lp-card h2{ font:600 16.5px/1.25 'Lora',serif; margin:0 0 5px; color:var(--text); }
+.lp-card p{ color:var(--text-muted); font-size:12px; margin:0; line-height:1.5; }
+.lp-legend{ font-size:10px; color:var(--text-muted); margin:15px 0 5px; display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+.lp-dot{ width:7px; height:7px; border-radius:50%; display:inline-block; }
+.lp-dot.a{ background:rgba(154,52,18,.5); }
+.lp-dot.b{ background:#8FAE84; }
+.lp-dot.c{ background:#C97C5F; }
+.lp-chart{ height:220px; }
+
+.lp-heatmap{ display:grid; grid-template-columns:22px repeat(7,1fr); gap:4px; margin-top:16px; }
+.lp-heatmap .dow{ font-size:8.5px; color:var(--text-muted); text-align:center; }
+.lp-heatmap .label{ font-size:8px; color:var(--text-muted); display:flex; align-items:center; }
+.lp-heatmap .cell{ aspect-ratio:1; border-radius:4px; background:var(--line); }
+.lp-callout{ margin-top:13px; padding:10px; background:var(--amber-dim); border-radius:9px; color:var(--terracotta-deep); font-size:10.5px; line-height:1.4; }
+
+.lp-site{ margin-top:14px; }
+.lp-site:first-child{ margin-top:16px; }
+.lp-site-row{ display:flex; justify-content:space-between; font-size:11px; color:var(--text); }
+.lp-site-row small{ color:var(--text-muted); }
+.lp-bar, .lp-progress{ height:5px; background:var(--line); border-radius:99px; overflow:hidden; margin-top:5px; }
+.lp-bar i, .lp-progress i{ display:block; height:100%; background:var(--terracotta); border-radius:99px; }
+
+.lp-support{ display:flex; align-items:center; gap:22px; margin-top:20px; flex-wrap:wrap; }
+.lp-donut{
+  width:98px; height:98px; border-radius:50%; flex-shrink:0;
+  background:conic-gradient(var(--terracotta) var(--v), var(--line) 0);
+  display:grid; place-items:center; font:600 21px 'Lora',serif; color:var(--text);
+}
+.lp-support-stats{ display:flex; gap:18px; flex-wrap:wrap; }
+.lp-support-stat b{ font:600 21px 'Lora',serif; display:block; color:var(--text); }
+.lp-support-stat small{ font-size:9.5px; color:var(--text-muted); }
+
+.lp-effect{ display:block; font:600 46px 'Lora',serif; color:var(--terracotta); margin:12px 0 6px; }
+.lp-progress{ margin-top:16px; }
+
+.lp-milestone{ display:flex; justify-content:space-between; font-size:10.5px; margin-top:10px; color:var(--text-muted); }
+.lp-milestone.ok{ color:var(--sage); font-weight:700; }
+
+.lp-insight{ margin-top:14px; padding:19px 22px; background:var(--amber-dim); border-color:rgba(190,122,66,.3); }
+.lp-insight strong, .lp-premium strong{ font-size:9px; letter-spacing:.14em; color:var(--terracotta); }
+.lp-insight h2{ font:600 18px 'Lora',serif; margin:6px 0; color:var(--text); }
+.lp-insight p{ font-size:11.5px; color:var(--text-muted); margin:0; }
+
+.lp-premium{
+  margin-top:14px; padding:21px 23px; display:flex; align-items:center; justify-content:space-between;
+  gap:20px; background:linear-gradient(105deg, var(--amber-dim), var(--surface-2));
+}
+.lp-premium h2{ font:600 17px 'Lora',serif; margin:6px 0; color:var(--text); }
+.lp-btn{
+  height:40px; border:1px solid var(--line); border-radius:10px; background:var(--surface); padding:0 16px;
+  color:var(--text); font-weight:650; font-size:11.5px; cursor:pointer; font-family:'Inter',sans-serif; white-space:nowrap;
+}
+.lp-btn.primary{ background:var(--terracotta); border-color:var(--terracotta); color:#fff; }
+
+/* Tablet: 768–1199px */
+@media(max-width:1199px){
+  .lp-kpis{ grid-template-columns:repeat(3,1fr); }
+  .lp-grid{ grid-template-columns:1fr 1fr; }
+  .lp-card.wide{ grid-column:1/-1; }
+}
+/* Celular: <768px */
+@media(max-width:767px){
+  .lp-head{ align-items:flex-start; flex-direction:column; }
+  .lp-actions{ width:100%; }
+  .lp-actions select{ width:100%; }
+  .lp-kpis{ grid-template-columns:1fr 1fr; }
+  .lp-kpi:first-child{ grid-column:1/-1; }
+  .lp-grid{ grid-template-columns:1fr; }
+  .lp-chart{ height:200px; }
+  .lp-premium{ align-items:flex-start; flex-direction:column; }
+  .lp-premium .lp-btn{ width:100%; }
+  .lp-support{ flex-direction:column; align-items:flex-start; }
+}
+@media(max-width:390px){
+  .lp-kpis{ gap:8px; }
+  .lp-kpi, .lp-card{ padding:13px; }
+  .lp-kpi b{ font-size:21px; }
+  .lp-card h2{ font-size:14.5px; }
+  .lp-effect{ font-size:38px; }
+}
 </style>
 
 </head>
@@ -1534,6 +1660,12 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
         <button class="app-tab active" data-tab="bloqueos" role="tab" aria-selected="true" data-i18n="tabs.bloqueos">Bloqueos</button>
         <button class="app-tab" data-tab="chats" role="tab" aria-selected="false" data-i18n="tabs.chats">Chats</button>
         <button class="app-tab" data-tab="metricas" role="tab" aria-selected="false" data-i18n="tabs.metricas">Métricas</button>
+        <button class="app-tab" data-tab="ajustes" role="tab" aria-selected="false" data-i18n="tabs.ajustes">Ajustes</button>
+      </div>
+      <div class="sidebar-premium">
+        <strong data-i18n="account.premium.title">Limen Premium</strong>
+        <span data-i18n="account.premium.body">Desbloquea todo tu potencial.</span>
+        <button type="button" class="btn-link" id="btn-sidebar-premium" data-i18n="account.premium.cta">Ver planes</button>
       </div>
     </div>
   </div>
@@ -1603,13 +1735,113 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
     </div>
 
     <div id="tab-metricas" class="tab-panel" style="display:none;">
-      <div class="metrics-shell">
-        <div class="metrics-shell-head">
-          <span class="premium-badge"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2 9.5 8.5 3 9l5 4.6L6.5 20 12 16.5 17.5 20 16 13.6l5-4.6-6.5-.5z"/></svg><span data-i18n="metrics.premiumBadge">Premium</span></span>
-          <div class="title" data-i18n="metrics.title">Cómo te fue</div>
-          <div class="sub" data-i18n="metrics.sub">Contado a partir de tus propios intentos de desbloqueo — nada estimado.</div>
+      <div class="lp-dashboard">
+        <header class="lp-head">
+          <div>
+            <span class="lp-kicker" data-i18n="metrics.premiumKicker">LIMEN PREMIUM</span>
+            <h1 data-i18n="tabs.metricas">Métricas</h1>
+            <p data-i18n="metrics.tagline">Tu progreso, no tu perfección.</p>
+          </div>
+          <div class="lp-actions">
+            <select id="lp-period">
+              <option value="30" data-i18n="metrics.period30">Últimos 30 días</option>
+              <option value="14" data-i18n="metrics.period14">Últimos 14 días</option>
+            </select>
+          </div>
+        </header>
+
+        <section class="lp-kpis">
+          <article class="lp-kpi"><span data-i18n="metrics.kpi.success">Decisiones alineadas</span><b id="lp-success">—</b><small id="lp-success-note"></small></article>
+          <article class="lp-kpi"><span data-i18n="metrics.kpi.protected">Tiempo protegido</span><b id="lp-protected">—</b><small data-i18n="metrics.kpi.protectedNote">Disponible cuando registremos la duración</small></article>
+          <article class="lp-kpi"><span data-i18n="metrics.kpi.streak">Racha actual</span><b id="lp-streak">—</b><small id="lp-best"></small></article>
+          <article class="lp-kpi"><span data-i18n="metrics.kpi.attempts">Intentos</span><b id="lp-attempts">0</b><small id="lp-attempts-note"></small></article>
+          <article class="lp-kpi"><span data-i18n="metrics.kpi.unlocked">Desbloqueos</span><b id="lp-unlocked">0</b><small data-i18n="metrics.kpi.unlockedNote">Decisiones abiertas</small></article>
+        </section>
+
+        <section class="lp-grid">
+          <article class="lp-card wide">
+            <header><h2 data-i18n="metrics.evolution.title">Tu evolución</h2><span data-i18n="metrics.premiumBadge">Premium</span></header>
+            <p data-i18n="metrics.evolution.sub">Cómo están cambiando tus decisiones.</p>
+            <div class="lp-legend">
+              <span class="lp-dot a"></span><span data-i18n="chart.legendAttempts">Intentos</span>
+              <span class="lp-dot b"></span><span data-i18n="metrics.evolution.legendResisted">Decisiones alineadas</span>
+              <span class="lp-dot c"></span><span data-i18n="chart.legendUnlocked">Desbloqueos</span>
+            </div>
+            <div class="lp-chart"><canvas id="lp-evolution-chart"></canvas></div>
+          </article>
+
+          <article class="lp-card">
+            <h2 data-i18n="metrics.heatmap.title">Tus momentos de mayor tentación</h2>
+            <p data-i18n="metrics.heatmap.sub">Basado en tus intentos registrados.</p>
+            <div id="lp-heatmap" class="lp-heatmap"></div>
+            <div id="lp-pattern" class="lp-callout" data-i18n="metrics.heatmap.empty">Estamos aprendiendo de tus patrones.</div>
+          </article>
+
+          <article class="lp-card">
+            <h2 data-i18n="metrics.sites.title">Tus sitios más desafiantes</h2>
+            <p data-i18n="metrics.sites.sub">Donde más necesitas a Limen.</p>
+            <div id="lp-sites"></div>
+          </article>
+
+          <article class="lp-card">
+            <h2 data-i18n="metrics.support.title">El acompañamiento hace diferencia</h2>
+            <p data-i18n="metrics.support.sub">Tus decisiones con y sin conversación.</p>
+            <div id="lp-support"></div>
+          </article>
+
+          <article class="lp-card">
+            <h2 data-i18n="metrics.effect.title">Efectividad de Limen</h2>
+            <p data-i18n="metrics.effect.sub">Qué ocurre cuando decides mantener tu bloqueo.</p>
+            <b class="lp-effect" id="lp-effectiveness">—%</b>
+            <p id="lp-effect-text"></p>
+            <div class="lp-progress"><i id="lp-effect-progress"></i></div>
+          </article>
+
+          <article class="lp-card">
+            <h2 data-i18n="metrics.milestones.title">Tus hitos</h2>
+            <p data-i18n="metrics.milestones.sub">Cada decisión cuenta.</p>
+            <div id="lp-milestones"></div>
+          </article>
+        </section>
+
+        <section class="lp-insight">
+          <strong data-i18n="metrics.insight.kicker">✦ INSIGHT DE LIMEN</strong>
+          <h2 id="lp-insight-title" data-i18n="metrics.insight.emptyTitle">Estamos conociendo tus patrones.</h2>
+          <p id="lp-insight-text" data-i18n="metrics.insight.emptyText">A medida que uses Limen, van a aparecer insights basados en tus propios momentos difíciles.</p>
+        </section>
+
+        <section class="lp-premium">
+          <div>
+            <strong data-i18n="metrics.premiumKicker">LIMEN PREMIUM</strong>
+            <h2 data-i18n="metrics.premiumCta.title">Conoce tu forma de decidir.</h2>
+            <p data-i18n="metrics.premiumCta.body">Más contexto. Mejores decisiones. Un acompañamiento que aprende de ti.</p>
+          </div>
+          <button type="button" class="lp-btn primary" id="btn-metrics-premium" data-i18n="metrics.premiumCta.button">Ver Premium</button>
+        </section>
+      </div>
+    </div>
+
+    <div id="tab-ajustes" class="tab-panel" style="display:none;">
+      <div class="card">
+        <div class="title" data-i18n="settings.accountTitle">Cuenta</div>
+        <div class="site-row" style="margin-top:10px;">
+          <div>
+            <div class="name" id="settings-email"></div>
+            <div class="meta"><span data-i18n="settings.planLabel">Plan actual</span>: <span data-i18n="settings.planFree">Gratis</span></div>
+          </div>
+          <button type="button" class="btn-link" id="btn-settings-logout" data-i18n="account.logout">Cerrar sesión</button>
         </div>
-        <div id="metrics-grid"><div class="sub" data-i18n="metrics.loading">Cargando…</div></div>
+      </div>
+
+      <div class="card">
+        <div class="title" data-i18n="settings.extensionTitle">Extensión de Chrome</div>
+        <div class="sub" data-i18n="settings.extensionBody">Instala la extensión para que el bloqueo funcione mientras navegas.</div>
+        <a class="btn btn-amber btn-block js-extension-download" href="#" target="_blank" style="display:inline-block; text-decoration:none; text-align:center; margin-top:10px;" data-i18n="download.cta">Descargar la extensión</a>
+      </div>
+
+      <div class="card">
+        <div class="title" data-i18n="settings.languageTitle">Idioma</div>
+        <div class="sub" data-i18n="settings.languageBody">Limen usa el idioma de tu navegador automáticamente.</div>
       </div>
     </div>
 

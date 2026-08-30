@@ -81,6 +81,7 @@ document.querySelectorAll('.js-google-login').forEach((btn) => {
 });
 
 document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+document.getElementById('btn-settings-logout').addEventListener('click', () => signOut(auth));
 
 let currentUser = null;
 let unsubscribeSites = null;
@@ -98,6 +99,7 @@ onAuthStateChanged(auth, (user) => {
   if (!user) return;
 
   document.getElementById('user-email').textContent = user.email || '';
+  document.getElementById('settings-email').textContent = user.email || '';
   unsubscribeSites = onSnapshot(collection(db, 'users', user.uid, 'blockedSites'), (snap) => {
     currentSites = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     renderSiteList();
@@ -106,17 +108,18 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById('site-list').innerHTML = '<div class="field-error">No se pudo cargar tu lista: ' + (err.message || err.code) + '</div>';
   });
 
-  const attemptsQuery = query(collection(db, 'users', user.uid, 'unlockAttempts'), orderBy('createdAt', 'desc'), limit(50));
+  const attemptsQuery = query(collection(db, 'users', user.uid, 'unlockAttempts'), orderBy('createdAt', 'desc'), limit(200));
   unsubscribeAttempts = onSnapshot(attemptsQuery, (snap) => {
     currentAttempts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     renderChatsList();
-    renderMetrics();
+    renderPremiumMetrics();
   }, (err) => {
     console.error('[limen-dashboard] error escuchando unlockAttempts', err);
     document.getElementById('chats-list').innerHTML = '<div class="field-error">No se pudo cargar tu historial: ' + (err.message || err.code) + '</div>';
-    document.getElementById('metrics-grid').innerHTML = '<div class="field-error">No se pudo cargar tus métricas.</div>';
   });
 });
+
+document.getElementById('lp-period')?.addEventListener('change', renderPremiumMetrics);
 
 // ---------------------------------------------------------------
 // Pestañas del panel logueado
@@ -504,13 +507,6 @@ const MILESTONES = [
   { days: 100, icon: '🏆' },
 ];
 
-function renderMilestones(bestStreak) {
-  return `<div class="milestone-row">${MILESTONES.map((m) => `
-    <div class="milestone ${bestStreak >= m.days ? 'unlocked' : ''}" title="${bestStreak >= m.days ? t('milestone.reached') : t('milestone.remaining', { n: m.days - bestStreak })}">
-      <div class="m-icon">${m.icon}</div>
-      <div class="m-n">${t('milestone.days', { n: m.days })}</div>
-    </div>`).join('')}</div>`;
-}
 
 const WEEKDAY_LABELS = [t('weekday.0'), t('weekday.1'), t('weekday.2'), t('weekday.3'), t('weekday.4'), t('weekday.5'), t('weekday.6')];
 
@@ -583,191 +579,209 @@ function computeBestResistedSite(attempts) {
   return { domain, rate: Math.round((v.resisted / v.decided) * 100), decided: v.decided };
 }
 
-let metricsChartInstance = null;
+// ---------------------------------------------------------------
+// Panel premium de métricas (Limen Premium) — todo lo de abajo lee
+// currentAttempts, nunca inventa números. "Tiempo protegido" queda fuera
+// a propósito: no guardamos una duración fiable del bloqueo todavía.
+// ---------------------------------------------------------------
+function attemptsWithinDays(attempts, days) {
+  const since = new Date(); since.setHours(0, 0, 0, 0); since.setDate(since.getDate() - (days - 1));
+  return attempts.filter((a) => a.createdAt?.toDate && a.createdAt.toDate() >= since);
+}
 
-function renderChart(attempts) {
-  const canvas = document.getElementById('metrics-chart');
-  if (!canvas || typeof Chart === 'undefined') return; // sin Chart.js (ej. sin internet) no rompe el resto del panel
+function computeChallengingSites(attempts, max = 5) {
+  const byDomain = {};
+  attempts.forEach((a) => { if (a.domain) byDomain[a.domain] = (byDomain[a.domain] || 0) + 1; });
+  const entries = Object.entries(byDomain).sort((a, b) => b[1] - a[1]).slice(0, max);
+  const top = entries[0]?.[1] || 1;
+  return entries.map(([domain, count]) => ({ domain, count, pct: Math.round((count / top) * 100) }));
+}
 
-  const start = accountStartDate();
+function computeSupportComparison(attempts) {
+  const decided = attempts.filter((a) => a.state === 'stayed_blocked' || a.state === 'unlocked');
+  const withChat = decided.filter((a) => a.chatId);
+  const withoutChat = decided.filter((a) => !a.chatId);
+  if (withChat.length < 2 || withoutChat.length < 2) return null;
+  const rate = (list) => Math.round((list.filter((a) => a.state === 'stayed_blocked').length / list.length) * 100);
+  return {
+    withChatRate: rate(withChat), withChatCount: withChat.length,
+    withoutChatRate: rate(withoutChat), withoutChatCount: withoutChat.length,
+  };
+}
+
+function computeHeatmap(attempts) {
+  const withDate = attempts.filter((a) => a.createdAt?.toDate);
+  const BLOCKS = 6; // franjas de 4 horas: 00-04, 04-08, ... 20-24
+  const grid = Array.from({ length: BLOCKS }, () => Array(7).fill(0));
+  withDate.forEach((a) => {
+    const d = a.createdAt.toDate();
+    const dow = (d.getDay() + 6) % 7; // lunes=0 ... domingo=6
+    const block = Math.floor(d.getHours() / 4);
+    grid[block][dow]++;
+  });
+  const max = Math.max(1, ...grid.flat());
+  return { grid, max, total: withDate.length };
+}
+
+function computeEvolution(attempts, days) {
   const today = new Date(); today.setHours(0, 0, 0, 0);
-  const daysSinceStart = Math.round((today - start) / 86400000) + 1;
-  const daysToShow = Math.min(14, daysSinceStart);
-
   const labels = [];
+  const attemptsData = [];
   const resistedData = [];
   const unlockedData = [];
-  for (let i = daysToShow - 1; i >= 0; i--) {
+  for (let i = days - 1; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
-    labels.push(d.toLocaleDateString(LANG, { weekday: 'short' }).replace('.', ''));
+    labels.push(d.toLocaleDateString(LANG, { day: 'numeric', month: 'short' }));
     const key = dayKey(d);
     const dayAttempts = attempts.filter((a) => a.createdAt?.toDate && dayKey(a.createdAt.toDate()) === key);
+    attemptsData.push(dayAttempts.length);
     resistedData.push(dayAttempts.filter((a) => a.state === 'stayed_blocked').length);
     unlockedData.push(dayAttempts.filter((a) => a.state === 'unlocked').length);
   }
+  return { labels, attemptsData, resistedData, unlockedData };
+}
 
-  if (metricsChartInstance) metricsChartInstance.destroy();
-  metricsChartInstance = new Chart(canvas, {
+let evolutionChartInstance = null;
+
+function renderEvolutionChart(evolution) {
+  const canvas = document.getElementById('lp-evolution-chart');
+  if (!canvas || typeof Chart === 'undefined') return; // sin Chart.js (ej. sin internet) no rompe el resto del panel
+
+  if (evolutionChartInstance) evolutionChartInstance.destroy();
+  evolutionChartInstance = new Chart(canvas, {
     type: 'bar',
     data: {
-      labels,
+      labels: evolution.labels,
       datasets: [
-        { label: t('chart.legendResisted'), data: resistedData, backgroundColor: '#8FAE84', borderRadius: 4, maxBarThickness: 22 },
-        { label: t('chart.legendUnlocked'), data: unlockedData, backgroundColor: '#C97C5F', borderRadius: 4, maxBarThickness: 22 },
+        { label: t('chart.legendAttempts'), data: evolution.attemptsData, backgroundColor: 'rgba(154,52,18,.25)', borderRadius: 3, maxBarThickness: 14 },
+        { label: t('metrics.evolution.legendResisted'), data: evolution.resistedData, backgroundColor: '#8FAE84', borderRadius: 3, maxBarThickness: 14 },
+        { label: t('chart.legendUnlocked'), data: evolution.unlockedData, backgroundColor: '#C97C5F', borderRadius: 3, maxBarThickness: 14 },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        x: { stacked: true, grid: { display: false }, ticks: { color: 'rgba(251,243,231,.55)', font: { size: 10.5 } } },
-        y: { stacked: true, beginAtZero: true, ticks: { color: 'rgba(251,243,231,.4)', stepSize: 1, font: { size: 10.5 } }, grid: { color: 'rgba(251,243,231,.06)' } },
+        x: { grid: { display: false }, ticks: { color: 'var(--lp-axis, #8C7A63)', font: { size: 9.5 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } },
+        y: { beginAtZero: true, ticks: { color: 'var(--lp-axis, #8C7A63)', stepSize: 1, precision: 0, font: { size: 10 } }, grid: { color: 'rgba(154,52,18,.08)' } },
       },
-      plugins: {
-        legend: { display: true, position: 'bottom', labels: { color: 'rgba(251,243,231,.7)', boxWidth: 10, font: { size: 11 }, padding: 12 } },
-      },
+      plugins: { legend: { display: false } },
     },
   });
 }
 
-function renderStreakDots(attempts) {
-  const unlockedDays = unlockedDaySet(attempts);
-  const start = accountStartDate();
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const daysSinceStart = Math.round((today - start) / 86400000) + 1;
-  const daysToShow = Math.min(14, daysSinceStart);
+function renderHeatmap(heatmap) {
+  const el = document.getElementById('lp-heatmap');
+  if (!el) return;
+  const BLOCK_LABELS = ['00', '04', '08', '12', '16', '20'];
+  const DOW_LABELS = [t('weekday.1short'), t('weekday.2short'), t('weekday.3short'), t('weekday.4short'), t('weekday.5short'), t('weekday.6short'), t('weekday.0short')];
 
-  let dots = '';
-  for (let i = daysToShow - 1; i >= 0; i--) {
-    const d = new Date(today); d.setDate(d.getDate() - i);
-    const held = !unlockedDays.has(dayKey(d));
-    const label = d.toLocaleDateString(LANG, { day: 'numeric', month: 'short' });
-    dots += `<span class="streak-dot ${held ? 'held' : 'broken'}" title="${label} · ${held ? t('streak.dotHeld') : t('streak.dotBroken')}"></span>`;
-  }
-  return dots;
+  let html = '<div class="dow"></div>' + DOW_LABELS.map((l) => `<div class="dow">${l}</div>`).join('');
+  heatmap.grid.forEach((row, i) => {
+    html += `<div class="label">${BLOCK_LABELS[i]}</div>`;
+    row.forEach((count) => {
+      const intensity = count / heatmap.max;
+      html += `<div class="cell" style="background:${count ? `rgba(154,52,18,${(0.12 + intensity * 0.75).toFixed(2)})` : ''}" title="${count} ${count === 1 ? t('metrics.heatmap.attemptOne') : t('metrics.heatmap.attemptMany')}"></div>`;
+    });
+  });
+  el.innerHTML = html;
 }
 
-function renderMetrics() {
-  const el = document.getElementById('metrics-grid');
-  const total = currentAttempts.length;
+function renderChallengingSites(sites) {
+  const el = document.getElementById('lp-sites');
+  if (!el) return;
+  if (!sites.length) { el.innerHTML = `<p class="lp-callout">${t('metrics.sites.empty')}</p>`; return; }
+  el.innerHTML = sites.map((s) => `
+    <div class="lp-site">
+      <div class="lp-site-row"><span>${escapeHtmlDash(s.domain)}</span><small>${t(s.count === 1 ? 'metrics.sites.attemptOne' : 'metrics.sites.attemptMany', { n: s.count })}</small></div>
+      <div class="lp-bar"><i style="width:${s.pct}%"></i></div>
+    </div>`).join('');
+}
 
-  const start = accountStartDate();
-  const daysSinceStart = Math.max(1, Math.round((new Date() - start) / 86400000) + 1);
-  const streak = computeStreak(currentAttempts);
-  const bestStreak = computeBestStreak(currentAttempts);
-
-  const streakBlock = `
-    <div class="streak-card">
-      <div class="streak-row">
-        <div class="streak-main">
-          <div class="streak-num"><span class="fire">🔥</span>${streak}</div>
-          <div class="streak-label">${streak === 1 ? t('streak.dayOne') : t('streak.dayMany')}</div>
-        </div>
-        <div class="streak-best">
-          <div class="streak-best-n">${bestStreak}</div>
-          <div class="streak-best-l">${t('streak.record')}</div>
-        </div>
+function renderSupportComparison(support) {
+  const el = document.getElementById('lp-support');
+  if (!el) return;
+  if (!support) { el.innerHTML = `<p class="lp-callout">${t('metrics.support.empty')}</p>`; return; }
+  el.innerHTML = `
+    <div class="lp-support">
+      <div class="lp-donut" style="--v:${support.withChatRate}%">${support.withChatRate}%</div>
+      <div class="lp-support-stats">
+        <div class="lp-support-stat"><b>${support.withChatRate}%</b><small>${t('metrics.support.withChat', { n: support.withChatCount })}</small></div>
+        <div class="lp-support-stat"><b>${support.withoutChatRate}%</b><small>${t('metrics.support.withoutChat', { n: support.withoutChatCount })}</small></div>
       </div>
-      <div class="streak-dots">${renderStreakDots(currentAttempts)}</div>
-      <div class="streak-since">${t(daysSinceStart === 1 ? 'streak.sinceOne' : 'streak.sinceMany', { n: daysSinceStart })}</div>
     </div>`;
+}
 
-  const milestonesBlock = renderMilestones(bestStreak);
+function renderPremiumMilestones(bestStreak) {
+  const el = document.getElementById('lp-milestones');
+  if (!el) return;
+  el.innerHTML = MILESTONES.map((m) => {
+    const reached = bestStreak >= m.days;
+    return `<div class="lp-milestone ${reached ? 'ok' : ''}"><span>${m.icon} ${t('milestone.days', { n: m.days })}</span><span>${reached ? t('milestone.reached') : t('milestone.remaining', { n: m.days - bestStreak })}</span></div>`;
+  }).join('');
+}
 
-  if (!total) {
-    el.innerHTML = streakBlock + milestonesBlock + `
-      <div class="metrics-preview">
-        <div class="eyebrow">${t('metrics.exampleEyebrow')}</div>
-        <div class="sub">${t('metrics.exampleSub')}</div>
-        <div class="metric-grid ghost">
-          <div class="metric-tile"><div class="n">6</div><div class="l">${t('metrics.example.attempts')}</div></div>
-          <div class="metric-tile"><div class="n">4</div><div class="l">${t('metrics.example.talked')}</div></div>
-          <div class="metric-tile"><div class="n">3</div><div class="l">${t('metrics.example.resisted')}</div></div>
-          <div class="metric-tile"><div class="n">$8.00</div><div class="l">${t('metrics.example.spent')}</div></div>
-          <div class="metric-tile"><div class="n">75%</div><div class="l">${t('metrics.example.successRate')}</div></div>
-          <div class="metric-tile"><div class="n" style="font-size:19px;">instagram.com</div><div class="l">${t('metrics.example.topSite')}</div></div>
-        </div>
-      </div>`;
+function renderInsight(pattern) {
+  const titleEl = document.getElementById('lp-insight-title');
+  const textEl = document.getElementById('lp-insight-text');
+  if (!titleEl || !textEl) return;
+  if (!pattern) {
+    titleEl.textContent = t('metrics.insight.emptyTitle');
+    textEl.textContent = t('metrics.insight.emptyText');
     return;
   }
+  titleEl.textContent = t('insight.patternTitle', { weekday: WEEKDAY_LABELS[pattern.day], hour: String(pattern.hour).padStart(2, '0') });
+  textEl.textContent = t('insight.patternText', { weekday: WEEKDAY_LABELS[pattern.day], hour: String(pattern.hour).padStart(2, '0'), count: pattern.count, total: pattern.total }).replace(/<\/?strong>/g, '');
+}
 
-  const talked = currentAttempts.filter((a) => a.chatId).length;
-  const resisted = currentAttempts.filter((a) => a.state === 'stayed_blocked').length;
-  const unlocked = currentAttempts.filter((a) => a.state === 'unlocked').length;
-  const spentCents = currentAttempts.reduce((sum, a) => sum + (a.state === 'unlocked' ? (a.feeAmountCents || 0) : 0), 0);
-  const donatedCents = currentAttempts.reduce((sum, a) => sum + (a.donationAmountCents || 0), 0);
+function renderPremiumMetrics() {
+  if (!document.getElementById('lp-success')) return; // pestaña Métricas nunca abierta todavía
+  const days = Number(document.getElementById('lp-period')?.value || 30);
+  const periodAttempts = attemptsWithinDays(currentAttempts, days);
+
+  const streak = computeStreak(currentAttempts);
+  const bestStreak = computeBestStreak(currentAttempts);
+  document.getElementById('lp-streak').textContent = streak;
+  document.getElementById('lp-best').textContent = t('metrics.kpi.bestNote', { n: bestStreak });
+
+  const resisted = periodAttempts.filter((a) => a.state === 'stayed_blocked').length;
+  const unlocked = periodAttempts.filter((a) => a.state === 'unlocked').length;
   const decided = resisted + unlocked;
   const successRate = decided ? Math.round((resisted / decided) * 100) : null;
-  const topSite = mostTemptingDomain(currentAttempts);
-  const bestSite = computeBestResistedSite(currentAttempts);
-  const pattern = computePatternInsight(currentAttempts);
-  const week = computeWeekCompare(currentAttempts);
-  const weekDelta = week.thisWeekResisted - week.lastWeekResisted;
-  const month = computeMonthCompare(currentAttempts);
-  const monthDelta = month.thisMonthResisted - month.lastMonthResisted;
-  const weeklyFrequency = computeWeeklyFrequency(currentAttempts);
-  const talkRate = total ? Math.round((talked / total) * 100) : null;
 
-  const insightRow = `
-    <div class="insight-row">
-      <div class="insight-card">
-        <div class="k">${t('insight.pattern')}</div>
-        ${pattern
-          ? `<p>${t('insight.patternText', { weekday: WEEKDAY_LABELS[pattern.day], hour: String(pattern.hour).padStart(2, '0'), count: pattern.count, total: pattern.total })}</p>`
-          : `<p>${t('insight.patternEmpty')}</p>`}
-      </div>
-      <div class="insight-card">
-        <div class="k">${t('insight.weekCompare')}</div>
-        <div class="big">
-          <span class="v">${week.thisWeekResisted}</span>
-          <span>${t('insight.daysThisWeek')}</span>
-        </div>
-        <p style="margin-top:6px;">${
-          weekDelta > 0 ? `<span class="d up">${t('insight.moreThanLastWeek', { n: weekDelta, m: week.lastWeekResisted })}`
-          : weekDelta < 0 ? `<span class="d down">${t('insight.lessThanLastWeek', { n: Math.abs(weekDelta), m: week.lastWeekResisted })}`
-          : t('insight.sameAsLastWeek', { m: week.lastWeekResisted })
-        }</p>
-      </div>
-      <div class="insight-card">
-        <div class="k">${t('insight.monthCompare')}</div>
-        <div class="big">
-          <span class="v">${month.thisMonthResisted}</span>
-          <span>${t('insight.daysThisMonth')}</span>
-        </div>
-        <p style="margin-top:6px;">${
-          monthDelta > 0 ? `<span class="d up">${t('insight.moreThanLastMonth', { n: monthDelta, m: month.lastMonthResisted })}`
-          : monthDelta < 0 ? `<span class="d down">${t('insight.lessThanLastMonth', { n: Math.abs(monthDelta), m: month.lastMonthResisted })}`
-          : t('insight.sameAsLastMonth', { m: month.lastMonthResisted })
-        }</p>
-      </div>
-      ${talkRate !== null ? `
-      <div class="insight-card">
-        <div class="k">${t('insight.talkRate')}</div>
-        <div class="big">
-          <span class="v">${talkRate}%</span>
-        </div>
-        <p style="margin-top:6px;">${t('insight.talkRateNote', { n: talked, total })}</p>
-      </div>` : ''}
-    </div>`;
+  document.getElementById('lp-success').textContent = successRate !== null ? successRate + '%' : '—';
+  document.getElementById('lp-success-note').textContent = decided ? t('metrics.kpi.successNote', { n: decided }) : t('metrics.kpi.successEmpty');
+  document.getElementById('lp-attempts').textContent = periodAttempts.length;
+  document.getElementById('lp-attempts-note').textContent = t('metrics.kpi.attemptsNote', { n: days });
+  document.getElementById('lp-unlocked').textContent = unlocked;
 
-  el.innerHTML = streakBlock + milestonesBlock + insightRow + `
-    <div class="chart-card">
-      <div class="k">${t('chart.title')}</div>
-      <div class="chart-wrap"><canvas id="metrics-chart"></canvas></div>
-    </div>
-    <div class="metric-grid">
-      <div class="metric-tile"><div class="n">${total}</div><div class="l">${t('metrics.attempts')}</div></div>
-      <div class="metric-tile"><div class="n">${weeklyFrequency.toFixed(1)}</div><div class="l">${t('metrics.weeklyFrequency')}</div></div>
-      <div class="metric-tile"><div class="n">${talked}</div><div class="l">${t('metrics.talked')}</div></div>
-      <div class="metric-tile"><div class="n">${resisted}</div><div class="l">${t('metrics.resisted')}</div></div>
-      <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">${t('metrics.spent', { n: unlocked })}</div></div>
-      ${successRate !== null ? `<div class="metric-tile"><div class="n">${successRate}%</div><div class="l">${t('metrics.successRate', { n: decided })}</div></div>` : ''}
-      ${topSite ? `<div class="metric-tile"><div class="n" style="font-size:19px;">${escapeHtmlDash(topSite[0])}</div><div class="l">${t(topSite[1] === 1 ? 'metrics.topSiteOne' : 'metrics.topSiteMany', { n: topSite[1] })}</div></div>` : ''}
-      ${bestSite ? `<div class="metric-tile"><div class="n" style="font-size:19px;">${escapeHtmlDash(bestSite.domain)}</div><div class="l">${t('metrics.bestSite', { rate: bestSite.rate, n: bestSite.decided })}</div></div>` : ''}
-      <div class="metric-tile"><div class="n">${currentSites.length}</div><div class="l">${t(currentSites.length === 1 ? 'metrics.sitesProtectedOne' : 'metrics.sitesProtectedMany')}</div></div>
-      ${donatedCents ? `<div class="metric-tile"><div class="n">$${(donatedCents / 100).toFixed(2)}</div><div class="l">${t('metrics.donated')}</div></div>` : ''}
-      <div class="metric-note">${t('metrics.freeNote')}</div>
-    </div>`;
+  renderPremiumMilestones(bestStreak);
 
-  renderChart(currentAttempts);
+  const evolution = computeEvolution(periodAttempts, days);
+  renderEvolutionChart(evolution);
+
+  const heatmap = computeHeatmap(periodAttempts);
+  renderHeatmap(heatmap);
+
+  const pattern = computePatternInsight(periodAttempts);
+  document.getElementById('lp-pattern').textContent = pattern
+    ? t('insight.patternText', { weekday: WEEKDAY_LABELS[pattern.day], hour: String(pattern.hour).padStart(2, '0'), count: pattern.count, total: pattern.total }).replace(/<\/?strong>/g, '')
+    : t('metrics.heatmap.empty');
+  renderInsight(pattern);
+
+  renderChallengingSites(computeChallengingSites(periodAttempts));
+  renderSupportComparison(computeSupportComparison(periodAttempts));
+
+  const effectivenessEl = document.getElementById('lp-effectiveness');
+  const effectTextEl = document.getElementById('lp-effect-text');
+  const effectProgressEl = document.getElementById('lp-effect-progress');
+  if (successRate !== null) {
+    effectivenessEl.textContent = successRate + '%';
+    effectTextEl.textContent = t('metrics.effect.text', { n: decided });
+    effectProgressEl.style.width = successRate + '%';
+  } else {
+    effectivenessEl.textContent = '—%';
+    effectTextEl.textContent = t('metrics.effect.empty');
+    effectProgressEl.style.width = '0%';
+  }
 }
