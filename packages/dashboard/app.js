@@ -545,6 +545,44 @@ function computeWeekCompare(attempts) {
   return { thisWeekResisted, lastWeekResisted };
 }
 
+function computeMonthCompare(attempts) {
+  const now = new Date();
+  const startThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const endLastMonth = new Date(startThisMonth.getTime() - 1);
+
+  let thisMonthResisted = 0;
+  let lastMonthResisted = 0;
+  attempts.forEach((a) => {
+    if (!a.createdAt?.toDate || a.state !== 'stayed_blocked') return;
+    const d = a.createdAt.toDate();
+    if (d >= startThisMonth && d <= now) thisMonthResisted++;
+    else if (d >= startLastMonth && d <= endLastMonth) lastMonthResisted++;
+  });
+  return { thisMonthResisted, lastMonthResisted };
+}
+
+function computeWeeklyFrequency(attempts) {
+  const start = accountStartDate();
+  const weeks = Math.max(1, (new Date() - start) / (7 * 86400000));
+  return attempts.length / weeks;
+}
+
+function computeBestResistedSite(attempts) {
+  const byDomain = {};
+  attempts.forEach((a) => {
+    if (!a.domain || (a.state !== 'stayed_blocked' && a.state !== 'unlocked')) return;
+    if (!byDomain[a.domain]) byDomain[a.domain] = { resisted: 0, decided: 0 };
+    byDomain[a.domain].decided++;
+    if (a.state === 'stayed_blocked') byDomain[a.domain].resisted++;
+  });
+  const entries = Object.entries(byDomain).filter(([, v]) => v.decided >= 2);
+  if (!entries.length) return null;
+  entries.sort((a, b) => (b[1].resisted / b[1].decided) - (a[1].resisted / a[1].decided));
+  const [domain, v] = entries[0];
+  return { domain, rate: Math.round((v.resisted / v.decided) * 100), decided: v.decided };
+}
+
 let metricsChartInstance = null;
 
 function renderChart(attempts) {
@@ -661,9 +699,14 @@ function renderMetrics() {
   const decided = resisted + unlocked;
   const successRate = decided ? Math.round((resisted / decided) * 100) : null;
   const topSite = mostTemptingDomain(currentAttempts);
+  const bestSite = computeBestResistedSite(currentAttempts);
   const pattern = computePatternInsight(currentAttempts);
   const week = computeWeekCompare(currentAttempts);
   const weekDelta = week.thisWeekResisted - week.lastWeekResisted;
+  const month = computeMonthCompare(currentAttempts);
+  const monthDelta = month.thisMonthResisted - month.lastMonthResisted;
+  const weeklyFrequency = computeWeeklyFrequency(currentAttempts);
+  const talkRate = total ? Math.round((talked / total) * 100) : null;
 
   const insightRow = `
     <div class="insight-row">
@@ -685,6 +728,26 @@ function renderMetrics() {
           : t('insight.sameAsLastWeek', { m: week.lastWeekResisted })
         }</p>
       </div>
+      <div class="insight-card">
+        <div class="k">${t('insight.monthCompare')}</div>
+        <div class="big">
+          <span class="v">${month.thisMonthResisted}</span>
+          <span>${t('insight.daysThisMonth')}</span>
+        </div>
+        <p style="margin-top:6px;">${
+          monthDelta > 0 ? `<span class="d up">${t('insight.moreThanLastMonth', { n: monthDelta, m: month.lastMonthResisted })}`
+          : monthDelta < 0 ? `<span class="d down">${t('insight.lessThanLastMonth', { n: Math.abs(monthDelta), m: month.lastMonthResisted })}`
+          : t('insight.sameAsLastMonth', { m: month.lastMonthResisted })
+        }</p>
+      </div>
+      ${talkRate !== null ? `
+      <div class="insight-card">
+        <div class="k">${t('insight.talkRate')}</div>
+        <div class="big">
+          <span class="v">${talkRate}%</span>
+        </div>
+        <p style="margin-top:6px;">${t('insight.talkRateNote', { n: talked, total })}</p>
+      </div>` : ''}
     </div>`;
 
   el.innerHTML = streakBlock + milestonesBlock + insightRow + `
@@ -694,11 +757,14 @@ function renderMetrics() {
     </div>
     <div class="metric-grid">
       <div class="metric-tile"><div class="n">${total}</div><div class="l">${t('metrics.attempts')}</div></div>
+      <div class="metric-tile"><div class="n">${weeklyFrequency.toFixed(1)}</div><div class="l">${t('metrics.weeklyFrequency')}</div></div>
       <div class="metric-tile"><div class="n">${talked}</div><div class="l">${t('metrics.talked')}</div></div>
       <div class="metric-tile"><div class="n">${resisted}</div><div class="l">${t('metrics.resisted')}</div></div>
       <div class="metric-tile"><div class="n">$${(spentCents / 100).toFixed(2)}</div><div class="l">${t('metrics.spent', { n: unlocked })}</div></div>
       ${successRate !== null ? `<div class="metric-tile"><div class="n">${successRate}%</div><div class="l">${t('metrics.successRate', { n: decided })}</div></div>` : ''}
       ${topSite ? `<div class="metric-tile"><div class="n" style="font-size:19px;">${escapeHtmlDash(topSite[0])}</div><div class="l">${t(topSite[1] === 1 ? 'metrics.topSiteOne' : 'metrics.topSiteMany', { n: topSite[1] })}</div></div>` : ''}
+      ${bestSite ? `<div class="metric-tile"><div class="n" style="font-size:19px;">${escapeHtmlDash(bestSite.domain)}</div><div class="l">${t('metrics.bestSite', { rate: bestSite.rate, n: bestSite.decided })}</div></div>` : ''}
+      <div class="metric-tile"><div class="n">${currentSites.length}</div><div class="l">${t(currentSites.length === 1 ? 'metrics.sitesProtectedOne' : 'metrics.sitesProtectedMany')}</div></div>
       ${donatedCents ? `<div class="metric-tile"><div class="n">$${(donatedCents / 100).toFixed(2)}</div><div class="l">${t('metrics.donated')}</div></div>` : ''}
       <div class="metric-note">${t('metrics.freeNote')}</div>
     </div>`;
