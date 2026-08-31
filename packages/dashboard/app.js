@@ -92,7 +92,12 @@ let currentAttempts = [];
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   document.getElementById('landing').style.display = user ? 'none' : 'block';
-  document.getElementById('app-shell').style.display = user ? 'block' : 'none';
+  // '' (no vacío el string, sino que borra el inline style) en vez de 'block' —
+  // #app-shell usa display:grid en su CSS (el sidebar de escritorio necesita
+  // el layout de 2 columnas); si acá pusiéramos 'block' inline, ese inline
+  // style le gana al display:grid de la hoja de estilos (que no tiene
+  // !important) y el sidebar se ve estirado a todo el ancho, sin layout.
+  document.getElementById('app-shell').style.display = user ? '' : 'none';
 
   if (unsubscribeSites) { unsubscribeSites(); unsubscribeSites = null; }
   if (unsubscribeAttempts) { unsubscribeAttempts(); unsubscribeAttempts = null; }
