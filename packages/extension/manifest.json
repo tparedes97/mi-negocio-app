@@ -30,7 +30,6 @@
     "storage",
     "alarms",
     "declarativeNetRequest",
-    "declarativeNetRequestFeedback",
     "tabs",
     "identity"
   ],
