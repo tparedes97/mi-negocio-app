@@ -633,24 +633,24 @@ function renderHeatmap(heatmap) {
 function renderChallengingSites(sites) {
   const el = document.getElementById('lp-sites');
   if (!el) return;
-  if (!sites.length) { el.innerHTML = `<p class="lp-callout">${t('metrics.sites.empty')}</p>`; return; }
+  if (!sites.length) { el.innerHTML = `<p class="lpv2-critical">${t('metrics.sites.empty')}</p>`; return; }
   el.innerHTML = sites.map((s) => `
-    <div class="lp-site">
-      <div class="lp-site-row"><span>${escapeHtmlDash(s.domain)}</span><small>${t(s.count === 1 ? 'metrics.sites.attemptOne' : 'metrics.sites.attemptMany', { n: s.count })}</small></div>
-      <div class="lp-bar"><i style="width:${s.pct}%"></i></div>
+    <div class="site">
+      <div class="lpv2-site-row"><span>${escapeHtmlDash(s.domain)}</span><small>${t(s.count === 1 ? 'metrics.sites.attemptOne' : 'metrics.sites.attemptMany', { n: s.count })}</small></div>
+      <div class="lpv2-bar"><i style="width:${s.pct}%"></i></div>
     </div>`).join('');
 }
 
 function renderSupportComparison(support) {
   const el = document.getElementById('lp-support');
   if (!el) return;
-  if (!support) { el.innerHTML = `<p class="lp-callout">${t('metrics.support.empty')}</p>`; return; }
+  if (!support) { el.innerHTML = `<p class="lpv2-critical">${t('metrics.support.empty')}</p>`; return; }
   el.innerHTML = `
-    <div class="lp-support">
-      <div class="lp-donut" style="--v:${support.withChatRate}%">${support.withChatRate}%</div>
-      <div class="lp-support-stats">
-        <div class="lp-support-stat"><b>${support.withChatRate}%</b><small>${t('metrics.support.withChat', { n: support.withChatCount })}</small></div>
-        <div class="lp-support-stat"><b>${support.withoutChatRate}%</b><small>${t('metrics.support.withoutChat', { n: support.withoutChatCount })}</small></div>
+    <div class="lpv2-compare">
+      <div class="lpv2-donut" style="--v:${support.withChatRate}%">${support.withChatRate}%</div>
+      <div class="lpv2-compare-stats">
+        <div class="lpv2-compare-stat"><b>${support.withChatRate}%</b><small>${t('metrics.support.withChat', { n: support.withChatCount })}</small></div>
+        <div class="lpv2-compare-stat bad"><b>${support.withoutChatRate}%</b><small>${t('metrics.support.withoutChat', { n: support.withoutChatCount })}</small></div>
       </div>
     </div>`;
 }
@@ -660,8 +660,8 @@ function renderPremiumMilestones(bestStreak) {
   if (!el) return;
   el.innerHTML = MILESTONES.map((m) => {
     const reached = bestStreak >= m.days;
-    return `<div class="lp-milestone ${reached ? 'ok' : ''}"><span>${m.icon} ${t('milestone.days', { n: m.days })}</span><span>${reached ? t('milestone.reached') : t('milestone.remaining', { n: m.days - bestStreak })}</span></div>`;
-  }).join('');
+    return `<div class="lpv2-milestone ${reached ? 'ok' : ''}"><span><span class="icon">${m.icon}</span>${t('milestone.days', { n: m.days })}</span><span class="check">${reached ? '✓' : '○'}</span></div>`;
+  }).join('') + (bestStreak >= MILESTONES[MILESTONES.length - 1].days ? '<div class="trophy">🏆</div>' : '');
 }
 
 function renderInsight(pattern) {
@@ -677,10 +677,112 @@ function renderInsight(pattern) {
   textEl.textContent = t('insight.patternText', { weekday: WEEKDAY_LABELS[pattern.day], hour: String(pattern.hour).padStart(2, '0'), count: pattern.count, total: pattern.total }).replace(/<\/?strong>/g, '');
 }
 
+function renderEffectPeople(successRate) {
+  const el = document.getElementById('lp-effect-people');
+  if (!el) return;
+  if (successRate === null) { el.innerHTML = ''; return; }
+  const filled = Math.round(successRate / 10);
+  el.innerHTML = Array.from({ length: 10 }, (_, i) => `<span class="${i < filled ? '' : 'off'}">●</span>`).join('');
+}
+
+// ---------------------------------------------------------------
+// Comparación mensual (mes calendario actual vs. el anterior) — usa TODOS
+// los intentos, no solo la ventana de 14/30 días del selector, porque acá
+// "mes pasado" siempre significa el mes calendario anterior.
+// ---------------------------------------------------------------
+function computeMonthlyDeltas(attempts) {
+  const now = new Date();
+  const startThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const endLastMonth = new Date(startThisMonth.getTime() - 1);
+
+  const inRange = (d, start, end) => d >= start && d <= end;
+  const thisMonthList = attempts.filter((a) => a.createdAt?.toDate && inRange(a.createdAt.toDate(), startThisMonth, now));
+  const lastMonthList = attempts.filter((a) => a.createdAt?.toDate && inRange(a.createdAt.toDate(), startLastMonth, endLastMonth));
+
+  const stats = (list) => {
+    const resisted = list.filter((a) => a.state === 'stayed_blocked').length;
+    const unlocked = list.filter((a) => a.state === 'unlocked').length;
+    const decided = resisted + unlocked;
+    return {
+      attempts: list.length, resisted, unlocked, decided,
+      successRate: decided ? Math.round((resisted / decided) * 100) : null,
+      relapseRate: decided ? Math.round((unlocked / decided) * 100) : null,
+    };
+  };
+  return { thisMonth: stats(thisMonthList), lastMonth: stats(lastMonthList) };
+}
+
+function pctDelta(curr, prev) {
+  if (!prev) return null;
+  return Math.round(((curr - prev) / prev) * 100);
+}
+function ptDelta(curr, prev) {
+  if (curr === null || prev === null) return null;
+  return curr - prev;
+}
+
+function monthDeltaNote(delta, unit) {
+  if (delta === null) return t('metrics.month.noPrevData');
+  const arrow = delta >= 0 ? '▲' : '▼';
+  const value = Math.abs(delta) + (unit === 'pt' ? ' pts' : '%');
+  return `${arrow} ${value} ${t('metrics.month.vsLastMonth')}`;
+}
+
+// ---------------------------------------------------------------
+// Índice Limen — puntaje compuesto 0-100, pensado para resumir el
+// progreso en un solo número. Fórmula (documentada a propósito, ajustable
+// si el criterio de negocio cambia): 60% tasa de éxito del período +
+// 40% racha actual normalizada contra 30 días. No es un dato que Limen
+// "mida" directamente — es un cálculo derivado de datos reales, igual
+// que un puntaje de crédito resume varias señales en un número.
+// ---------------------------------------------------------------
+function computeLimenIndex(successRate, streak) {
+  if (successRate === null) return null;
+  const streakScore = Math.min(streak / 30, 1) * 100;
+  return Math.round(successRate * 0.6 + streakScore * 0.4);
+}
+
+function indexStatusLabel(index) {
+  if (index === null) return '';
+  if (index >= 80) return t('metrics.index.great');
+  if (index >= 60) return t('metrics.index.good');
+  if (index >= 40) return t('metrics.index.fair');
+  return t('metrics.index.starting');
+}
+
+function renderMonthGrid(monthly) {
+  const el = document.getElementById('lp-month-grid');
+  if (!el) return;
+
+  const successDelta = ptDelta(monthly.thisMonth.successRate, monthly.lastMonth.successRate);
+  const unlockedDelta = pctDelta(monthly.thisMonth.unlocked, monthly.lastMonth.unlocked);
+  const attemptsDelta = pctDelta(monthly.thisMonth.attempts, monthly.lastMonth.attempts);
+  const relapseDelta = ptDelta(monthly.thisMonth.relapseRate, monthly.lastMonth.relapseRate);
+
+  const rows = [
+    { label: t('metrics.month.aligned'), value: monthly.thisMonth.successRate !== null ? monthly.thisMonth.successRate + '%' : '—', delta: successDelta, unit: 'pt', good: successDelta === null ? null : successDelta >= 0 },
+    { label: t('metrics.month.unlocked'), value: String(monthly.thisMonth.unlocked), delta: unlockedDelta, unit: '%', good: unlockedDelta === null ? null : unlockedDelta <= 0 },
+    { label: t('metrics.month.recovered'), value: null },
+    { label: t('metrics.month.attempts'), value: String(monthly.thisMonth.attempts), delta: attemptsDelta, unit: '%', good: attemptsDelta === null ? null : attemptsDelta <= 0 },
+    { label: t('metrics.month.relapse'), value: monthly.thisMonth.relapseRate !== null ? monthly.thisMonth.relapseRate + '%' : '—', delta: relapseDelta, unit: 'pt', good: relapseDelta === null ? null : relapseDelta <= 0 },
+  ];
+
+  el.innerHTML = rows.map((r) => {
+    if (r.value === null) {
+      return `<div><label>${r.label}</label><b>—</b><small>${t('metrics.kpi.recoveredNote')}</small></div>`;
+    }
+    const cls = r.good === false ? 'down' : '';
+    const note = r.good === true ? `<strong>${t('metrics.month.goodNote')}</strong>` : '';
+    return `<div><label>${r.label}</label><b class="${cls}">${r.value}</b><small>${monthDeltaNote(r.delta, r.unit)}</small>${note}</div>`;
+  }).join('');
+}
+
 function renderPremiumMetrics() {
   if (!document.getElementById('lp-success')) return; // pestaña Métricas nunca abierta todavía
   const days = Number(document.getElementById('lp-period')?.value || 30);
   const periodAttempts = attemptsWithinDays(currentAttempts, days);
+  document.getElementById('lp-evolution-title').textContent = t('metrics.evolution.title', { days });
 
   const streak = computeStreak(currentAttempts);
   const bestStreak = computeBestStreak(currentAttempts);
@@ -692,13 +794,25 @@ function renderPremiumMetrics() {
   const decided = resisted + unlocked;
   const successRate = decided ? Math.round((resisted / decided) * 100) : null;
 
+  const monthly = computeMonthlyDeltas(currentAttempts);
+
   document.getElementById('lp-success').textContent = successRate !== null ? successRate + '%' : '—';
-  document.getElementById('lp-success-note').textContent = decided ? t('metrics.kpi.successNote', { n: decided }) : t('metrics.kpi.successEmpty');
+  document.getElementById('lp-success-note').textContent = monthDeltaNote(ptDelta(monthly.thisMonth.successRate, monthly.lastMonth.successRate), 'pt');
   document.getElementById('lp-attempts').textContent = periodAttempts.length;
-  document.getElementById('lp-attempts-note').textContent = t('metrics.kpi.attemptsNote', { n: days });
+  document.getElementById('lp-attempts-note').textContent = monthDeltaNote(pctDelta(monthly.thisMonth.attempts, monthly.lastMonth.attempts), '%');
   document.getElementById('lp-unlocked').textContent = unlocked;
+  document.getElementById('lp-unlocked-note').textContent = monthDeltaNote(pctDelta(monthly.thisMonth.unlocked, monthly.lastMonth.unlocked), '%');
+  document.getElementById('lp-recovered').textContent = '—';
+
+  const index = computeLimenIndex(successRate, streak);
+  document.getElementById('lp-index').textContent = index !== null ? index : '—';
+  document.getElementById('lp-index-ring-n').textContent = index !== null ? index : '—';
+  document.getElementById('lp-index-ring').style.setProperty('--ring', (index || 0) + '%');
+  document.getElementById('lp-index-status').textContent = indexStatusLabel(index);
+  document.getElementById('lp-index-note').textContent = index === null ? '' : monthDeltaNote(ptDelta(index, computeLimenIndex(monthly.lastMonth.successRate, streak)), 'pt');
 
   renderPremiumMilestones(bestStreak);
+  renderMonthGrid(monthly);
 
   const evolution = computeEvolution(periodAttempts, days);
   renderEvolutionChart(evolution);
@@ -714,6 +828,7 @@ function renderPremiumMetrics() {
 
   renderChallengingSites(computeChallengingSites(periodAttempts));
   renderSupportComparison(computeSupportComparison(periodAttempts));
+  renderEffectPeople(successRate);
 
   const effectivenessEl = document.getElementById('lp-effectiveness');
   const effectTextEl = document.getElementById('lp-effect-text');
