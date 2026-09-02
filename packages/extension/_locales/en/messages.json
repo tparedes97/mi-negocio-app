@@ -92,6 +92,8 @@
   "donationTitle": { "message": "Help us keep this space running" },
   "donationSub": { "message": "Your donation helps pay for the time of the people who support you. It's 100% optional." },
   "donateBtn": { "message": "Donate" },
+  "openingPaymentBtn": { "message": "Opening payment…" },
+  "paymentErrorBtn": { "message": "Couldn't open payment, try again" },
   "donateAmountBtn": {
     "message": "Donate $$AMOUNT$",
     "placeholders": { "amount": { "content": "$1" } }

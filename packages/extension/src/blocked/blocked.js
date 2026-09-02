@@ -688,14 +688,24 @@ function renderDonationPrompt() {
 
   document.getElementById('btn-donate').addEventListener('click', async () => {
     if (!selectedAmount) return;
-    const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
-    const { data } = await createCheckoutSession({
-      kind: 'donation',
-      amountCents: Math.round(selectedAmount * 100),
-      metadata: { chatId: attempt.chatId || null, companionId: attempt.companionId || null },
-    });
-    window.open(data.url, '_blank'); // El checkout SIEMPRE en pestaña externa, nunca dentro de la extensión
-    await goToFinalConfirmation();
+    // La creación de la transacción en Paddle (llamada a una Cloud
+    // Function) tarda unos segundos -- sin este feedback visual el botón
+    // se queda "muerto" y parece trabado.
+    donateBtn.disabled = true;
+    donateBtn.textContent = chrome.i18n.getMessage('openingPaymentBtn');
+    try {
+      const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
+      const { data } = await createCheckoutSession({
+        kind: 'donation',
+        amountCents: Math.round(selectedAmount * 100),
+        metadata: { chatId: attempt.chatId || null, companionId: attempt.companionId || null },
+      });
+      window.open(data.url, '_blank'); // El checkout SIEMPRE en pestaña externa, nunca dentro de la extensión
+      await goToFinalConfirmation();
+    } catch (err) {
+      donateBtn.disabled = false;
+      donateBtn.textContent = chrome.i18n.getMessage('paymentErrorBtn');
+    }
   });
 
   document.getElementById('btn-skip-donation').addEventListener('click', goToFinalConfirmation);
@@ -800,14 +810,22 @@ function renderFeeSelection() {
 
   document.getElementById('btn-pay').addEventListener('click', async () => {
     if (!selected) return;
-    const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
-    const { data } = await createCheckoutSession({
-      kind: 'unlock_fee',
-      amountCents: Math.round(selected.price * 100),
-      metadata: { attemptId, domain, siteId, minutes: String(selected.minutes) },
-    });
-    window.open(data.url, '_blank');
-    renderWaitingForPayment();
+    const payBtn = document.getElementById('btn-pay');
+    payBtn.disabled = true;
+    payBtn.textContent = chrome.i18n.getMessage('openingPaymentBtn');
+    try {
+      const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
+      const { data } = await createCheckoutSession({
+        kind: 'unlock_fee',
+        amountCents: Math.round(selected.price * 100),
+        metadata: { attemptId, domain, siteId, minutes: String(selected.minutes) },
+      });
+      window.open(data.url, '_blank');
+      renderWaitingForPayment();
+    } catch (err) {
+      payBtn.disabled = false;
+      payBtn.textContent = chrome.i18n.getMessage('paymentErrorBtn');
+    }
   });
 }
 

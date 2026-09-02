@@ -92,6 +92,8 @@
   "donationTitle": { "message": "Ayúdanos a mantener este espacio" },
   "donationSub": { "message": "Tu donación ayuda a pagar el tiempo de las personas que te acompañan. Es 100% opcional." },
   "donateBtn": { "message": "Donar" },
+  "openingPaymentBtn": { "message": "Abriendo pago…" },
+  "paymentErrorBtn": { "message": "No se pudo abrir el pago, intenta de nuevo" },
   "donateAmountBtn": {
     "message": "Donar $$AMOUNT$",
     "placeholders": { "amount": { "content": "$1" } }
