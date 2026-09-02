@@ -42,6 +42,22 @@
       ]
     },
     {
+      "collectionGroup": "chats",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "state", "order": "ASCENDING" },
+        { "fieldPath": "timerStartedAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "chats",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "state", "order": "ASCENDING" },
+        { "fieldPath": "farewellStartedAt", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "donations",
       "queryScope": "COLLECTION",
       "fields": [
