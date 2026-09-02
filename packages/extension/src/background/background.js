@@ -47,7 +47,22 @@ function extensionUrl(path) {
   return chrome.runtime.getURL(path);
 }
 
-async function syncBlockingRules() {
+// syncBlockingRules() se llama desde dos listeners de Firestore
+// independientes (sitios bloqueados y desbloqueos activos), que pueden
+// disparar casi al mismo tiempo. Sin serializar, dos llamadas concurrentes
+// leen chrome.declarativeNetRequest.getDynamicRules() antes de que la otra
+// termine de escribir, y ambas intentan agregar una regla con el mismo id
+// -> "Rule with id X does not have a unique ID". syncChain encola cada
+// llamada detrás de la anterior para que nunca corran en paralelo.
+let syncChain = Promise.resolve();
+function syncBlockingRules() {
+  syncChain = syncChain.then(syncBlockingRulesNow).catch((err) => {
+    console.error('[limen] error sincronizando reglas de bloqueo:', err);
+  });
+  return syncChain;
+}
+
+async function syncBlockingRulesNow() {
   const [sites, activeUnlocks] = await Promise.all([getBlockedSites(), getActiveUnlocks()]);
   const unlockedDomains = new Set(activeUnlocks.map((u) => u.domain));
 
