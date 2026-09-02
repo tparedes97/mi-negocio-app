@@ -17,6 +17,15 @@
       ]
     },
     {
+      "collectionGroup": "unlockAttempts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "domain", "order": "ASCENDING" },
+        { "fieldPath": "state", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "chats",
       "queryScope": "COLLECTION",
       "fields": [
