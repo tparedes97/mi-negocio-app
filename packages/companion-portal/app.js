@@ -4,7 +4,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   getFirestore, collectionGroup, collection, doc, query, where, orderBy,
-  onSnapshot, addDoc, updateDoc, serverTimestamp,
+  onSnapshot, addDoc, updateDoc, serverTimestamp, runTransaction,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import {
   getFunctions, httpsCallable,
@@ -115,29 +115,56 @@ function formatElapsed(startedAtMs) {
  * compañero puede atender todos los que quiera. Crea el ChatSessionDoc y
  * escribe su id de vuelta en el attempt, que es justo lo que la extensión
  * está escuchando (ver packages/extension/src/blocked/blocked.js → renderQueued()).
+ *
+ * Envuelto en una transacción porque dos compañeros (o dos pestañas del
+ * mismo compañero) pueden hacer clic en "Atender" para la misma solicitud
+ * casi al mismo tiempo -- sin esto, ambos clics crean un chat cada uno,
+ * pero el attempt.chatId solo puede apuntar a uno, así que el otro chat
+ * queda "huérfano" (el compañero que lo abrió nunca recibe respuesta,
+ * porque el usuario terminó conectado al otro chat). La transacción
+ * relee el estado del attempt antes de escribir: si ya no está en
+ * 'queued' (porque alguien más lo atendió primero), aborta en vez de
+ * crear un segundo chat.
  */
 async function attendChat(userId, attemptId, domain) {
   const alias = ALIAS_POOL[Math.floor(Math.random() * ALIAS_POOL.length)];
+  const attemptRef = doc(db, 'users', userId, 'unlockAttempts', attemptId);
+  const chatRef = doc(collection(db, 'chats'));
 
-  const chatRef = await addDoc(collection(db, 'chats'), {
-    unlockAttemptId: attemptId,
-    userId,
-    domain, // denormalizado desde el attempt — así el admin no necesita ir a buscarlo aparte para sus estadísticas
-    companionId: currentUser.uid,
-    aliasUsed: alias,
-    state: 'waiting_reply', // el cronómetro NO arranca hasta que el usuario responda
-    startedAt: serverTimestamp(),
-    timerStartedAt: null,
-    farewellStartedAt: null,
-    closedAt: null,
-    closingMessage: null,
-    durationSeconds: null,
-  });
+  try {
+    await runTransaction(db, async (tx) => {
+      const attemptSnap = await tx.get(attemptRef);
+      if (!attemptSnap.exists() || attemptSnap.data().state !== 'queued') {
+        throw new Error('LIMEN_ALREADY_ATTENDED');
+      }
 
-  await updateDoc(doc(db, 'users', userId, 'unlockAttempts', attemptId), {
-    chatId: chatRef.id,
-    state: 'chat_waiting',
-  });
+      tx.set(chatRef, {
+        unlockAttemptId: attemptId,
+        userId,
+        domain, // denormalizado desde el attempt — así el admin no necesita ir a buscarlo aparte para sus estadísticas
+        companionId: currentUser.uid,
+        aliasUsed: alias,
+        state: 'waiting_reply', // el cronómetro NO arranca hasta que el usuario responda
+        startedAt: serverTimestamp(),
+        timerStartedAt: null,
+        farewellStartedAt: null,
+        closedAt: null,
+        closingMessage: null,
+        durationSeconds: null,
+      });
+
+      tx.update(attemptRef, {
+        chatId: chatRef.id,
+        state: 'chat_waiting',
+      });
+    });
+  } catch (err) {
+    if (err.message === 'LIMEN_ALREADY_ATTENDED') {
+      alert('Otra persona ya está atendiendo esta solicitud.');
+      return;
+    }
+    throw err;
+  }
 }
 
 // ---------------------------------------------------------------
