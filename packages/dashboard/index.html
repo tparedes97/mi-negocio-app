@@ -1036,7 +1036,7 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
 }
 
 .lpv2-kpis{ display:grid; grid-template-columns:1.5fr repeat(5,1fr); gap:12px; margin-bottom:16px; }
-.lpv2-kpis > article, .lpv2-card, .lpv2-insight, .lpv2-premiumfoot{
+.lpv2-kpis > article, .lpv2-card, .lpv2-insight{
   background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:0 10px 30px rgba(87,57,38,.06);
 }
 .lpv2-kpis > article{ padding:16px; position:relative; }
@@ -1125,20 +1125,9 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
 .lpv2-monthgrid strong{ display:block; font-size:10px; color:var(--sage); font-weight:700; margin-top:8px; }
 
 .lpv2-insight{ margin-bottom:14px; padding:19px 22px; background:var(--amber-dim); border-color:rgba(190,122,66,.3); }
-.lpv2-insight small, .lpv2-premiumfoot small{ font-size:9px; letter-spacing:.14em; color:var(--terracotta); }
+.lpv2-insight small{ font-size:9px; letter-spacing:.14em; color:var(--terracotta); }
 .lpv2-insight h2{ font:600 18px 'Lora',serif; margin:6px 0; color:var(--text); }
 .lpv2-insight p{ font-size:11.5px; color:var(--text-muted); margin:0; }
-
-.lpv2-premiumfoot{
-  padding:21px 23px; display:flex; align-items:center; justify-content:space-between;
-  gap:20px; background:linear-gradient(105deg, var(--amber-dim), var(--surface-2));
-}
-.lpv2-premiumfoot h2{ font:600 17px 'Lora',serif; margin:6px 0; color:var(--text); }
-.lpv2-btn{
-  height:40px; border:1px solid var(--line); border-radius:10px; background:var(--surface); padding:0 16px;
-  color:var(--text); font-weight:650; font-size:11.5px; cursor:pointer; font-family:'Inter',sans-serif; white-space:nowrap;
-}
-.lpv2-btn.primary{ background:var(--terracotta); border-color:var(--terracotta); color:#fff; }
 
 /* Tablet: 768–1199px */
 @media(max-width:1199px){
@@ -1157,8 +1146,6 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
   .lpv2-grid.lpv2-top, .lpv2-grid.lpv2-bottom{ grid-template-columns:1fr; }
   .lpv2-chart{ height:190px; }
   .lpv2-monthgrid{ grid-template-columns:1fr 1fr; }
-  .lpv2-premiumfoot{ align-items:flex-start; flex-direction:column; }
-  .lpv2-premiumfoot .lpv2-btn{ width:100%; }
   .lpv2-compare{ flex-direction:column; align-items:flex-start; }
 }
 @media(max-width:390px){
@@ -1792,15 +1779,6 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
             <h2 id="lp-insight-title" data-i18n="metrics.insight.emptyTitle">Estamos conociendo tus patrones.</h2>
             <p id="lp-insight-text" data-i18n="metrics.insight.emptyText">A medida que uses Limen, van a aparecer insights basados en tus propios momentos difíciles.</p>
           </div>
-        </section>
-
-        <section class="lpv2-premiumfoot">
-          <div>
-            <small data-i18n="metrics.premiumKicker">LIMEN PREMIUM</small>
-            <h2 data-i18n="metrics.premiumCta.title">Conoce tu forma de decidir.</h2>
-            <p data-i18n="metrics.premiumCta.body">Más contexto. Mejores decisiones. Un acompañamiento que aprende de ti.</p>
-          </div>
-          <button type="button" class="lpv2-btn primary" id="btn-metrics-premium" data-i18n="metrics.premiumCta.button">Ver Premium</button>
         </section>
       </div>
     </div>
