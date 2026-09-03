@@ -419,7 +419,8 @@ window.closeTranscript = function closeTranscript() {
 //   - `abandonRate` es un proxy: intentos que quedaron atascados en
 //     'queued'/'chat_waiting' sobre el total del período.
 // ---------------------------------------------------------------
-const SUBSCRIPTION_PRICE_USD = { basic: 3, premium: 6 };
+// Único plan de pago hoy -- ver packages/shared/src/constants.js (SUBSCRIPTION_PLANS.premium)
+const SUBSCRIPTION_PRICE_USD_PREMIUM = 5;
 
 function fmtMinSec(totalSeconds) {
   const m = Math.floor(totalSeconds / 60);
@@ -446,17 +447,15 @@ window.computeRealPeriodData = async function computeRealPeriodData(start, end) 
     donationsByCompanion.set(v.companionId, (donationsByCompanion.get(v.companionId) || 0) + v.amountCents);
   });
 
-  // --- Usuarios activos / plan / MRR (snapshot actual, no acotado al rango) ---
-  let activeUsers = 0, planBasicCount = 0, planPremiumCount = 0;
+  // --- Usuarios activos / MRR (snapshot actual, no acotado al rango) ---
+  // Un solo plan de pago (premium) -- todo usuario con subscriptionStatus
+  // 'active' está en ese plan, no hace falta distinguir por u.plan.
+  let activeUsers = 0;
   usersAllSnap.forEach((d) => {
     const u = d.data();
-    if (u.subscriptionStatus === 'active') {
-      activeUsers++;
-      if (u.plan === 'premium') planPremiumCount++; else planBasicCount++;
-    }
+    if (u.subscriptionStatus === 'active') activeUsers++;
   });
-  const mrr = planBasicCount * SUBSCRIPTION_PRICE_USD.basic + planPremiumCount * SUBSCRIPTION_PRICE_USD.premium;
-  const planBasicPct = activeUsers ? Math.round((planBasicCount / activeUsers) * 100) : 0;
+  const mrr = activeUsers * SUBSCRIPTION_PRICE_USD_PREMIUM;
 
   // --- Chats: productividad por compañero, sitios más atendidos ---
   const byCompanion = new Map();
@@ -570,7 +569,6 @@ window.computeRealPeriodData = async function computeRealPeriodData(start, end) 
     prev: null,
     users: {
       activeUsers, newUsers: newUsersSnap.size, retention: null, mrr,
-      planBasic: planBasicPct, planPremium: 100 - planBasicPct,
       topSites, cancellations,
     },
     service: {

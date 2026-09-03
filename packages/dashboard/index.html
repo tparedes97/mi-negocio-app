@@ -999,7 +999,6 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
   #app-shell .app-tabs{margin-top:13px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
   #app-shell .app-tab{text-align:center;padding:9px 5px;font-size:11px}
   #app-shell .app-tab::before{display:none}
-  #app-shell .sidebar-premium{display:none!important}
   #app-shell .tab-panel{padding:28px 16px 50px!important}
   #app-shell .grid-2{grid-template-columns:1fr!important}
 }
@@ -1020,16 +1019,6 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
    solo agrega layout propio bajo .lp-dashboard. Breakpoints pedidos:
    escritorio >=1200px, tablet 768-1199px, celular <768px.
 --------------------------------------------------------------- */
-#app-shell .sidebar-premium{
-  margin-top:22px; padding:16px 15px; border-radius:14px;
-  background:linear-gradient(135deg, rgba(243,200,146,.16), rgba(190,122,66,.08));
-  border:1px solid rgba(243,200,146,.35);
-  display:flex; flex-direction:column; gap:4px;
-}
-#app-shell .sidebar-premium strong{ font-family:'Lora',serif; font-size:13px; color:#F3C892; }
-#app-shell .sidebar-premium span{ font-size:11px; color:rgba(251,243,231,0.65); line-height:1.4; margin-bottom:4px; }
-#app-shell .sidebar-premium .btn-link{ text-align:left; color:#F3C892; font-size:11.5px; margin-top:2px; padding:0; text-decoration:underline; }
-
 .lpv2{ box-sizing:border-box; color:var(--text); font-family:'Inter',sans-serif; }
 .lpv2 *{ box-sizing:border-box; }
 .lpv2-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:22px; }
@@ -1616,11 +1605,6 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
         <button class="app-tab" data-tab="metricas" role="tab" aria-selected="false" data-i18n="tabs.metricas">Métricas</button>
         <button class="app-tab" data-tab="ajustes" role="tab" aria-selected="false" data-i18n="tabs.ajustes">Ajustes</button>
       </div>
-      <div class="sidebar-premium">
-        <strong data-i18n="account.premium.title">Limen Premium</strong>
-        <span data-i18n="account.premium.body">Desbloquea todo tu potencial.</span>
-        <button type="button" class="btn-link" id="btn-sidebar-premium" data-i18n="account.premium.cta">Ver planes</button>
-      </div>
     </div>
   </div>
 
@@ -1689,7 +1673,13 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
     </div>
 
     <div id="tab-metricas" class="tab-panel" style="display:none;">
-      <div class="lpv2">
+      <div class="card" id="metrics-locked" style="display:none; text-align:center; padding:44px 24px;">
+        <div style="font-size:30px; margin-bottom:10px;">🔒</div>
+        <div class="title" data-i18n="metrics.locked.title">Las métricas son parte de Limen Premium</div>
+        <p class="sub" style="max-width:38ch; margin:8px auto 0;" data-i18n="metrics.locked.body">Sitios ilimitados y todo tu progreso en un solo lugar, por $5/mes.</p>
+        <button type="button" class="btn btn-amber" style="margin-top:16px; width:auto; padding:0 24px;" id="btn-metrics-locked-cta" data-i18n="account.premium.cta">Ver planes</button>
+      </div>
+      <div class="lpv2" id="metrics-unlocked">
         <header class="lpv2-head">
           <div>
             <small data-i18n="metrics.premiumKicker">LIMEN PREMIUM</small>
@@ -1795,10 +1785,16 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
         <div class="site-row" style="margin-top:10px;">
           <div>
             <div class="name" id="settings-email"></div>
-            <div class="meta"><span data-i18n="settings.planLabel">Plan actual</span>: <span data-i18n="settings.planFree">Gratis</span></div>
+            <div class="meta"><span data-i18n="settings.planLabel">Plan actual</span>: <span id="settings-plan-label" data-i18n="settings.planFree">Gratis</span></div>
           </div>
           <button type="button" class="btn-link" id="btn-settings-logout" data-i18n="account.logout">Cerrar sesión</button>
         </div>
+      </div>
+
+      <div class="card" id="settings-plan-card">
+        <div class="title" data-i18n="account.premium.title">Limen Premium</div>
+        <div class="sub" id="settings-plan-body" data-i18n="account.premium.body">Sitios ilimitados y tus métricas, por $5/mes.</div>
+        <button type="button" class="btn btn-amber btn-block" id="btn-settings-premium" style="margin-top:10px;" data-i18n="account.premium.cta">Ver planes</button>
       </div>
 
       <div class="card">

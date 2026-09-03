@@ -35,6 +35,12 @@ function isValidDomain(value) {
   return /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$/i.test(value.trim());
 }
 
+// Copiado a mano de packages/shared/src/constants.js (SUBSCRIPTION_PLANS.free)
+// -- este paquete no usa bundler, así que no puede importar el módulo
+// compartido con un specifier tipo '@limen/shared/...' desde el navegador.
+// Si cambia el número allá, hay que cambiarlo acá también.
+const FREE_MAX_BLOCKED_SITES = 5;
+
 function normalizeDomain(raw) {
   let value = raw.trim().toLowerCase();
   if (!value) return '';
@@ -82,15 +88,26 @@ document.querySelectorAll('.js-google-login').forEach((btn) => {
 
 document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 document.getElementById('btn-settings-logout').addEventListener('click', () => signOut(auth));
+// Las suscripciones todavía no están implementadas en el backend (ver
+// createCheckoutSession.js) -- en vez de ofrecer un botón que intente un
+// pago y falle, se avisa directamente.
+document.getElementById('btn-settings-premium').addEventListener('click', () => {
+  alert(t('account.premium.comingSoon'));
+});
+document.getElementById('btn-metrics-locked-cta').addEventListener('click', () => {
+  alert(t('account.premium.comingSoon'));
+});
 
 let currentUser = null;
 let unsubscribeSites = null;
 let unsubscribeAttempts = null;
 let unsubscribeActiveUnlocks = null;
+let unsubscribeUserDoc = null;
 let currentSites = [];
 let currentAttempts = [];
 let currentActiveUnlocks = new Map(); // domain -> expiresAtMs
 let unlockCountdownInterval = null;
+let currentPlan = 'free'; // 'free' | 'premium' -- solo lo escribe el backend (ver firestore.rules)
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
@@ -105,8 +122,9 @@ onAuthStateChanged(auth, (user) => {
   if (unsubscribeSites) { unsubscribeSites(); unsubscribeSites = null; }
   if (unsubscribeAttempts) { unsubscribeAttempts(); unsubscribeAttempts = null; }
   if (unsubscribeActiveUnlocks) { unsubscribeActiveUnlocks(); unsubscribeActiveUnlocks = null; }
+  if (unsubscribeUserDoc) { unsubscribeUserDoc(); unsubscribeUserDoc = null; }
   if (unlockCountdownInterval) { clearInterval(unlockCountdownInterval); unlockCountdownInterval = null; }
-  if (!user) return;
+  if (!user) { currentPlan = 'free'; return; }
 
   document.getElementById('user-email').textContent = user.email || '';
   document.getElementById('settings-email').textContent = user.email || '';
@@ -151,6 +169,17 @@ onAuthStateChanged(auth, (user) => {
       if (currentActiveUnlocks.size > 0) renderSiteList();
     }, 15000);
   }
+
+  // Plan real (gratis/premium) -- lo escribe únicamente el backend al
+  // confirmar un pago (ver firestore.rules). Si el documento todavía no
+  // existe, se trata como 'free' (nunca se asume premium por defecto).
+  unsubscribeUserDoc = onSnapshot(doc(db, 'users', user.uid), (snap) => {
+    currentPlan = snap.exists() && snap.data().plan === 'premium' ? 'premium' : 'free';
+    renderSettingsPlan();
+    renderPremiumMetrics();
+  }, (err) => {
+    console.error('[limen-dashboard] error escuchando el plan del usuario', err);
+  });
 });
 
 document.getElementById('lp-period')?.addEventListener('change', renderPremiumMetrics);
@@ -191,6 +220,20 @@ function scheduleSummary(site) {
   const window = Object.values(site.schedule)[0];
   const dayList = days.map((d) => DAY_LABELS[Number(d)]).join(', ');
   return dayList + ' · ' + String(window.startHour).padStart(2, '0') + ':00–' + (window.endHour === 24 ? '24:00' : String(window.endHour).padStart(2, '0') + ':00');
+}
+
+function renderSettingsPlan() {
+  const label = document.getElementById('settings-plan-label');
+  const body = document.getElementById('settings-plan-body');
+  const cta = document.getElementById('btn-settings-premium');
+  if (!label) return;
+
+  label.removeAttribute('data-i18n');
+  label.textContent = currentPlan === 'premium' ? t('settings.planPremium') : t('settings.planFree');
+
+  body.removeAttribute('data-i18n');
+  body.textContent = currentPlan === 'premium' ? t('account.premium.bodyActive') : t('account.premium.body');
+  cta.style.display = currentPlan === 'premium' ? 'none' : '';
 }
 
 function formatUnlockCountdown(msRemaining) {
@@ -303,6 +346,11 @@ async function addCurrentDomain() {
   }
   clearDomainError();
   if (currentSites.some((s) => s.domain === value)) { domainInput.value = ''; return; }
+
+  if (currentPlan !== 'premium' && currentSites.length >= FREE_MAX_BLOCKED_SITES) {
+    showDomainError(t('addSite.freeLimitReached', { limit: FREE_MAX_BLOCKED_SITES }));
+    return;
+  }
 
   const ref = doc(sitesCollectionRef());
   const site = { id: ref.id, domain: value, schedule: {}, reasonWhy: '', reasonInstead: '' };
@@ -831,6 +879,12 @@ function renderMonthGrid(monthly) {
 
 function renderPremiumMetrics() {
   if (!document.getElementById('lp-success')) return; // pestaña Métricas nunca abierta todavía
+
+  const isPremium = currentPlan === 'premium';
+  document.getElementById('metrics-locked').style.display = isPremium ? 'none' : 'block';
+  document.getElementById('metrics-unlocked').style.display = isPremium ? 'block' : 'none';
+  if (!isPremium) return; // sin plan pago no se calcula nada -- ni falta hace
+
   const days = Number(document.getElementById('lp-period')?.value || 30);
   const periodAttempts = attemptsWithinDays(currentAttempts, days);
   document.getElementById('lp-evolution-title').textContent = t('metrics.evolution.title', { days });

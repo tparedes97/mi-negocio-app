@@ -10,9 +10,13 @@
  */
 
 // ---- Suscripción ----
+// Solo dos niveles: gratis (tope de sitios bloqueados, sin métricas) y
+// premium (sitios ilimitados + métricas). El acompañamiento (chat con
+// compañeros) es siempre gratuito en ambos niveles — no depende del plan.
+const FREE_MAX_BLOCKED_SITES = 5;
 const SUBSCRIPTION_PLANS = {
-  basic: { id: 'basic', priceUsd: 3, label: 'Básico', includesStats: false },
-  premium: { id: 'premium', priceUsd: 6, label: 'Premium', includesStats: true },
+  free: { id: 'free', priceUsd: 0, label: 'Gratis', includesStats: false, maxBlockedSites: FREE_MAX_BLOCKED_SITES },
+  premium: { id: 'premium', priceUsd: 5, label: 'Premium', includesStats: true, maxBlockedSites: Infinity },
 };
 
 // ---- Chat: duración y reglas de cierre ----
@@ -70,6 +74,7 @@ const COMPANION_ROLES = { FOUNDER: 'founder', STAFF: 'staff' };
 
 module.exports = {
   SUBSCRIPTION_PLANS,
+  FREE_MAX_BLOCKED_SITES,
   CHAT_DURATION_SECONDS,
   FAREWELL_DURATION_SECONDS,
   CHAT_LOW_TIME_THRESHOLD_SECONDS,

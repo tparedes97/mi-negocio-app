@@ -1209,16 +1209,9 @@
 
       <div class="desk-row" style="gap:18px; align-items:flex-start;">
         <div class="chart-card" style="flex:1; min-width:240px;">
-          <label class="field-label" style="margin-top:0;">Suscriptores por plan</label>
-          <div class="donut-row">
-            <div class="donut" style="background:conic-gradient(var(--sage) 0% ${d.planBasic}%, var(--amber) ${d.planBasic}% 100%);">
-              <div class="donut-hole"></div>
-            </div>
-            <div>
-              <div class="legend-chip" style="margin-bottom:9px;"><span class="legend-swatch" style="background:var(--sage);"></span> Plan $3 — ${d.planBasic}%</div>
-              <div class="legend-chip"><span class="legend-swatch" style="background:var(--amber);"></span> Plan $6 — ${d.planPremium}%</div>
-            </div>
-          </div>
+          <label class="field-label" style="margin-top:0;">Suscriptores Premium</label>
+          <div class="sub" style="margin-top:0; font-size:11.5px;">Único plan de pago — $5/mes, incluye métricas y sitios ilimitados.</div>
+          <div class="kpi-num" style="margin-top:10px;">${d.activeUsers}</div>
         </div>
 
         <div class="table-card" style="flex:1.3; min-width:260px;">

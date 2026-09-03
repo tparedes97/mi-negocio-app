@@ -27,8 +27,16 @@ service cloud.firestore {
       // necesita contar usuarios activos, planes, etc. sobre toda la
       // colección, no solo el propio documento.
       allow read: if isOwner(userId) || isFounder();
-      allow update: if isOwner(userId);
-      allow create: if isSignedIn() && request.auth.uid == userId;
+      // 'plan' y 'subscriptionStatus' solo los escribe el backend (el
+      // webhook de Paddle, con el Admin SDK, que se salta estas reglas) —
+      // si el dueño pudiera tocarlos, cualquiera se pondría "premium"
+      // gratis desde la consola del navegador.
+      allow update: if isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['plan', 'subscriptionStatus']);
+      // Mismo motivo: si el doc todavía no existe, tampoco puede crearlo
+      // ya con esos campos adentro.
+      allow create: if isSignedIn() && request.auth.uid == userId &&
+        !('plan' in request.resource.data) && !('subscriptionStatus' in request.resource.data);
       allow delete: if false; // baja de cuenta se maneja vía Cloud Function, no borrado directo
 
       match /blockedSites/{siteId} {
