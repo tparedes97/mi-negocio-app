@@ -482,6 +482,11 @@
   .site-row button{ background:none; border:none; color:var(--text-muted); cursor:pointer; padding:7px; border-radius:8px; display:flex; }
   .site-row button:hover{ background:var(--page-bg); color:var(--text); }
   .lock-badge{ color:var(--amber); display:flex; align-items:center; }
+  .site-row .dot.dot-unlocked{ background:var(--sage); }
+  .unlock-badge{
+    color:#3E4E37; background:var(--sage-dim); border-radius:999px; padding:5px 11px;
+    font-size:11px; font-weight:700; white-space:nowrap;
+  }
 
   .site-row.confirming{ flex-direction:column; align-items:stretch; background:var(--amber-dim); border-color:var(--amber); }
   .confirm-actions{ display:flex; gap:8px; margin-top:8px; }
@@ -904,6 +909,7 @@ footer.site-footer{background:#a94a1d!important;padding:34px 70px 18px!important
 #app-shell .site-row .name{font-size:12.5px!important}
 #app-shell .site-row .meta{font-size:10px!important}
 #app-shell .site-row .dot{background:var(--dash-accent)!important}
+#app-shell .site-row .dot.dot-unlocked{background:var(--sage)!important}
 #app-shell .lock-badge{color:var(--dash-accent)!important}
 #app-shell .site-row button:hover{background:#f7ede1!important;color:var(--dash-accent)!important}
 

@@ -3,7 +3,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
-  getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, limit, getDocs,
+  getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, where, orderBy, limit, getDocs,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 import { t, LANG, applyStaticTranslations } from './i18n.js';
@@ -86,8 +86,11 @@ document.getElementById('btn-settings-logout').addEventListener('click', () => s
 let currentUser = null;
 let unsubscribeSites = null;
 let unsubscribeAttempts = null;
+let unsubscribeActiveUnlocks = null;
 let currentSites = [];
 let currentAttempts = [];
+let currentActiveUnlocks = new Map(); // domain -> expiresAtMs
+let unlockCountdownInterval = null;
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
@@ -101,6 +104,8 @@ onAuthStateChanged(auth, (user) => {
 
   if (unsubscribeSites) { unsubscribeSites(); unsubscribeSites = null; }
   if (unsubscribeAttempts) { unsubscribeAttempts(); unsubscribeAttempts = null; }
+  if (unsubscribeActiveUnlocks) { unsubscribeActiveUnlocks(); unsubscribeActiveUnlocks = null; }
+  if (unlockCountdownInterval) { clearInterval(unlockCountdownInterval); unlockCountdownInterval = null; }
   if (!user) return;
 
   document.getElementById('user-email').textContent = user.email || '';
@@ -122,6 +127,30 @@ onAuthStateChanged(auth, (user) => {
     console.error('[limen-dashboard] error escuchando unlockAttempts', err);
     document.getElementById('chats-list').innerHTML = '<div class="field-error">No se pudo cargar tu historial: ' + (err.message || err.code) + '</div>';
   });
+
+  // Desbloqueos temporales pagados (mismo activeUnlocks/{uid}_{domain} que
+  // lee la extensión) -- sin esto, un sitio con un desbloqueo activo se
+  // seguía mostrando con el candado como si estuviera bloqueando de verdad,
+  // sin ninguna señal de que en realidad ya se puede entrar y por cuánto
+  // tiempo más.
+  const activeUnlocksQuery = query(collection(db, 'activeUnlocks'), where('userId', '==', user.uid));
+  unsubscribeActiveUnlocks = onSnapshot(activeUnlocksQuery, (snap) => {
+    currentActiveUnlocks = new Map(
+      snap.docs
+        .map((d) => d.data())
+        .filter((u) => u.expiresAt && u.expiresAt.toMillis() > Date.now())
+        .map((u) => [u.domain, u.expiresAt.toMillis()]),
+    );
+    renderSiteList();
+  }, (err) => {
+    console.error('[limen-dashboard] error escuchando activeUnlocks', err);
+  });
+
+  if (!unlockCountdownInterval) {
+    unlockCountdownInterval = setInterval(() => {
+      if (currentActiveUnlocks.size > 0) renderSiteList();
+    }, 15000);
+  }
 });
 
 document.getElementById('lp-period')?.addEventListener('change', renderPremiumMetrics);
@@ -164,6 +193,14 @@ function scheduleSummary(site) {
   return dayList + ' · ' + String(window.startHour).padStart(2, '0') + ':00–' + (window.endHour === 24 ? '24:00' : String(window.endHour).padStart(2, '0') + ':00');
 }
 
+function formatUnlockCountdown(msRemaining) {
+  const totalMinutes = Math.max(0, Math.ceil(msRemaining / 60000));
+  if (totalMinutes < 60) return t('sites.unlockedMinutes', { minutes: totalMinutes });
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return t('sites.unlockedHoursMinutes', { hours, minutes });
+}
+
 function renderSiteList() {
   const el = document.getElementById('site-list');
   if (!currentSites.length) {
@@ -171,8 +208,22 @@ function renderSiteList() {
     return;
   }
 
+  const now = Date.now();
   el.innerHTML = currentSites.map((site) => {
     const blockedNow = isWithinBlockedWindow(site);
+    const unlockExpiresAt = currentActiveUnlocks.get(site.domain);
+    const isTemporarilyUnlocked = blockedNow && unlockExpiresAt && unlockExpiresAt > now;
+
+    if (isTemporarilyUnlocked) {
+      return `
+        <div class="site-row">
+          <div>
+            <div class="name"><span class="dot dot-unlocked"></span>${site.domain}</div>
+            <div class="meta">${scheduleSummary(site)}</div>
+          </div>
+          <span class="unlock-badge" title="${t('sites.unlockTooltip')}">${formatUnlockCountdown(unlockExpiresAt - now)}</span>
+        </div>`;
+    }
 
     if (blockedNow) {
       return `
