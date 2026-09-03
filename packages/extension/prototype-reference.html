@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Limen — Prototipo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --page-bg:#F6EFE2;
+    --ink:#6B5642;
+    --frame-dark:#4A3826;
+    --surface:#FFFCF5;
+    --surface-2:#F2E7D3;
+    --amber:#BE7A42;
+    --amber-dim:#F1E1C7;
+    --sage:#6E8768;
+    --sage-dim:#E4EBDA;
+    --text:#3B2E22;
+    --text-muted:#8C7A63;
+    --line:#E6D9C0;
+    --radius:20px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    background:var(--page-bg);
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(190,122,66,0.10), transparent 42%),
+      radial-gradient(circle at 88% 92%, rgba(110,135,104,0.10), transparent 42%);
+    min-height:100vh;
+    font-family:'Inter', sans-serif;
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:40px 16px 80px;
+  }
+
+  .top-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin-bottom:6px;
+  }
+
+  h1.brand{
+    font-family:'Source Serif 4', serif;
+    font-weight:500;
+    font-size:29px;
+    letter-spacing:0.01em;
+    margin-bottom:36px;
+    color:var(--text);
+  }
+  h1.brand span{ color:var(--amber); }
+
+  .layout{
+    display:flex;
+    gap:32px;
+    align-items:flex-start;
+  }
+
+  /* --- Screen index (desktop rail) --- */
+  .rail{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    width:230px;
+    position:sticky;
+    top:40px;
+  }
+  .rail-item{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--text-muted);
+    padding:10px 14px;
+    border-radius:12px;
+    cursor:pointer;
+    display:flex;
+    gap:10px;
+    border:1px solid transparent;
+    transition:all .15s ease;
+  }
+  .rail-item .n{ color:var(--amber); opacity:0.85; width:18px; }
+  .rail-item:hover{ background:var(--surface); }
+  .rail-item.active{
+    background:var(--surface);
+    border-color:var(--line);
+    color:var(--text);
+    box-shadow:0 2px 10px rgba(59,46,34,0.06);
+  }
+
+  /* --- Phone frame --- */
+  .phone-wrap{ display:flex; flex-direction:column; align-items:center; }
+  .phone{
+    width:380px;
+    height:760px;
+    background:var(--ink);
+    border-radius:44px;
+    border:1px solid var(--frame-dark);
+    box-shadow:0 40px 80px -20px rgba(59,46,34,0.35), inset 0 0 0 6px var(--frame-dark);
+    position:relative;
+    overflow:hidden;
+  }
+  .notch{
+    position:absolute;
+    top:0; left:50%;
+    transform:translateX(-50%);
+    width:140px; height:22px;
+    background:var(--frame-dark);
+    border-radius:0 0 16px 16px;
+    z-index:20;
+  }
+
+  .screen{
+    position:absolute; inset:6px;
+    top:12px;
+    border-radius:38px;
+    background:var(--page-bg);
+    padding:46px 24px 28px;
+    display:none;
+    flex-direction:column;
+    overflow-y:auto;
+  }
+  .screen.active{ display:flex; }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:8px;
+  }
+  .title{
+    font-family:'Source Serif 4', serif;
+    font-size:23px;
+    font-weight:500;
+    line-height:1.3;
+    margin-bottom:10px;
+  }
+  .sub{
+    font-size:13.5px;
+    color:var(--text-muted);
+    line-height:1.6;
+    margin-bottom:22px;
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-bottom:12px;
+    box-shadow:0 2px 10px rgba(59,46,34,0.05);
+  }
+
+  .confidential-note{
+    display:flex; gap:10px; align-items:flex-start;
+    background:var(--sage-dim);
+    border:1px solid #D7E2CC;
+    border-radius:16px;
+    padding:13px 14px;
+    font-size:12.5px;
+    color:#3E4E37;
+    line-height:1.55;
+    margin-top:14px;
+  }
+  .confidential-note .ico{ color:var(--sage); font-size:15px; margin-top:1px; }
+
+  input[type=text], input[type=time], textarea{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px 14px;
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    font-size:13.5px;
+    outline:none;
+    resize:none;
+  }
+  textarea{ min-height:56px; }
+  input::placeholder, textarea::placeholder{ color:#B5A688; }
+
+  label.field-label{
+    font-size:11.5px;
+    color:var(--text-muted);
+    display:block;
+    margin-bottom:6px;
+    margin-top:14px;
+  }
+
+  .btn{
+    border:none;
+    border-radius:999px;
+    padding:14px 18px;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    text-align:center;
+    transition:transform .1s ease, filter .15s ease;
+  }
+  .btn:active{ transform:scale(0.98); }
+  .btn-primary{ background:var(--sage); color:#FBF9F1; }
+  .btn-primary:hover{ filter:brightness(1.06); }
+  .btn-amber{ background:var(--amber); color:#FBF3E7; }
+  .btn-ghost{
+    background:transparent;
+    color:var(--text-muted);
+    border:1px solid var(--line);
+  }
+  .btn-link{
+    background:none; border:none; color:var(--text-muted);
+    font-size:12.5px; text-decoration:underline;
+    cursor:pointer; text-align:center; margin-top:10px;
+  }
+
+  .spacer{ flex:1; }
+
+  .chip-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .chip{
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--text);
+    border-radius:20px;
+    padding:8px 16px;
+    font-size:13px;
+    font-family:'IBM Plex Mono', monospace;
+    cursor:pointer;
+  }
+  .chip.selected{ background:var(--amber-dim); border-color:var(--amber); color:#7A4D26; }
+
+  /* Horizon — signature element: dawn/dusk arc instead of a digital countdown ring */
+  .horizon{
+    position:relative;
+    height:100px;
+    border-radius:22px;
+    overflow:hidden;
+    margin:6px 0 20px;
+    background:linear-gradient(180deg, var(--amber-dim) 0%, var(--sage-dim) 100%);
+    border:1px solid var(--line);
+  }
+  .horizon::after{
+    content:'';
+    position:absolute; left:0; right:0; bottom:36%;
+    height:1px; background:rgba(59,46,34,0.14);
+  }
+  .horizon .sun{
+    position:absolute; bottom:36%;
+    width:32px; height:32px; border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 22px rgba(190,122,66,0.45);
+    transform:translate(-50%,50%);
+    transition:left .3s ease;
+  }
+  .horizon .horizon-time{
+    position:absolute; right:16px; top:14px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:19px; font-weight:600; color:#5A4530;
+  }
+  .horizon .horizon-label{
+    position:absolute; left:16px; bottom:12px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px; letter-spacing:.06em; color:#6B5A45;
+  }
+
+  .stepper{ display:flex; gap:6px; justify-content:center; margin-bottom:18px; }
+  .step-dot{ width:22px; height:3px; border-radius:2px; background:var(--line); }
+  .step-dot.done{ background:var(--sage); }
+  .step-dot.now{ background:var(--amber); }
+
+  /* Chat screen */
+  .chat-header{
+    display:flex; align-items:center; gap:10px;
+    padding-bottom:14px; border-bottom:1px solid var(--line); margin-bottom:14px;
+  }
+  .avatar{
+    width:36px; height:36px; border-radius:50%;
+    background:var(--sage-dim); color:#3E4E37;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Source Serif 4',serif; font-size:15px;
+  }
+  .chat-meta{ flex:1; }
+  .chat-meta .name{ font-size:13.5px; font-weight:600; }
+  .chat-meta .status{ font-size:11px; color:var(--sage); }
+  .chat-timer{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px; color:#7A4D26;
+    background:var(--amber-dim);
+    padding:4px 9px; border-radius:8px;
+  }
+  .bubble{
+    max-width:78%;
+    padding:10px 13px;
+    border-radius:16px;
+    font-size:13px;
+    line-height:1.5;
+    margin-bottom:10px;
+  }
+  .bubble.them{ background:var(--surface); border:1px solid var(--line); align-self:flex-start; border-bottom-left-radius:4px; }
+  .bubble.me{ background:var(--sage-dim); color:#33422D; align-self:flex-end; border-bottom-right-radius:4px; }
+  .bubble-col{ display:flex; flex-direction:column; }
+
+  /* stats */
+  .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .stat-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:14px;
+    box-shadow:0 2px 10px rgba(59,46,34,0.05);
+  }
+  .stat-num{ font-family:'Source Serif 4', serif; font-size:24px; color:var(--amber); }
+  .stat-num.sage{ color:var(--sage); }
+  .stat-label{ font-size:11px; color:var(--text-muted); margin-top:2px; }
+
+  .bars{ display:flex; align-items:flex-end; gap:6px; height:70px; margin-top:14px; }
+  .bar{ flex:1; background:var(--sage); border-radius:5px 5px 0 0; opacity:0.85; }
+  .bar.low{ background:var(--amber); }
+
+  /* Self-congrats banner */
+  .congrats-card{
+    background:linear-gradient(135deg, rgba(110,135,104,0.16), rgba(110,135,104,0.05));
+    border:1px solid #D7E2CC;
+    border-radius:18px;
+    padding:15px 16px;
+    margin-bottom:16px;
+  }
+  .congrats-card .cg-top{
+    display:flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--sage); margin-bottom:6px;
+  }
+  .congrats-card .cg-msg{ font-size:13px; line-height:1.55; color:var(--text); }
+  .congrats-card .cg-msg b{ color:#4A6144; }
+
+  .scope-note{
+    display:flex; gap:8px; align-items:flex-start;
+    font-size:11px; color:var(--text-muted); line-height:1.55;
+    margin-bottom:18px;
+  }
+  .scope-note .ico{ margin-top:1px; }
+
+  .section-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:10px; margin-top:6px;
+  }
+  .section-head .field-label{ margin:0; }
+  .section-head .count{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--amber); }
+
+  .achv-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }
+  .achv-item{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:12px 8px;
+    text-align:center;
+    box-shadow:0 2px 8px rgba(59,46,34,0.04);
+  }
+  .achv-item .achv-badge{
+    width:38px; height:38px; margin:0 auto 8px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:17px;
+    background:var(--sage-dim); color:#4A6144;
+  }
+  .achv-item .achv-label{ font-size:10px; color:var(--text); line-height:1.3; }
+  .achv-item.locked{ opacity:0.45; box-shadow:none; }
+  .achv-item.locked .achv-badge{ background:var(--surface-2); color:var(--text-muted); }
+  .achv-item.locked .achv-label{ color:var(--text-muted); }
+
+  /* Celebration screen */
+  .confetti-row{ display:flex; justify-content:center; gap:10px; margin-bottom:6px; }
+  .confetti-row span{ font-size:20px; }
+  .badge-hero{
+    width:96px; height:96px; margin:6px auto 18px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, rgba(190,122,66,0.30), var(--sage-dim) 72%);
+    border:1px solid var(--sage);
+    display:flex; align-items:center; justify-content:center;
+    font-size:38px;
+  }
+
+  .fee-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:13px 14px; border:1px solid var(--line); border-radius:16px; margin-bottom:9px;
+    cursor:pointer;
+    background:var(--surface);
+  }
+  .fee-row.selected{ border-color:var(--amber); background:var(--amber-dim); }
+  .fee-time{ font-size:13.5px; font-weight:600; }
+  .fee-note{ font-size:10.5px; color:var(--text-muted); }
+  .fee-price{ font-family:'IBM Plex Mono', monospace; color:#7A4D26; font-size:14px; }
+
+  .site-pill{
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:12px; padding:8px 12px; font-size:12.5px; margin-top:8px;
+  }
+  .dot-blocked{ width:7px; height:7px; border-radius:50%; background:var(--amber); }
+
+  .center-block{ text-align:center; margin-top:20px; }
+  .center-block .big-emoji{ font-size:34px; margin-bottom:14px; }
+
+  .wait-dots{ display:flex; gap:7px; justify-content:center; margin-top:22px; }
+  .wait-dots span{
+    width:8px; height:8px; border-radius:50%; background:var(--amber);
+    animation:wait-pulse 1.2s ease-in-out infinite;
+  }
+  .wait-dots span:nth-child(2){ animation-delay:.2s; }
+  .wait-dots span:nth-child(3){ animation-delay:.4s; }
+  @keyframes wait-pulse{
+    0%, 80%, 100%{ opacity:0.25; transform:scale(0.8); }
+    40%{ opacity:1; transform:scale(1); }
+  }
+
+  /* --- View toggle --- */
+  .view-toggle{
+    display:flex; gap:6px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:4px;
+    margin-bottom:30px;
+  }
+  .view-toggle button{
+    border:none; background:transparent;
+    font-family:'Inter', sans-serif;
+    font-size:12.5px; font-weight:600;
+    color:var(--text-muted);
+    padding:8px 18px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .view-toggle button.active{
+    background:var(--sage);
+    color:#FBF9F1;
+  }
+  .hidden-view{ display:none !important; }
+
+  /* --- Desktop browser frame --- */
+  .browser-frame{
+    width:920px;
+    max-width:92vw;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:0 40px 80px -20px rgba(59,46,34,0.30);
+    overflow:hidden;
+    margin:0 auto;
+  }
+  .browser-bar{
+    height:46px;
+    background:var(--surface-2);
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:center;
+    padding:0 16px;
+    gap:14px;
+  }
+  .browser-dots{ display:flex; gap:6px; }
+  .browser-dots span{ width:10px; height:10px; border-radius:50%; background:var(--line); }
+  .browser-url{
+    flex:1;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:6px 14px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--text-muted);
+    text-align:center;
+  }
+
+  .app-shell{ display:flex; height:600px; }
+  .app-sidebar{
+    width:220px;
+    flex-shrink:0;
+    background:var(--page-bg);
+    border-right:1px solid var(--line);
+    padding:26px 16px;
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .app-sidebar .app-logo{
+    font-family:'Source Serif 4', serif;
+    font-size:20px;
+    color:var(--text);
+    margin-bottom:22px;
+    padding:0 10px;
+  }
+  .app-logo span{ color:var(--amber); }
+  .app-nav-item{
+    font-size:13px;
+    color:var(--text-muted);
+    padding:10px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    display:flex; align-items:center; gap:10px;
+  }
+  .app-nav-item:hover{ background:var(--surface); }
+  .app-nav-item.active{
+    background:var(--surface);
+    color:var(--text);
+    font-weight:600;
+    box-shadow:0 2px 10px rgba(59,46,34,0.06);
+  }
+
+  .app-main{
+    flex:1;
+    padding:32px 36px;
+    overflow-y:auto;
+    background:var(--page-bg);
+  }
+  .app-panel{ display:none; }
+  .app-panel.active{ display:block; }
+
+  .desk-row{ display:flex; gap:16px; }
+  .desk-row > *{ flex:1; }
+  .desk-stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .desk-achv-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+  .desk-sites-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+
+  .site-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 2px 10px rgba(59,46,34,0.05);
+  }
+  .site-card .sc-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .site-card .sc-name{ font-weight:600; font-size:14px; }
+  .site-card .sc-time{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--amber); background:var(--amber-dim); padding:4px 10px; border-radius:8px; }
+  .site-card .sc-note{ font-size:12px; color:var(--text-muted); line-height:1.5; }
+
+  /* modal overlay for desktop unlock-attempt flow */
+  .modal-backdrop{
+    position:absolute; inset:0;
+    background:rgba(59,46,34,0.35);
+    display:none;
+    align-items:center; justify-content:center;
+    z-index:50;
+  }
+  .modal-backdrop.active{ display:flex; }
+  .modal-card{
+    width:380px;
+    background:var(--page-bg);
+    border-radius:24px;
+    border:1px solid var(--line);
+    box-shadow:0 30px 60px -10px rgba(59,46,34,0.35);
+    padding:28px;
+  }
+  .modal-panel{ display:none; }
+  .modal-panel.active{ display:block; }
+
+  ::-webkit-scrollbar{ width:0; }
+</style>
+</head>
+<body>
+
+<div class="top-label">Prototipo interactivo — vista móvil y escritorio</div>
+<h1 class="brand">Limen<span>.</span></h1>
+
+<div class="view-toggle">
+  <button id="btn-desktop" class="active">Vista escritorio</button>
+  <button id="btn-mobile">Vista móvil</button>
+</div>
+
+<!-- ===== DESKTOP VIEW ===== -->
+<div class="browser-frame" id="desktop-wrap">
+  <div class="browser-bar">
+    <div class="browser-dots"><span></span><span></span><span></span></div>
+    <div class="browser-url">limen.app/inicio</div>
+  </div>
+  <div class="app-shell" style="position:relative;">
+    <div class="app-sidebar">
+      <div class="app-logo">Limen<span>.</span></div>
+      <div class="app-nav-item active" data-panel="inicio">&#127749; Inicio</div>
+      <div class="app-nav-item" data-panel="bloqueos">&#128274; Bloqueos</div>
+      <div class="app-nav-item" data-panel="stats">&#10024; Estadísticas</div>
+    </div>
+
+    <div class="app-main">
+
+      <div class="app-panel active" id="panel-inicio">
+        <div class="eyebrow">Buenas tardes</div>
+        <div class="title" style="font-size:26px;">Tu espacio hoy</div>
+        <div class="sub">instagram.com está bloqueado hasta las 18:00.</div>
+
+        <div class="horizon" style="max-width:520px;">
+          <div class="sun" style="left:72%"></div>
+          <div class="horizon-time">3:42</div>
+          <div class="horizon-label">tiempo restante bloqueado</div>
+        </div>
+
+        <div class="desk-row" style="margin-bottom:18px;">
+          <div class="stat-card"><div class="stat-num sage">12</div><div class="stat-label">días de racha</div></div>
+          <div class="stat-card"><div class="stat-num sage">38h</div><div class="stat-label">tiempo respetado</div></div>
+          <div class="stat-card"><div class="stat-num">$24</div><div class="stat-label">gastado en total</div></div>
+        </div>
+
+        <div class="congrats-card" style="max-width:520px;">
+          <div class="cg-top">&#9679; Reconócelo</div>
+          <div class="cg-msg">Llevas <b>12 días</b> seguidos respetando tus bloqueos. Date el crédito.</div>
+        </div>
+
+        <button class="btn btn-ghost" id="btn-simulate" style="max-width:280px; border-color:var(--amber);">Simular intento de desbloqueo</button>
+      </div>
+
+      <div class="app-panel" id="panel-bloqueos">
+        <div class="eyebrow">Tus sitios</div>
+        <div class="title" style="font-size:26px;">Bloqueos activos</div>
+        <div class="sub">Este espacio es solo tuyo. Lo que agregues aquí es confidencial.</div>
+
+        <div class="desk-sites-grid" style="margin-bottom:20px;">
+          <div class="site-card">
+            <div class="sc-top"><div class="sc-name">instagram.com</div><div class="sc-time">09:00–18:00</div></div>
+            <div class="sc-note">Porque pierdo horas de trabajo y me quedo despierto tarde.</div>
+          </div>
+          <div class="site-card">
+            <div class="sc-top"><div class="sc-name">tiktok.com</div><div class="sc-time">08:00–22:00</div></div>
+            <div class="sc-note">Quiero recuperar mis noches para leer.</div>
+          </div>
+        </div>
+
+        <div class="card" style="max-width:460px;">
+          <label class="field-label" style="margin-top:0;">Agregar nuevo sitio</label>
+          <input type="text" placeholder="ejemplo.com">
+          <label class="field-label">¿Por qué eliges bloquear esto?</label>
+          <textarea placeholder="Escribe tu razón..."></textarea>
+        </div>
+        <button class="btn btn-primary" style="max-width:220px; margin-top:14px;">Guardar bloqueo</button>
+      </div>
+
+      <div class="app-panel" id="panel-stats">
+        <div class="eyebrow">Tu progreso</div>
+        <div class="title" style="font-size:26px;">Estadísticas</div>
+
+        <div class="scope-note">
+          <span class="ico">&#8505;</span>
+          <span>Estas estadísticas son de <b style="color:var(--text)">este navegador</b>. Otros dispositivos llevan su propio conteo.</span>
+        </div>
+
+        <div class="desk-stat-grid" style="margin-bottom:20px;">
+          <div class="stat-card"><div class="stat-num sage">12</div><div class="stat-label">días de racha</div></div>
+          <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">desbloqueos este mes</div></div>
+          <div class="stat-card"><div class="stat-num sage">38h</div><div class="stat-label">tiempo respetado</div></div>
+          <div class="stat-card"><div class="stat-num">$24</div><div class="stat-label">gastado en total</div></div>
+        </div>
+
+        <label class="field-label">Bloqueos respetados vs. desbloqueados (7 días)</label>
+        <div class="bars" style="max-width:420px;">
+          <div class="bar" style="height:80%"></div>
+          <div class="bar" style="height:60%"></div>
+          <div class="bar low" style="height:30%"></div>
+          <div class="bar" style="height:90%"></div>
+          <div class="bar" style="height:70%"></div>
+          <div class="bar" style="height:100%"></div>
+          <div class="bar low" style="height:40%"></div>
+        </div>
+
+        <div class="section-head"><label class="field-label">Logros</label><span class="count">5 de 9</span></div>
+        <div class="desk-achv-grid">
+          <div class="achv-item"><div class="achv-badge">&#127793;</div><div class="achv-label">Primera semana</div></div>
+          <div class="achv-item"><div class="achv-badge">&#128737;</div><div class="achv-label">10 bloqueos</div></div>
+          <div class="achv-item"><div class="achv-badge">&#9889;</div><div class="achv-label">Racha 7 días</div></div>
+          <div class="achv-item"><div class="achv-badge">&#127942;</div><div class="achv-label">Racha 30 días</div></div>
+          <div class="achv-item"><div class="achv-badge">&#127769;</div><div class="achv-label">Finde sin desbloquear</div></div>
+          <div class="achv-item locked"><div class="achv-badge">&#128274;</div><div class="achv-label">100 días</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal: simulación de intento de desbloqueo -->
+    <div class="modal-backdrop" id="modal-backdrop">
+      <div class="modal-card">
+
+        <div class="modal-panel active" id="modal-question">
+          <div class="stepper"><div class="step-dot done"></div><div class="step-dot now"></div><div class="step-dot"></div></div>
+          <div class="horizon"><div class="sun" style="left:72%"></div><div class="horizon-time">3:42</div><div class="horizon-label">tiempo restante bloqueado</div></div>
+          <div class="title" style="text-align:center; font-size:19px;">instagram.com está bloqueado</div>
+          <div class="sub" style="text-align:center;">Pregunta 2 de 3</div>
+          <div class="card">
+            <div style="font-size:13.5px; margin-bottom:10px;">¿Qué pasaría si esperas 10 minutos más antes de decidir?</div>
+            <textarea placeholder="Responde con honestidad..."></textarea>
+          </div>
+          <button class="btn btn-ghost" id="btn-ask-talk">Aún quiero seguir</button>
+        </div>
+
+        <div class="modal-panel" id="modal-talk">
+          <div class="center-block" style="margin-top:0;">
+            <div class="big-emoji">&#9737;</div>
+            <div class="title" style="font-size:19px;">¿Deseas hablar con alguien antes de continuar?</div>
+            <div class="sub">Una persona real puede acompañarte 5 minutos antes de que decidas.</div>
+          </div>
+          <button class="btn btn-primary" id="btn-open-chat">Sí, quiero hablar 5 min</button>
+          <button class="btn-link" id="btn-close-modal">No, continuar sin hablar</button>
+        </div>
+
+        <div class="modal-panel" id="modal-chat">
+          <div class="chat-header">
+            <div class="avatar">A</div>
+            <div class="chat-meta"><div class="name">Ana · Acompañamiento</div><div class="status">&#9679; en línea, persona real</div></div>
+            <div class="chat-timer">04:12</div>
+          </div>
+          <div class="bubble-col" style="margin-bottom:14px;">
+            <div class="bubble them">Hola, veo que querías entrar a instagram.com. ¿Qué es lo que buscas ahí en este momento?</div>
+            <div class="bubble me">La verdad no sé, creo que es solo costumbre.</div>
+          </div>
+          <input type="text" placeholder="Escribe tu mensaje...">
+          <button class="btn-link" id="btn-close-modal-2">Cerrar</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== MOBILE VIEW ===== -->
+<div class="layout hidden-view" id="mobile-wrap">
+
+  <div class="rail" id="rail"></div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="notch"></div>
+      <div id="screens"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const screens = [
+  {
+    name: "Agregar sitio",
+    html: `
+      <div class="eyebrow">Paso 1</div>
+      <div class="title">¿Qué quieres proteger de ti mismo?</div>
+      <div class="sub">Agrega el sitio o app que quieres bloquear. Puedes agregar más de uno.</div>
+      <input type="text" placeholder="instagram.com" value="instagram.com">
+      <div class="site-pill"><span class="dot-blocked"></span> instagram.com</div>
+      <div class="site-pill"><span class="dot-blocked"></span> tiktok.com</div>
+      <div class="confidential-note">
+        <span class="ico">&#9679;</span>
+        <span>Este es tu espacio, solo tuyo. Los sitios que agregues aquí son confidenciales — nadie más los verá, ni siquiera nosotros los mostramos en ningún reporte.</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-primary">Continuar</button>
+    `
+  },
+  {
+    name: "Configurar horario",
+    html: `
+      <div class="eyebrow">instagram.com</div>
+      <div class="title">Antes de bloquear, piénsalo bien</div>
+      <div class="sub">Este horario será difícil de romper. Elígelo con intención.</div>
+      <label class="field-label">Horario bloqueado</label>
+      <div style="display:flex; gap:8px;">
+        <input type="time" value="09:00">
+        <input type="time" value="18:00">
+      </div>
+      <label class="field-label">¿Por qué eliges bloquear esto en este horario?</label>
+      <textarea placeholder="Escribe tu razón...">Porque pierdo horas de trabajo y luego me quedo despierto tarde por el mismo motivo.</textarea>
+      <label class="field-label">¿Qué te gustaría hacer en su lugar?</label>
+      <textarea placeholder="Escribe qué harías en cambio...">Terminar mis pendientes y leer 20 minutos antes de dormir.</textarea>
+      <div class="spacer"></div>
+      <button class="btn btn-primary">Guardar bloqueo</button>
+    `
+  },
+  {
+    name: "Intento de desbloqueo",
+    html: `
+      <div class="stepper">
+        <div class="step-dot done"></div><div class="step-dot now"></div><div class="step-dot"></div>
+      </div>
+      <div class="horizon">
+        <div class="sun" style="left:72%"></div>
+        <div class="horizon-time">3:42</div>
+        <div class="horizon-label">tiempo restante bloqueado</div>
+      </div>
+      <div class="title" style="text-align:center;">instagram.com está bloqueado hasta las 18:00</div>
+      <div class="sub" style="text-align:center;">Pregunta 2 de 3</div>
+      <div class="card">
+        <div style="font-size:13.5px; margin-bottom:10px;">¿Qué pasaría si esperas 10 minutos más antes de decidir?</div>
+        <textarea placeholder="Responde con honestidad..."></textarea>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost">Aún quiero seguir</button>
+    `
+  },
+  {
+    name: "¿Hablar con alguien?",
+    html: `
+      <div class="center-block">
+        <div class="big-emoji">&#9737;</div>
+        <div class="title">¿Deseas hablar con alguien antes de continuar?</div>
+        <div class="sub">Una persona real — no un bot — puede acompañarte 5 minutos antes de que decidas.</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-primary">Sí, quiero hablar 5 min</button>
+      <button class="btn-link">No, continuar sin hablar</button>
+    `
+  },
+  {
+    name: "Esperando a alguien",
+    html: `
+      <div class="center-block" style="margin-top:60px;">
+        <div class="big-emoji">&#9737;</div>
+        <div class="title">Buscando a alguien disponible</div>
+        <div class="sub">Ya avisamos a tu acompañante. El tiempo de tu chat todavía no empieza a correr — eso pasa recién cuando comienza la conversación.</div>
+        <div class="wait-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn-link">Cancelar y seguir bloqueado</button>
+    `
+  },
+  {
+    name: "Chat en vivo",
+    html: `
+      <div class="chat-header">
+        <div class="avatar">A</div>
+        <div class="chat-meta">
+          <div class="name">Ana · Acompañamiento</div>
+          <div class="status">&#9679; en línea, persona real</div>
+        </div>
+        <div class="chat-timer">04:12</div>
+      </div>
+      <div class="bubble-col">
+        <div class="bubble them">Hola, veo que querías entrar a instagram.com. ¿Qué es lo que buscas ahí en este momento?</div>
+        <div class="bubble me">La verdad no sé, creo que es solo costumbre.</div>
+        <div class="bubble them">Eso pasa mucho. ¿Qué tenías pensado hacer hoy en ese horario?</div>
+      </div>
+      <div class="spacer"></div>
+      <input type="text" placeholder="Escribe tu mensaje...">
+    `
+  },
+  {
+    name: "Donación opcional",
+    html: `
+      <div class="eyebrow">Después del chat</div>
+      <div class="title">Ayúdanos a mantener este espacio</div>
+      <div class="sub">Tu donación ayuda a pagar el tiempo de las personas que te acompañan. Es 100% opcional.</div>
+      <div class="chip-row">
+        <div class="chip">$2</div>
+        <div class="chip selected">$5</div>
+        <div class="chip">$10</div>
+        <div class="chip">Otro monto</div>
+      </div>
+      <label class="field-label">Monto personalizado (opcional)</label>
+      <input type="text" placeholder="USD $">
+      <div class="spacer"></div>
+      <button class="btn btn-primary">Donar $5</button>
+      <button class="btn-link">Omitir, no donar</button>
+    `
+  },
+  {
+    name: "Confirmación final",
+    html: `
+      <div class="center-block">
+        <div class="title">¿Aún quieres desbloquear instagram.com?</div>
+        <div class="sub">Esta es tu decisión, tómate un segundo antes de responder.</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-primary">No, seguir bloqueado</button>
+      <button class="btn btn-ghost" style="margin-top:10px; border-color:var(--amber-dim); color:var(--amber);">Sí, quiero desbloquear</button>
+    `
+  },
+  {
+    name: "Tarifas de desbloqueo",
+    html: `
+      <div class="eyebrow">instagram.com · 2° desbloqueo hoy</div>
+      <div class="title">Elige cuánto tiempo necesitas</div>
+      <div class="sub">La tarifa sube con cada desbloqueo del mismo sitio en el día.</div>
+      <div class="fee-row"><div><div class="fee-time">10 minutos</div><div class="fee-note">tarifa base x2</div></div><div class="fee-price">$2.00</div></div>
+      <div class="fee-row selected"><div><div class="fee-time">30 minutos</div><div class="fee-note">tarifa base x2</div></div><div class="fee-price">$6.00</div></div>
+      <div class="fee-row"><div><div class="fee-time">1 hora</div><div class="fee-note">tarifa base x2</div></div><div class="fee-price">$12.00</div></div>
+      <div class="spacer"></div>
+      <button class="btn btn-amber">Pagar y desbloquear 30 min</button>
+    `
+  },
+  {
+    name: "Recordatorio de reincidencia",
+    html: `
+      <div class="center-block" style="margin-top:60px;">
+        <div class="big-emoji">&#127772;</div>
+        <div class="title">Ya tomaste esta decisión hoy</div>
+        <div class="sub">Desbloqueaste instagram.com antes. No hace falta decidir de nuevo — mañana es un día nuevo y puedes volver a empezar.</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-primary">Entendido</button>
+    `
+  },
+  {
+    name: "Estadísticas",
+    html: `
+      <div class="eyebrow">Tu progreso</div>
+      <div class="title">Estadísticas</div>
+
+      <div class="congrats-card">
+        <div class="cg-top">&#9679; Reconócelo</div>
+        <div class="cg-msg">Llevas <b>12 días</b> seguidos respetando tus bloqueos. Eso no es suerte, es una decisión que tomaste una y otra vez. Date el crédito.</div>
+      </div>
+
+      <div class="scope-note">
+        <span class="ico">&#8505;</span>
+        <span>Estas estadísticas son de <b style="color:var(--text)">este navegador</b>. Si usas Limen en otro navegador o dispositivo, llevan su propio conteo por separado.</span>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-num sage">12</div><div class="stat-label">días de racha</div></div>
+        <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">desbloqueos este mes</div></div>
+        <div class="stat-card"><div class="stat-num sage">38h</div><div class="stat-label">tiempo respetado</div></div>
+        <div class="stat-card"><div class="stat-num">$24</div><div class="stat-label">gastado en total</div></div>
+      </div>
+
+      <label class="field-label">Bloqueos respetados vs. desbloqueados (7 días)</label>
+      <div class="bars">
+        <div class="bar" style="height:80%"></div>
+        <div class="bar" style="height:60%"></div>
+        <div class="bar low" style="height:30%"></div>
+        <div class="bar" style="height:90%"></div>
+        <div class="bar" style="height:70%"></div>
+        <div class="bar" style="height:100%"></div>
+        <div class="bar low" style="height:40%"></div>
+      </div>
+
+      <div class="section-head">
+        <label class="field-label">Logros</label>
+        <span class="count">5 de 9</span>
+      </div>
+      <div class="achv-grid">
+        <div class="achv-item"><div class="achv-badge">&#127793;</div><div class="achv-label">Primera semana</div></div>
+        <div class="achv-item"><div class="achv-badge">&#128737;</div><div class="achv-label">10 bloqueos respetados</div></div>
+        <div class="achv-item"><div class="achv-badge">&#9889;</div><div class="achv-label">Racha de 7 días</div></div>
+        <div class="achv-item"><div class="achv-badge">&#127942;</div><div class="achv-label">Racha de 30 días</div></div>
+        <div class="achv-item"><div class="achv-badge">&#127769;</div><div class="achv-label">Fin de semana sin desbloquear</div></div>
+        <div class="achv-item locked"><div class="achv-badge">&#128274;</div><div class="achv-label">100 días de racha</div></div>
+        <div class="achv-item locked"><div class="achv-badge">&#128274;</div><div class="achv-label">3 sitios bajo control</div></div>
+        <div class="achv-item locked"><div class="achv-badge">&#128274;</div><div class="achv-label">Un mes sin gastar</div></div>
+        <div class="achv-item locked"><div class="achv-badge">&#128274;</div><div class="achv-label">Cero desbloqueos nocturnos</div></div>
+      </div>
+    `
+  },
+  {
+    name: "Logro desbloqueado",
+    html: `
+      <div class="confetti-row"><span>&#10024;</span><span>&#127881;</span><span>&#10024;</span></div>
+      <div class="badge-hero">&#9889;</div>
+      <div class="center-block" style="margin-top:0;">
+        <div class="eyebrow" style="justify-content:center; display:flex;">Nuevo logro</div>
+        <div class="title">Racha de 7 días</div>
+        <div class="sub">Una semana completa respetando tus horarios bloqueados en instagram.com. Reconócete esto — la mayoría no llega ni a los 3 días.</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-primary">Seguir así</button>
+      <button class="btn-link">Ver todos mis logros</button>
+    `
+  },
+];
+
+const screensEl = document.getElementById('screens');
+const railEl = document.getElementById('rail');
+
+screens.forEach((s, i) => {
+  const div = document.createElement('div');
+  div.className = 'screen' + (i === 0 ? ' active' : '');
+  div.id = 'screen-' + i;
+  div.innerHTML = s.html;
+  screensEl.appendChild(div);
+
+  const item = document.createElement('div');
+  item.className = 'rail-item' + (i === 0 ? ' active' : '');
+  item.innerHTML = `<span class="n">${String(i+1).padStart(2,'0')}</span><span>${s.name}</span>`;
+  item.onclick = () => showScreen(i);
+  railEl.appendChild(item);
+});
+
+function showScreen(i){
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.rail-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('screen-' + i).classList.add('active');
+  document.querySelectorAll('.rail-item')[i].classList.add('active');
+}
+
+/* --- View toggle --- */
+const btnDesktop = document.getElementById('btn-desktop');
+const btnMobile = document.getElementById('btn-mobile');
+const desktopWrap = document.getElementById('desktop-wrap');
+const mobileWrap = document.getElementById('mobile-wrap');
+
+btnDesktop.onclick = () => {
+  desktopWrap.classList.remove('hidden-view');
+  mobileWrap.classList.add('hidden-view');
+  btnDesktop.classList.add('active');
+  btnMobile.classList.remove('active');
+};
+btnMobile.onclick = () => {
+  mobileWrap.classList.remove('hidden-view');
+  desktopWrap.classList.add('hidden-view');
+  btnMobile.classList.add('active');
+  btnDesktop.classList.remove('active');
+};
+
+/* --- Desktop sidebar nav --- */
+document.querySelectorAll('.app-nav-item').forEach(item => {
+  item.onclick = () => {
+    document.querySelectorAll('.app-nav-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.app-panel').forEach(el => el.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('panel-' + item.dataset.panel).classList.add('active');
+  };
+});
+
+/* --- Desktop modal flow --- */
+const modalBackdrop = document.getElementById('modal-backdrop');
+function showModalPanel(id){
+  document.querySelectorAll('.modal-panel').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+document.getElementById('btn-simulate').onclick = () => {
+  showModalPanel('modal-question');
+  modalBackdrop.classList.add('active');
+};
+document.getElementById('btn-ask-talk').onclick = () => showModalPanel('modal-talk');
+document.getElementById('btn-open-chat').onclick = () => showModalPanel('modal-chat');
+document.getElementById('btn-close-modal').onclick = () => modalBackdrop.classList.remove('active');
+document.getElementById('btn-close-modal-2').onclick = () => modalBackdrop.classList.remove('active');
+
+</script>
+
+</body>
+</html>

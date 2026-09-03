@@ -1,0 +1,16 @@
+{
+  "name": "@limen/companion-portal",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Portal de trabajo para la fundadora y futuros compañeros. Hoy es HTML/CSS/JS vanilla con datos de ejemplo — conectar a Firestore (colección chats/, unlockAttempts/) y a las Cloud Functions de firebase/functions/src/chat/.",
+  "dependencies": {
+    "@limen/shared": "*",
+    "firebase": "^10.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  },
+  "scripts": {
+    "dev": "serve . -l 4002"
+  }
+}

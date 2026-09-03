@@ -1,0 +1,146 @@
+{
+  "extName": { "message": "Limen — bloqueo con acompañamiento" },
+  "extDescription": { "message": "Bloquea sitios distractores en tu horario. Antes de desbloquear antes de tiempo, habla con una persona real." },
+
+  "popupTitle": { "message": "Limen" },
+  "step1Label": { "message": "Paso 1" },
+  "addSiteTitle": { "message": "¿Qué quieres proteger de ti mismo?" },
+  "addSiteSub": { "message": "Agrega el sitio que quieres bloquear. Puedes agregar más de uno." },
+  "confidentialNote": { "message": "Este es tu espacio, solo tuyo. Los sitios que agregues aquí son confidenciales." },
+  "continueButton": { "message": "Continuar" },
+  "addSiteBtnLabel": { "message": "Agregar sitio" },
+  "invalidDomainError": { "message": "Eso no parece un sitio válido. Escribe solo el dominio, por ejemplo instagram.com (sin \"https://\")." },
+  "removeSiteAriaLabel": {
+    "message": "Quitar $DOMAIN$",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "lockedWhileBlockedTooltip": { "message": "No puedes editar ni quitar esto mientras está bloqueado. Solo puedes hacerlo en las horas libres de este sitio." },
+  "confirmRemoveText": {
+    "message": "¿Eliminar el bloqueo de $DOMAIN$?",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "confirmRemoveYesBtn": { "message": "Sí, eliminar" },
+  "confirmRemoveNoBtn": { "message": "No" },
+
+  "scheduleTitle": { "message": "Antes de bloquear, piénsalo bien" },
+  "scheduleSub": { "message": "Este horario será difícil de romper. Elígelo con intención." },
+  "daysHoursLabel": { "message": "Horario bloqueado" },
+  "startLabel": { "message": "Desde" },
+  "endLabel": { "message": "Hasta" },
+  "reasonWhyLabel": { "message": "¿Por qué eliges bloquear esto en este horario?" },
+  "reasonWhyPlaceholder": { "message": "Escribe tu razón..." },
+  "reasonWhyRequiredError": { "message": "Cuéntanos aunque sea brevemente por qué — ayuda a que la decisión pese más." },
+  "reasonInsteadLabel": { "message": "¿Qué te gustaría hacer en su lugar?" },
+  "reasonInsteadPlaceholder": { "message": "Escribe qué harías en cambio..." },
+  "saveScheduleBtn": { "message": "Guardar bloqueo" },
+  "backToSitesBtn": { "message": "← Editar sitios" },
+  "doneTitle": { "message": "Listo — ya está bloqueando" },
+  "doneSub": { "message": "Los sitios que agregaste se van a bloquear en el horario que elegiste." },
+  "editMoreBtn": { "message": "Editar sitios u horario" },
+  "dayMon": { "message": "Lun" },
+  "dayTue": { "message": "Mar" },
+  "dayWed": { "message": "Mié" },
+  "dayThu": { "message": "Jue" },
+  "dayFri": { "message": "Vie" },
+  "daySat": { "message": "Sáb" },
+  "daySun": { "message": "Dom" },
+
+  "blockedPageTitle": { "message": "Limen — bloqueado" },
+  "loadingState": { "message": "Cargando…" },
+  "initErrorTitle": { "message": "No se pudo cargar" },
+  "retryBtn": { "message": "Reintentar" },
+
+  "motivationalQuestion1": { "message": "¿Qué es exactamente lo que quieres ver ahora?" },
+  "motivationalQuestion2": { "message": "¿Qué pasaría si esperas 10 minutos más antes de decidir?" },
+  "motivationalQuestion3": { "message": "¿Qué tenías pensado hacer en este horario antes de que apareciera la idea de entrar?" },
+
+  "domainBlockedEyebrow": {
+    "message": "$DOMAIN$ está bloqueado",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "questionOfLabel": {
+    "message": "Pregunta $CURRENT$ de $TOTAL$",
+    "placeholders": { "current": { "content": "$1" }, "total": { "content": "$2" } }
+  },
+  "answerPlaceholder": { "message": "Responde con honestidad..." },
+  "stillWantBtn": { "message": "Aún quiero seguir" },
+
+  "offerChatTitle": { "message": "¿Deseas hablar con alguien antes de continuar?" },
+  "offerChatSub": { "message": "Conversa con alguien por unos minutos para despejarte — es gratis." },
+  "donationCustomPlaceholder": { "message": "Otro monto" },
+  "yesChatBtn": { "message": "Sí, quiero hablar 5 min" },
+  "noChatBtn": { "message": "No, continuar sin hablar" },
+
+  "queuedTitle": { "message": "Buscando a alguien disponible" },
+  "queuedSub": { "message": "Ya avisamos a tu acompañante. El tiempo de tu chat todavía no empieza a correr — eso pasa recién cuando comienza la conversación." },
+  "cancelWaitBtn": { "message": "Cancelar y seguir bloqueado" },
+
+  "connectingName": { "message": "Conectando…" },
+  "onlineStatus": { "message": "● en línea, persona real" },
+  "chatAliasSuffix": {
+    "message": "$ALIAS$ · Acompañamiento",
+    "placeholders": { "alias": { "content": "$1" } }
+  },
+  "chatInputPlaceholder": { "message": "Escribe tu mensaje..." },
+  "sendBtn": { "message": "Enviar" },
+  "farewellBanner": { "message": "Tu acompañante está por despedirse — el chat se cierra en un minuto." },
+
+  "chatEndedTitle": { "message": "Chat terminado" },
+  "continueAfterChatBtn": { "message": "Continuar" },
+
+  "afterChatEyebrow": { "message": "Después del chat" },
+  "donationTitle": { "message": "Ayúdanos a mantener este espacio" },
+  "donationSub": { "message": "Tu donación ayuda a pagar el tiempo de las personas que te acompañan. Es 100% opcional." },
+  "donateBtn": { "message": "Donar" },
+  "openingPaymentBtn": { "message": "Abriendo pago…" },
+  "paymentErrorBtn": { "message": "No se pudo abrir el pago, intenta de nuevo" },
+  "donateAmountBtn": {
+    "message": "Donar $$AMOUNT$",
+    "placeholders": { "amount": { "content": "$1" } }
+  },
+  "skipDonationBtn": { "message": "Omitir, no donar" },
+
+  "finalConfirmTitle": {
+    "message": "¿Aún quieres desbloquear $DOMAIN$?",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "finalConfirmSub": { "message": "Esta es tu decisión, tómate un segundo antes de responder." },
+  "stayBlockedBtn": { "message": "No, seguir bloqueado" },
+  "wantUnlockBtn": { "message": "Sí, quiero desbloquear" },
+
+  "stayedBlockedTitle": { "message": "Sigues bloqueado — bien hecho" },
+  "stayedBlockedSub": { "message": "Puedes cerrar esta pestaña cuando quieras." },
+
+  "recurrenceEyebrowSuffix": {
+    "message": " · $COUNT$° desbloqueo esta semana",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "feeSelectionTitle": { "message": "Elige cuánto tiempo necesitas" },
+  "recurrenceFeeNote": { "message": "La tarifa está duplicada por reincidencia esta semana." },
+  "feeMinutesLabel": {
+    "message": "$MINUTES$ minutos",
+    "placeholders": { "minutes": { "content": "$1" } }
+  },
+  "feeNoteDouble": { "message": "tarifa x2" },
+  "feeNoteBase": { "message": "tarifa base" },
+  "selectOptionBtn": { "message": "Selecciona una opción" },
+  "payAndUnlockBtn": {
+    "message": "Pagar y desbloquear $MINUTES$ min",
+    "placeholders": { "minutes": { "content": "$1" } }
+  },
+
+  "waitingPaymentTitle": { "message": "Esperando la confirmación del pago" },
+  "waitingPaymentSub": { "message": "Se abrió en otra pestaña. En cuanto se confirme el cobro, este sitio se desbloquea solo." },
+
+  "unlockedTitle": {
+    "message": "$DOMAIN$ está desbloqueado",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "unlockedSub": { "message": "Puedes cerrar esta pestaña y volver a entrar." },
+
+  "reincidenceTitle": { "message": "Ya tomaste esta decisión hoy" },
+  "reincidenceSub": {
+    "message": "Desbloqueaste $DOMAIN$ antes. No hace falta decidir de nuevo — mañana es un día nuevo y puedes volver a empezar.",
+    "placeholders": { "domain": { "content": "$1" } }
+  }
+}

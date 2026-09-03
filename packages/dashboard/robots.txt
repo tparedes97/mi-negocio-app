@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://limen-app-3b8cf.web.app/sitemap.xml

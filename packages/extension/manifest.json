@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArFJV3a89oWqMua/J5ZNpOR2dZh/puP/ETYteYhPRrKZSgznd5/h++qg/w2TImIUIxshyHDqVVEu3vxc6AURjXU65S/OFK++HKad0eLeO3KtwE20YWSDB2UI31FBaQ60LI0S1YeitHRbEUvFoeHHP8e99WZ70vY3mGs+MKt+xtlEuIEYjHVk5uJMd51lWbjmtdU31zj3G5KG7Xpn1eCP1HbzmKkdsBIPUcsr+aSfd0Fg/Hc27JZ5X+gx/kSnVAOSToODCxNn5Spxk5x1N6WufTjBjDiHcrk9dhxKBjlpMI93wggNZ5e6pE+MHi04j78wq5zGEr84STFrPSytMnK/lcQIDAQAB",
+  "name": "__MSG_extName__",
+  "short_name": "Limen",
+  "version": "0.1.3",
+  "description": "__MSG_extDescription__",
+  "default_locale": "es",
+
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "permissions": [
+    "storage",
+    "alarms",
+    "declarativeNetRequest",
+    "tabs",
+    "identity"
+  ],
+
+  "oauth2": {
+    "client_id": "886284444237-aa3k1egf7ate7j6sadu6i2ue9cm1483n.apps.googleusercontent.com",
+    "scopes": ["openid", "email", "profile"]
+  },
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["blocked.html", "blocked.js", "blocked.css", "shared.css"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

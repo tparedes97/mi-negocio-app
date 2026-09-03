@@ -1,0 +1,123 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isCompanion() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/companions/$(request.auth.uid));
+    }
+
+    function isFounder() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/companions/$(request.auth.uid)).data.role == 'founder';
+    }
+
+    // ---- Usuarios finales ----
+    match /users/{userId} {
+      // isFounder() también, además del dueño — el dashboard de admin
+      // necesita contar usuarios activos, planes, etc. sobre toda la
+      // colección, no solo el propio documento.
+      allow read: if isOwner(userId) || isFounder();
+      // 'plan' y 'subscriptionStatus' solo los escribe el backend (el
+      // webhook de Paddle, con el Admin SDK, que se salta estas reglas) —
+      // si el dueño pudiera tocarlos, cualquiera se pondría "premium"
+      // gratis desde la consola del navegador.
+      allow update: if isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['plan', 'subscriptionStatus']);
+      // Mismo motivo: si el doc todavía no existe, tampoco puede crearlo
+      // ya con esos campos adentro.
+      allow create: if isSignedIn() && request.auth.uid == userId &&
+        !('plan' in request.resource.data) && !('subscriptionStatus' in request.resource.data);
+      allow delete: if false; // baja de cuenta se maneja vía Cloud Function, no borrado directo
+
+      match /blockedSites/{siteId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /unlockAttempts/{attemptId} {
+        allow read: if isOwner(userId) || isCompanion();
+        allow create: if isOwner(userId);
+        // El dueño actualiza su propio flujo (respuestas, decisión de
+        // desbloquear, etc.) pero nunca puede tocar waitSeconds — eso lo
+        // escribe únicamente el backend, para que no pueda ver ni
+        // manipular su propio tiempo de espera (ver especificación).
+        // Un compañero SÍ puede actualizar el intento: es lo que pasa
+        // cuando "atiende" desde la cola y escribe chatId de vuelta.
+        allow update: if isCompanion() || (
+          isOwner(userId) &&
+          !('waitSeconds' in request.resource.data.diff(resource.data).affectedKeys())
+        );
+      }
+    }
+
+    // Las reglas anidadas de arriba (dentro de /users/{userId}/...) SOLO
+    // cubren consultas a la subcolección de un usuario puntual — nunca
+    // alcanzan a las consultas collectionGroup(db, 'unlockAttempts'), que
+    // usan tanto el dashboard del admin como la cola global de chats del
+    // portal de compañeras. Hace falta esta regla aparte con {path=**}
+    // para que esas consultas no queden bloqueadas.
+    match /{path=**}/unlockAttempts/{attemptId} {
+      allow read: if isSignedIn() && (request.auth.uid == path[1] || isCompanion());
+    }
+
+    // ---- Chats ----
+    match /chats/{chatId} {
+      allow read: if isSignedIn() &&
+        (resource.data.userId == request.auth.uid || isCompanion());
+      allow create, update: if isCompanion(); // el estado del chat lo gobierna el backend/compañero
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if isSignedIn() &&
+          (get(/databases/$(database)/documents/chats/$(chatId)).data.userId == request.auth.uid
+            || isCompanion());
+        allow create: if isSignedIn();
+        allow update, delete: if false; // los mensajes son inmutables una vez enviados
+      }
+    }
+
+    // ---- Compañeros (información privada, nunca visible al usuario final) ----
+    match /companions/{companionUid} {
+      allow read: if isFounder() || request.auth.uid == companionUid;
+      allow write: if isFounder();
+    }
+
+    // ---- Turnos ----
+    match /shiftAssignments/{docId} {
+      allow read: if isCompanion();
+      allow write: if isFounder();
+    }
+    match /shiftArchive/{docId} {
+      allow read: if isCompanion();
+      allow write: if false; // solo la Cloud Function de "lanzar calendario" escribe aquí
+    }
+
+    // ---- Donaciones y cancelaciones (analítica del negocio) ----
+    match /donations/{docId} {
+      allow read: if isFounder();
+      allow write: if false; // las crea paddleWebhook, nunca el cliente
+    }
+    match /cancellations/{docId} {
+      allow read: if isFounder();
+      allow write: if false; // reservado para cuando se implementen suscripciones recurrentes
+    }
+
+    // ---- Desbloqueos activos ----
+    // El service worker de la extensión SOLO lee (para saber qué dominio
+    // dejar de bloquear). Escribirlo directo desde el cliente permitiría
+    // desbloquearse sin pagar — por eso allow write: if false, siempre.
+    match /activeUnlocks/{docId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+  }
+}

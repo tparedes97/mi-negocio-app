@@ -1,0 +1,8 @@
+{
+  "name": "@limen/shared",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/constants.js",
+  "types": "src/types.ts",
+  "description": "Tipos, constantes y reglas de negocio compartidas entre la extensión, el admin, el portal de compañeros y las Cloud Functions."
+}

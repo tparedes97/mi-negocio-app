@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "limen-3b8cf"
+  },
+  "targets": {
+    "limen-3b8cf": {
+      "hosting": {
+        "checkout": ["limen-3b8cf"],
+        "admin": ["limen-admin-3b8cf"],
+        "companion-portal": ["limen-companion-3b8cf"],
+        "dashboard": ["limen-app-3b8cf"]
+      }
+    }
+  }
+}

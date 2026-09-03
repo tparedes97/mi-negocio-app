@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Limen — bloqueado</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="blocked.css">
+</head>
+<body class="blocked-page">
+  <div class="blocked-shell">
+    <header class="app-header">
+      <h1 class="brand">Limen<span>.</span></h1>
+    </header>
+    <main id="view-root">
+      <!-- blocked.js es toda la UI que le queda a la extensión — shared.css
+           trae los estilos base, blocked.css agrega los específicos del
+           flujo de desbloqueo (chat, dona, tarifas). Cada estado de
+           UnlockAttemptState en @limen/shared/src/types.ts tiene su
+           función render* en blocked.js -->
+      <div class="loading-state" id="loading-state"></div>
+    </main>
+  </div>
+  <script type="module" src="blocked.js"></script>
+</body>
+</html>

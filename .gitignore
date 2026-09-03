@@ -1,0 +1,13 @@
+node_modules/
+dist/
+__pycache__/
+*.zip
+firebase/functions/shared/
+.env
+.env.local
+*.log
+.firebase/
+.DS_Store
+firebase-debug.log
+firestore-debug.log
+ui-debug.log

@@ -1,0 +1,45 @@
+{
+  "firestore": {
+    "rules": "firebase/firestore.rules",
+    "indexes": "firebase/firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "firebase/functions",
+      "codebase": "default",
+      "runtime": "nodejs20",
+      "predeploy": [
+        "mkdir -p $RESOURCE_DIR/shared && cp $RESOURCE_DIR/../../packages/shared/src/constants.js $RESOURCE_DIR/shared/constants.js"
+      ]
+    }
+  ],
+  "hosting": [
+    {
+      "target": "admin",
+      "public": "packages/admin",
+      "ignore": ["package.json"]
+    },
+    {
+      "target": "companion-portal",
+      "public": "packages/companion-portal",
+      "ignore": ["package.json"]
+    },
+    {
+      "target": "checkout",
+      "public": "packages/checkout",
+      "ignore": ["package.json"]
+    },
+    {
+      "target": "dashboard",
+      "public": "packages/dashboard",
+      "ignore": ["package.json"]
+    }
+  ],
+  "emulators": {
+    "auth": { "port": 9099 },
+    "firestore": { "port": 8080 },
+    "functions": { "port": 5001 },
+    "hosting": { "port": 5000 },
+    "ui": { "enabled": true }
+  }
+}
