@@ -95,7 +95,7 @@
   "openingPaymentBtn": { "message": "Abriendo pago…" },
   "paymentErrorBtn": { "message": "No se pudo abrir el pago, intenta de nuevo" },
   "donateAmountBtn": {
-    "message": "Donar $$AMOUNT$",
+    "message": "Donar $AMOUNT$",
     "placeholders": { "amount": { "content": "$1" } }
   },
   "skipDonationBtn": { "message": "Omitir, no donar" },

@@ -668,7 +668,7 @@ function renderDonationPrompt() {
       customInput.value = '';
       selectedAmount = Number(chip.dataset.amount);
       donateBtn.disabled = false;
-      donateBtn.textContent = chrome.i18n.getMessage('donateAmountBtn', [String(selectedAmount)]);
+      donateBtn.textContent = chrome.i18n.getMessage('donateAmountBtn', ['$' + selectedAmount]);
     });
   });
 
@@ -683,7 +683,7 @@ function renderDonationPrompt() {
     document.querySelectorAll('#donation-chips .chip').forEach((c) => c.classList.remove('selected'));
     selectedAmount = value;
     donateBtn.disabled = false;
-    donateBtn.textContent = chrome.i18n.getMessage('donateAmountBtn', [value.toFixed(2)]);
+    donateBtn.textContent = chrome.i18n.getMessage('donateAmountBtn', ['$' + value.toFixed(2)]);
   });
 
   document.getElementById('btn-donate').addEventListener('click', async () => {

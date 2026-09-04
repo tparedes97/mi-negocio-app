@@ -95,7 +95,7 @@
   "openingPaymentBtn": { "message": "Opening payment…" },
   "paymentErrorBtn": { "message": "Couldn't open payment, try again" },
   "donateAmountBtn": {
-    "message": "Donate $$AMOUNT$",
+    "message": "Donate $AMOUNT$",
     "placeholders": { "amount": { "content": "$1" } }
   },
   "skipDonationBtn": { "message": "Skip, don't donate" },
